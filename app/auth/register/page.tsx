@@ -1,6 +1,5 @@
 'use client';
 
-import FormButtons from '@/components/FormButtons';
 import {
   Container,
   NumberInput,
@@ -13,6 +12,7 @@ import {
 import { useForm } from '@mantine/form';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import FormButtons from '@/components/FormButtons';
 
 const Register = () => {
   const router = useRouter();
@@ -35,13 +35,9 @@ const Register = () => {
   });
 
   const sumbitRegister = async () => {
-    await axios
-      .post('/api/users/register', form.values)
-      .then(() => {
-        console.log('Registered successfully');
-        router.push('/auth/login');
-      })
-      .catch((err: any) => console.log(err.response.data.error));
+    await axios.post('/api/users/register', form.values).then(() => {
+      router.push('/auth/login');
+    });
   };
 
   return (

@@ -1,1 +1,3 @@
-export { default } from './FormButtons';
+import FormButtons from './FormButtons';
+
+export default FormButtons;

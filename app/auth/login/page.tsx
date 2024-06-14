@@ -22,11 +22,9 @@ const Login = () => {
   });
 
   const sumbitLogin = async () => {
-    await signIn('credentials', { ...form.values, redirect: false })
-      .then(() => {
-        router.push('/');
-      })
-      .catch((error) => console.log(error.response.data.error, 'Login failed'));
+    await signIn('credentials', { ...form.values, redirect: false }).then(() => {
+      router.push('/');
+    });
   };
 
   return (
