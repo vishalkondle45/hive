@@ -11,6 +11,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const session = useSession();
   const isLoggedIn = session?.status === 'authenticated';
+  const isLoggedOff = session?.status === 'unauthenticated';
   const router = useRouter();
 
   return (
@@ -40,7 +41,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               visibleFrom="sm"
               size="sm"
             />
-
             <Button
               variant="transparent"
               size="compact-md"
@@ -53,11 +53,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </Button>
           </Group>
           <Group gap={0}>
-            {isLoggedIn ? (
+            {isLoggedIn && (
               <Button variant="transparent" size="compact-md" color="red" onClick={() => signOut()}>
                 Logout
               </Button>
-            ) : (
+            )}
+            {isLoggedOff && (
               <>
                 <Button
                   variant="transparent"
