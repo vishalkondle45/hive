@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { Box, Center, rem, Stack, Text, ThemeIcon } from '@mantine/core';
 import { IconError404 } from '@tabler/icons-react';
@@ -14,7 +14,13 @@ const Page = () => {
             <IconError404 style={{ width: rem(200), height: rem(200) }} />
           </ThemeIcon>
           <Text ta="center" fw={500} size={rem(16)}>
-            <Text span c="blue" fw={700} style={{ cursor: 'pointer' }} onClick={() => router.push('/')}>
+            <Text
+              span
+              c="blue"
+              fw={700}
+              style={{ cursor: 'pointer' }}
+              onClick={() => router.push('/')}
+            >
               Click here
             </Text>
             , to go home

@@ -1,8 +1,8 @@
-import startDb from '@/lib/db';
-import UserModel from '@/models/User';
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { CredentialTypes, UserSessionObject } from './next-auth.interfaces';
+import startDb from '@/lib/db';
+import UserModel from '@/models/User';
 
 export const authOptions: NextAuthOptions = {
   session: {

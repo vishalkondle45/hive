@@ -1,6 +1,5 @@
 'use client';
 
-import FormButtons from '@/components/FormButtons';
 import {
   Container,
   NumberInput,
@@ -14,6 +13,7 @@ import { useForm } from '@mantine/form';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import FormButtons from '@/components/FormButtons';
 
 const Register = () => {
   const router = useRouter();

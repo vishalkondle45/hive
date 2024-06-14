@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  AppShell,
-  Burger,
-  Button,
-  Container,
-  Group,
-  rem
-} from '@mantine/core';
+import { AppShell, Burger, Button, Container, Group, rem } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';

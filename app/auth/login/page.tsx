@@ -1,10 +1,10 @@
 'use client';
 
-import FormButtons from '@/components/FormButtons';
 import { Container, Paper, PasswordInput, Stack, TextInput, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import FormButtons from '@/components/FormButtons';
 
 const Login = () => {
   const router = useRouter();

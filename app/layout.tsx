@@ -1,6 +1,6 @@
+import { MantineProvider } from '@mantine/core';
 import Layout from '@/components/Layout';
 import AuthProvider from '@/Providers/AuthProvider';
-import { MantineProvider } from '@mantine/core';
 import '@mantine/core/styles.css';
 import { theme } from '../theme';
 
