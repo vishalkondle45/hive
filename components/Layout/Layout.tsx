@@ -1,14 +1,24 @@
 'use client';
 
-import { ActionIcon, AppShell, Badge, Burger, Group } from '@mantine/core';
+import {
+  AppShell,
+  Burger,
+  Button,
+  Container,
+  Group,
+  rem
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconLogout } from '@tabler/icons-react';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
+  const session = useSession();
+  const isLoggedIn = session?.status === 'authenticated';
+  const router = useRouter();
 
   return (
     <AppShell
@@ -23,21 +33,70 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
           <Group>
-            <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
-            <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
-            <Badge variant="transparent" radius="xs" p={0} size="xl">
+            <Burger
+              opened={mobileOpened}
+              hidden={!isLoggedIn}
+              onClick={toggleMobile}
+              hiddenFrom="sm"
+              size="sm"
+            />
+            <Burger
+              opened={desktopOpened}
+              hidden={!isLoggedIn}
+              onClick={toggleDesktop}
+              visibleFrom="sm"
+              size="sm"
+            />
+
+            <Button
+              variant="transparent"
+              size="compact-md"
+              color="dark"
+              fw={900}
+              onClick={() => router.push('/')}
+              px={0}
+            >
               Next_App
-            </Badge>
+            </Button>
           </Group>
-          <Group>
-            <ActionIcon variant="transparent" color="red" onClick={() => signOut()}>
-              <IconLogout />
-            </ActionIcon>
+          <Group gap={0}>
+            {isLoggedIn ? (
+              <Button variant="transparent" size="compact-md" color="red" onClick={() => signOut()}>
+                Logout
+              </Button>
+            ) : (
+              <>
+                <Button
+                  variant="transparent"
+                  size="compact-md"
+                  color="blue"
+                  onClick={() => router.push('/auth/register')}
+                >
+                  Register
+                </Button>
+                <Button
+                  variant="transparent"
+                  size="compact-md"
+                  color="teal"
+                  onClick={() => router.push('/auth/login')}
+                >
+                  Login
+                </Button>
+              </>
+            )}
           </Group>
         </Group>
       </AppShell.Header>
-      <AppShell.Navbar p="md">Navbar</AppShell.Navbar>
-      <AppShell.Main>{children}</AppShell.Main>
+      {isLoggedIn ? (
+        <>
+          <AppShell.Navbar p="md">Navbar</AppShell.Navbar>
+          <AppShell.Main>{children}</AppShell.Main>
+        </>
+      ) : (
+        <Container size="100%" mt={rem(80)}>
+          {children}
+        </Container>
+      )}
     </AppShell>
   );
 }

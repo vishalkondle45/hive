@@ -1,3 +1,5 @@
+import Layout from '@/components/Layout';
+import AuthProvider from '@/Providers/AuthProvider';
 import { MantineProvider } from '@mantine/core';
 import '@mantine/core/styles.css';
 import { theme } from '../theme';
@@ -18,7 +20,11 @@ export default function RootLayout({ children }: { children: any }) {
         />
       </head>
       <body style={{ backgroundColor: '#F5F5F8' }}>
-        <MantineProvider theme={theme}>{children}</MantineProvider>
+        <AuthProvider>
+          <MantineProvider theme={theme}>
+            <Layout>{children}</Layout>
+          </MantineProvider>
+        </AuthProvider>
       </body>
     </html>
   );
