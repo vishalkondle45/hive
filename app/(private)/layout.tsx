@@ -1,6 +1,6 @@
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
 import { UserDataTypes } from '@/app/api/auth/[...nextauth]/next-auth.interfaces';
-import { Container, rem } from '@mantine/core';
+import Layout from '@/components/Layout/Layout';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
@@ -13,9 +13,7 @@ export default async function RootLayout({ children }: Props) {
   if (!session?.user) redirect('/auth/login');
   return (
     <>
-      <Container size="xl" mt={rem(70)}>
-        {children}
-      </Container>
+      <Layout>{children}</Layout>
     </>
   );
 }
