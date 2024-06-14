@@ -1,5 +1,6 @@
 'use client';
 
+import FormButtons from '@/components/FormButtons';
 import {
   Container,
   NumberInput,
@@ -11,12 +12,12 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import axios from 'axios';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import FormButtons from '@/components/FormButtons';
 
 const Register = () => {
   const router = useRouter();
-
+  const session = useSession();
   const form = useForm({
     initialValues: {
       name: '',
@@ -40,9 +41,13 @@ const Register = () => {
     });
   };
 
+  if (session.status === 'authenticated') {
+    router.push('/user');
+  }
+
   return (
     <>
-      <Container size="xs">
+      <Container size="xs" px={0} maw={400}>
         <Paper p="lg" mt="xl" radius="md" withBorder>
           <Title order={3} ta="center">
             Register

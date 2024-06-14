@@ -3,12 +3,12 @@
 import FormButtons from '@/components/FormButtons';
 import { Container, Paper, PasswordInput, Stack, TextInput, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 const Login = () => {
   const router = useRouter();
-
+  const session = useSession();
   const form = useForm({
     initialValues: {
       email: '',
@@ -27,9 +27,13 @@ const Login = () => {
     });
   };
 
+  if (session.status === 'authenticated') {
+    router.push('/user');
+  }
+
   return (
     <>
-      <Container size="xs">
+      <Container size="xs" px={0} maw={400}>
         <Paper p="lg" mt="xl" radius="md" withBorder>
           <Title order={3} ta="center">
             Login
