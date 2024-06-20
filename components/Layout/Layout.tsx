@@ -1,10 +1,23 @@
 'use client';
 
-import { AppShell, Burger, Button, Container, Group, rem } from '@mantine/core';
+import {
+  ActionIcon,
+  AppShell,
+  Burger,
+  Button,
+  Container,
+  Group,
+  Popover,
+  rem,
+  SimpleGrid,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { IconGridDots } from '@tabler/icons-react';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import { App } from '../App';
+import { APPS } from '@/lib/constants';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
@@ -54,9 +67,30 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Group>
           <Group gap={0}>
             {isLoggedIn && (
-              <Button variant="transparent" size="compact-md" color="red" onClick={() => signOut()}>
-                Logout
-              </Button>
+              <>
+                <Popover position="bottom" withArrow shadow="md">
+                  <Popover.Target>
+                    <ActionIcon variant="subtle" color="gray" radius="xl" size="md">
+                      <IconGridDots stroke={3} style={{ width: rem(20), height: rem(20) }} />
+                    </ActionIcon>
+                  </Popover.Target>
+                  <Popover.Dropdown p="xs">
+                    <SimpleGrid spacing="xs" cols={3}>
+                      {APPS.map((app) => (
+                        <App app={app} />
+                      ))}
+                    </SimpleGrid>
+                  </Popover.Dropdown>
+                </Popover>
+                <Button
+                  variant="transparent"
+                  size="compact-md"
+                  color="red"
+                  onClick={() => signOut()}
+                >
+                  Logout
+                </Button>
+              </>
             )}
             {isLoggedOff && (
               <>
