@@ -5475,6 +5475,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/nodemailer@npm:^6":
+  version: 6.4.15
+  resolution: "@types/nodemailer@npm:6.4.15"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/553e613fe08fd663bff1fb3647a8ebbcc4ca297a6249296a43f3c92499158acad5955689be2096ff3fe72f145e80d749c1fc66d5549fe665d7ceb6d0946f2a26
+  languageName: node
+  linkType: hard
+
 "@types/normalize-package-data@npm:^2.4.0":
   version: 2.4.2
   resolution: "@types/normalize-package-data@npm:2.4.2"
@@ -8605,6 +8614,88 @@ __metadata:
   checksum: 10c0/b95ff1bbe624ead85a3cd70dbd827e8e06d5f05f716f2d0cbc476532d54c7c9469c3bc4dd93ea519f6ad711cb522c00ac9a62b6eb340d5affae8008facc3fbd7
   languageName: node
   linkType: hard
+
+"dream@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "dream@workspace:."
+  dependencies:
+    "@babel/core": "npm:^7.24.0"
+    "@mantine/carousel": "npm:^7.10.2"
+    "@mantine/charts": "npm:^7.10.2"
+    "@mantine/code-highlight": "npm:^7.10.2"
+    "@mantine/core": "npm:^7.10.2"
+    "@mantine/dates": "npm:^7.10.2"
+    "@mantine/dropzone": "npm:^7.10.2"
+    "@mantine/form": "npm:^7.10.2"
+    "@mantine/hooks": "npm:^7.10.2"
+    "@mantine/modals": "npm:^7.10.2"
+    "@mantine/notifications": "npm:^7.10.2"
+    "@mantine/nprogress": "npm:^7.10.2"
+    "@mantine/spotlight": "npm:^7.10.2"
+    "@mantine/tiptap": "npm:^7.10.2"
+    "@next/bundle-analyzer": "npm:^14.1.3"
+    "@next/eslint-plugin-next": "npm:^14.1.3"
+    "@storybook/addon-essentials": "npm:^8.1.3"
+    "@storybook/addon-styling-webpack": "npm:^1.0.0"
+    "@storybook/blocks": "npm:^8.1.3"
+    "@storybook/nextjs": "npm:^8.1.3"
+    "@storybook/react": "npm:^8.1.3"
+    "@tabler/icons-react": "npm:^3.6.0"
+    "@testing-library/dom": "npm:^9.3.4"
+    "@testing-library/jest-dom": "npm:^6.4.2"
+    "@testing-library/react": "npm:^14.2.1"
+    "@testing-library/user-event": "npm:^14.5.2"
+    "@tiptap/extension-link": "npm:^2.4.0"
+    "@tiptap/react": "npm:^2.4.0"
+    "@tiptap/starter-kit": "npm:^2.4.0"
+    "@types/add": "npm:^2"
+    "@types/bcryptjs": "npm:^2"
+    "@types/jest": "npm:^29.5.12"
+    "@types/node": "npm:^20.11.26"
+    "@types/nodemailer": "npm:^6"
+    "@types/react": "npm:18.2.65"
+    "@typescript-eslint/eslint-plugin": "npm:^7.2.0"
+    "@typescript-eslint/parser": "npm:^7.2.0"
+    add: "npm:^2.0.6"
+    axios: "npm:^1.7.2"
+    babel-loader: "npm:^9.1.3"
+    bcryptjs: "npm:^2.4.3"
+    dayjs: "npm:^1.11.11"
+    embla-carousel-react: "npm:^8.1.5"
+    eslint: "npm:^8.57.0"
+    eslint-config-airbnb: "npm:19.0.4"
+    eslint-config-airbnb-typescript: "npm:^18.0.0"
+    eslint-config-mantine: "npm:3.2.0"
+    eslint-plugin-import: "npm:^2.29.1"
+    eslint-plugin-jest: "npm:^27.9.0"
+    eslint-plugin-jsx-a11y: "npm:^6.8.0"
+    eslint-plugin-react: "npm:^7.34.0"
+    eslint-plugin-react-hooks: "npm:^4.6.0"
+    eslint-plugin-testing-library: "npm:^6.2.0"
+    jest: "npm:^29.7.0"
+    jest-environment-jsdom: "npm:^29.7.0"
+    mantine-form-zod-resolver: "npm:^1.1.0"
+    mongoose: "npm:^8.4.1"
+    next: "npm:14.1.3"
+    next-auth: "npm:^4.24.7"
+    nodemailer: "npm:^6.9.14"
+    postcss: "npm:^8.4.35"
+    postcss-preset-mantine: "npm:1.15.0"
+    postcss-simple-vars: "npm:^7.0.1"
+    prettier: "npm:^3.2.5"
+    react: "npm:18.2.0"
+    react-dom: "npm:18.2.0"
+    recharts: "npm:2"
+    storybook: "npm:^8.1.3"
+    storybook-dark-mode: "npm:^4.0.1"
+    stylelint: "npm:^16.2.1"
+    stylelint-config-standard-scss: "npm:^13.0.0"
+    ts-jest: "npm:^29.1.2"
+    typescript: "npm:5.4.2"
+    yarn: "npm:^1.22.22"
+    zod: "npm:^3.23.8"
+  languageName: unknown
+  linkType: soft
 
 "duplexer@npm:^0.1.2":
   version: 0.1.2
@@ -12608,83 +12699,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mantine-next-template@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "mantine-next-template@workspace:."
-  dependencies:
-    "@babel/core": "npm:^7.24.0"
-    "@mantine/carousel": "npm:^7.10.2"
-    "@mantine/charts": "npm:^7.10.2"
-    "@mantine/code-highlight": "npm:^7.10.2"
-    "@mantine/core": "npm:^7.10.2"
-    "@mantine/dates": "npm:^7.10.2"
-    "@mantine/dropzone": "npm:^7.10.2"
-    "@mantine/form": "npm:^7.10.2"
-    "@mantine/hooks": "npm:^7.10.2"
-    "@mantine/modals": "npm:^7.10.2"
-    "@mantine/notifications": "npm:^7.10.2"
-    "@mantine/nprogress": "npm:^7.10.2"
-    "@mantine/spotlight": "npm:^7.10.2"
-    "@mantine/tiptap": "npm:^7.10.2"
-    "@next/bundle-analyzer": "npm:^14.1.3"
-    "@next/eslint-plugin-next": "npm:^14.1.3"
-    "@storybook/addon-essentials": "npm:^8.1.3"
-    "@storybook/addon-styling-webpack": "npm:^1.0.0"
-    "@storybook/blocks": "npm:^8.1.3"
-    "@storybook/nextjs": "npm:^8.1.3"
-    "@storybook/react": "npm:^8.1.3"
-    "@tabler/icons-react": "npm:^3.6.0"
-    "@testing-library/dom": "npm:^9.3.4"
-    "@testing-library/jest-dom": "npm:^6.4.2"
-    "@testing-library/react": "npm:^14.2.1"
-    "@testing-library/user-event": "npm:^14.5.2"
-    "@tiptap/extension-link": "npm:^2.4.0"
-    "@tiptap/react": "npm:^2.4.0"
-    "@tiptap/starter-kit": "npm:^2.4.0"
-    "@types/add": "npm:^2"
-    "@types/bcryptjs": "npm:^2"
-    "@types/jest": "npm:^29.5.12"
-    "@types/node": "npm:^20.11.26"
-    "@types/react": "npm:18.2.65"
-    "@typescript-eslint/eslint-plugin": "npm:^7.2.0"
-    "@typescript-eslint/parser": "npm:^7.2.0"
-    add: "npm:^2.0.6"
-    axios: "npm:^1.7.2"
-    babel-loader: "npm:^9.1.3"
-    bcryptjs: "npm:^2.4.3"
-    dayjs: "npm:^1.11.11"
-    embla-carousel-react: "npm:^8.1.5"
-    eslint: "npm:^8.57.0"
-    eslint-config-airbnb: "npm:19.0.4"
-    eslint-config-airbnb-typescript: "npm:^18.0.0"
-    eslint-config-mantine: "npm:3.2.0"
-    eslint-plugin-import: "npm:^2.29.1"
-    eslint-plugin-jest: "npm:^27.9.0"
-    eslint-plugin-jsx-a11y: "npm:^6.8.0"
-    eslint-plugin-react: "npm:^7.34.0"
-    eslint-plugin-react-hooks: "npm:^4.6.0"
-    eslint-plugin-testing-library: "npm:^6.2.0"
-    jest: "npm:^29.7.0"
-    jest-environment-jsdom: "npm:^29.7.0"
-    mongoose: "npm:^8.4.1"
-    next: "npm:14.1.3"
-    next-auth: "npm:^4.24.7"
-    postcss: "npm:^8.4.35"
-    postcss-preset-mantine: "npm:1.15.0"
-    postcss-simple-vars: "npm:^7.0.1"
-    prettier: "npm:^3.2.5"
-    react: "npm:18.2.0"
-    react-dom: "npm:18.2.0"
-    recharts: "npm:2"
-    storybook: "npm:^8.1.3"
-    storybook-dark-mode: "npm:^4.0.1"
-    stylelint: "npm:^16.2.1"
-    stylelint-config-standard-scss: "npm:^13.0.0"
-    ts-jest: "npm:^29.1.2"
-    typescript: "npm:5.4.2"
-    yarn: "npm:^1.22.22"
-  languageName: unknown
-  linkType: soft
+"mantine-form-zod-resolver@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "mantine-form-zod-resolver@npm:1.1.0"
+  peerDependencies:
+    "@mantine/form": ">=7.0.0"
+    zod: ">=3.0.0"
+  checksum: 10c0/3ff086f2a5d7b9d3d56b09f16fdc27919000c2007279c2e5e6fe85c60c56ee75a13cfebaa1dd341c4ddafd73aba9a3c59a98ea41c59ea8d01c67483dc07ea1ad
+  languageName: node
+  linkType: hard
 
 "map-or-similar@npm:^1.5.0":
   version: 1.5.0
@@ -13359,6 +13382,13 @@ __metadata:
   version: 2.0.14
   resolution: "node-releases@npm:2.0.14"
   checksum: 10c0/199fc93773ae70ec9969bc6d5ac5b2bbd6eb986ed1907d751f411fef3ede0e4bfdb45ceb43711f8078bea237b6036db8b1bf208f6ff2b70c7d615afd157f3ab9
+  languageName: node
+  linkType: hard
+
+"nodemailer@npm:^6.9.14":
+  version: 6.9.14
+  resolution: "nodemailer@npm:6.9.14"
+  checksum: 10c0/2542986849bc6ec2bf12fb7b72226da0ce9c6a0946216dea020d9eedee3ac1a4eb2413f59772a3ddd4bb9188d5ce859167a030c065719473f71319e052a319dc
   languageName: node
   linkType: hard
 
@@ -17842,5 +17872,12 @@ __metadata:
   version: 1.0.0
   resolution: "yocto-queue@npm:1.0.0"
   checksum: 10c0/856117aa15cf5103d2a2fb173f0ab4acb12b4b4d0ed3ab249fdbbf612e55d1cadfd27a6110940e24746fb0a78cf640b522cc8bca76f30a3b00b66e90cf82abe0
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.23.8":
+  version: 3.23.8
+  resolution: "zod@npm:3.23.8"
+  checksum: 10c0/8f14c87d6b1b53c944c25ce7a28616896319d95bc46a9660fe441adc0ed0a81253b02b5abdaeffedbeb23bdd25a0bf1c29d2c12dd919aef6447652dd295e3e69
   languageName: node
   linkType: hard

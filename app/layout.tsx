@@ -4,10 +4,7 @@ import AuthProvider from '@/Providers/AuthProvider';
 import '@mantine/core/styles.css';
 import { theme } from '../theme';
 
-export const metadata = {
-  title: 'My Next.js Template',
-  description: 'Thanks, for visiting my next.js template',
-};
+export const metadata = { title: 'Dream', description: '' };
 
 export default function RootLayout({ children }: { children: any }) {
   return (
