@@ -5,6 +5,7 @@ import { useForm } from '@mantine/form';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import FormButtons from '@/components/FormButtons';
+import { failure } from '@/lib/client_functions';
 
 const Login = () => {
   const router = useRouter();
@@ -22,8 +23,12 @@ const Login = () => {
   });
 
   const sumbitLogin = async () => {
-    await signIn('credentials', { ...form.values, redirect: false }).then(() => {
-      router.push('/');
+    await signIn('credentials', { ...form.values, redirect: false }).then((res) => {
+      if (res?.ok) {
+        router.push('/');
+      } else {
+        failure(res?.error || '');
+      }
     });
   };
 

@@ -1,7 +1,9 @@
 import { MantineProvider } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 import Layout from '@/components/Layout';
 import AuthProvider from '@/Providers/AuthProvider';
 import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 import { theme } from '../theme';
 
 export const metadata = { title: 'Dream', description: '' };
@@ -19,6 +21,7 @@ export default function RootLayout({ children }: { children: any }) {
       <body style={{ backgroundColor: '#F5F5F8' }}>
         <AuthProvider>
           <MantineProvider theme={theme}>
+            <Notifications />
             <Layout>{children}</Layout>
           </MantineProvider>
         </AuthProvider>

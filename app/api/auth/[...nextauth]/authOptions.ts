@@ -3,6 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { CredentialTypes, UserSessionObject } from './next-auth.interfaces';
 import startDb from '@/lib/db';
 import UserModel from '@/models/User';
+import { sendMail, verificationMessage } from '@/lib/functions';
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -22,6 +23,10 @@ export const authOptions: NextAuthOptions = {
 
         const passwordMatch = await user.comparePassword(password);
         if (!passwordMatch) throw Error('email/password mismatch!');
+        if (!user.isVerified) {
+          await sendMail(user?.email, verificationMessage(user.name, String(user._id)));
+          throw Error('Please verify your email!');
+        }
 
         return {
           name: user.name,

@@ -14,6 +14,7 @@ import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import FormButtons from '@/components/FormButtons';
+import { failure, success } from '@/lib/client_functions';
 
 const Register = () => {
   const router = useRouter();
@@ -36,9 +37,13 @@ const Register = () => {
   });
 
   const sumbitRegister = async () => {
-    await axios.post('/api/users/register', form.values).then(() => {
-      router.push('/auth/login');
-    });
+    await axios
+      .post('/api/users/register', form.values)
+      .then(() => {
+        success('User registered successfully');
+        router.push('/auth/login');
+      })
+      .catch((error) => failure(error.response.data.error));
   };
 
   if (session.status === 'authenticated') {

@@ -5,9 +5,10 @@ export interface UserDocument extends Document {
   _id?: Types.ObjectId;
   name: string;
   mobile?: string;
-  email?: string;
+  email: string;
   password: string;
   isAdmin: boolean;
+  isVerified: boolean;
 }
 
 interface Methods {
@@ -25,7 +26,7 @@ const userSchema = new Schema<UserDocument, {}, Methods>(
     mobile: {
       type: String,
       required: true,
-      unique: true,
+      // unique: true,
       index: true,
     },
     email: {
@@ -39,6 +40,10 @@ const userSchema = new Schema<UserDocument, {}, Methods>(
       required: true,
     },
     isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    isVerified: {
       type: Boolean,
       default: false,
     },
