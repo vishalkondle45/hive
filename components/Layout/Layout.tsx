@@ -70,14 +70,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <>
                 <Popover position="bottom" withArrow shadow="md">
                   <Popover.Target>
-                    <ActionIcon variant="subtle" color="gray" radius="xl" size="md">
+                    <ActionIcon variant="subtle" color="gray" radius="xl" size="lg">
                       <IconGridDots stroke={3} style={{ width: rem(20), height: rem(20) }} />
                     </ActionIcon>
                   </Popover.Target>
                   <Popover.Dropdown p="xs">
                     <SimpleGrid spacing="xs" cols={3}>
                       {APPS.map((app) => (
-                        <App app={app} />
+                        <App key={app.path} app={app} />
                       ))}
                     </SimpleGrid>
                   </Popover.Dropdown>
