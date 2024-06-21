@@ -10,11 +10,12 @@ import {
   Popover,
   rem,
   SimpleGrid,
+  Stack,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconGridDots } from '@tabler/icons-react';
 import { signOut, useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 import { App } from '../App';
 import { APPS } from '@/lib/constants';
@@ -26,6 +27,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const isLoggedIn = session?.status === 'authenticated';
   const isLoggedOff = session?.status === 'unauthenticated';
   const router = useRouter();
+  const pathname = usePathname();
+  const APP = APPS.find((app) => `/${pathname.split('/')[1]}` === app.path);
+
+  const navigateTo = (path: string) => {
+    router.push(path);
+    toggleMobile();
+  };
 
   return (
     <AppShell
@@ -62,7 +70,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               onClick={() => router.push('/')}
               px={0}
             >
-              Next_App
+              {APP?.label}
             </Button>
           </Group>
           <Group gap={0}>
@@ -77,7 +85,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <Popover.Dropdown p="xs">
                     <SimpleGrid spacing="xs" cols={3}>
                       {APPS.map((app) => (
-                        <App key={app.path} app={app} />
+                        <App isCurrent={APP?.path === app.path} key={app.path} app={app} />
                       ))}
                     </SimpleGrid>
                   </Popover.Dropdown>
@@ -117,7 +125,24 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </AppShell.Header>
       {isLoggedIn ? (
         <>
-          <AppShell.Navbar p="md">Navbar</AppShell.Navbar>
+          <AppShell.Navbar>
+            <Stack gap="xs" my="xs">
+              {APP?.sidebar.map((item) => (
+                <Button
+                  key={item.label}
+                  justify="left"
+                  onClick={() => navigateTo(item.path)}
+                  leftSection={item.icon}
+                  radius={0}
+                  variant={pathname === item.path ? 'filled' : 'subtle'}
+                  color={APP.color}
+                  fullWidth
+                >
+                  {item.label}
+                </Button>
+              ))}
+            </Stack>
+          </AppShell.Navbar>
           <AppShell.Main>{children}</AppShell.Main>
         </>
       ) : (
