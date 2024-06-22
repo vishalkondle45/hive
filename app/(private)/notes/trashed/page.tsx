@@ -1,12 +1,12 @@
 'use client';
 
-import { Container } from '@mantine/core';
+import { Container, SimpleGrid } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { nprogress } from '@mantine/nprogress';
 import axios from 'axios';
 import { useEffect } from 'react';
-import { NewNote, NoteModal, Notes } from '@/components/Note';
+import Note, { NewNote, NoteModal } from '@/components/Note';
 import useFetchData from '@/hooks/useFetchData';
 import { failure } from '@/lib/client_functions';
 import { NoteDocument } from '@/models/Note';
@@ -133,7 +133,11 @@ export default function NotesPage() {
     <>
       <NewNote newNote={newNote} />
       <Container px={0} size="md">
-        <Notes data={data} handleClick={handleClick} />
+        <SimpleGrid cols={{ base: 1, xs: 2, md: 3 }}>
+          {data?.map((note: NoteDocument) => (
+            <Note key={String(note._id)} note={note} handleClick={handleClick} />
+          ))}
+        </SimpleGrid>
       </Container>
       <NoteModal onDelete={onDelete} opened={opened} form={form} onSave={onSave} />
     </>

@@ -1,15 +1,16 @@
 'use client';
 
 import { useForm } from '@mantine/form';
-import { Container, Text } from '@mantine/core';
+import { Container, SimpleGrid, Stack, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { nprogress } from '@mantine/nprogress';
 import axios from 'axios';
 import { useEffect } from 'react';
-import { NewNote, NoteModal, Notes } from '@/components/Note';
+import Note, { NewNote, NoteModal } from '@/components/Note';
 import useFetchData from '@/hooks/useFetchData';
 import { failure } from '@/lib/client_functions';
 import { NoteDocument } from '@/models/Note';
+import Skelton from '@/components/Skelton/Skelton';
 
 export default function NotesPage() {
   const { data, loading, refetch } = useFetchData('/api/notes');
@@ -121,18 +122,34 @@ export default function NotesPage() {
     <>
       <NewNote newNote={newNote} />
       <Container px={0} size="md">
-        {pinned?.length > 0 && (
+        {loading ? (
+          <SimpleGrid cols={{ base: 1, xs: 2, md: 3 }}>
+            <Skelton items={6} />
+          </SimpleGrid>
+        ) : (
           <>
-            <Text size="sm" mb="xs">
-              PINNED
-            </Text>
-            <Notes data={pinned} handleClick={handleClick} />
-            <Text size="sm" my="xs">
-              OTHERS
-            </Text>
+            {pinned?.length > 0 && (
+              <Stack>
+                <Text size="sm" mb="xs">
+                  PINNED
+                </Text>
+                <SimpleGrid cols={{ base: 1, xs: 2, md: 3 }}>
+                  {pinned?.map((note: NoteDocument) => (
+                    <Note key={String(note._id)} note={note} handleClick={handleClick} />
+                  ))}
+                </SimpleGrid>
+                <Text size="sm" my="xs">
+                  OTHERS
+                </Text>
+              </Stack>
+            )}
+            <SimpleGrid cols={{ base: 1, xs: 2, md: 3 }}>
+              {others?.map((note: NoteDocument) => (
+                <Note key={String(note._id)} note={note} handleClick={handleClick} />
+              ))}
+            </SimpleGrid>
           </>
         )}
-        <Notes data={others} handleClick={handleClick} />
       </Container>
       <NoteModal opened={opened} form={form} onSave={onSave} />
     </>
