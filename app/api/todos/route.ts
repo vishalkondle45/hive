@@ -5,21 +5,51 @@ import startDb from '@/lib/db';
 import Todo from '@/models/Todo';
 import { authOptions } from '../auth/[...nextauth]/authOptions';
 import { UserDataTypes } from '../auth/[...nextauth]/next-auth.interfaces';
+import {
+  getAllTodos,
+  getImportantTodos,
+  getListTodos,
+  getUpcomingTodos,
+  getTodaysTodos,
+  getRecentTodos,
+} from '@/lib/functions';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const session: UserDataTypes | null = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    const user = session?.user._id;
     await startDb();
-    const todoList = await Todo.find({ user: session?.user._id })
-      .populate({
-        path: 'list',
-        select: 'title color -_id',
-      })
-      .sort('-updatedAt');
-    return NextResponse.json(todoList, { status: 200 });
+    let todos: any[] = [];
+    const type = req.nextUrl.searchParams.get('type')?.toString() ?? '';
+    const list = req.nextUrl.searchParams.get('list')?.toString() ?? '';
+    switch (type) {
+      case 'today':
+        todos = await getTodaysTodos(user);
+        break;
+      case 'important':
+        todos = await getImportantTodos(user);
+        break;
+      case 'upcoming':
+        todos = await getUpcomingTodos(user);
+        break;
+      case 'recent':
+        todos = await getRecentTodos(user);
+        break;
+      case 'list':
+        if (list) {
+          todos = await getListTodos(user, list);
+          break;
+        }
+        break;
+      default:
+        todos = await getAllTodos(user);
+        break;
+    }
+
+    return NextResponse.json(todos, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error?.message }, { status: 500 });
   }
@@ -37,8 +67,37 @@ export async function POST(req: NextRequest) {
     } else {
       body.list = null;
     }
-    const todoList = await Todo.create({ ...body, user: session?.user._id });
-    return NextResponse.json(todoList, { status: 200 });
+    const todos = await Todo.create({ ...body, user: session?.user._id });
+    return NextResponse.json(todos, { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json({ error: error?.message }, { status: 500 });
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  try {
+    const session: UserDataTypes | null = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    const body = await req.json();
+    await startDb();
+    const todos = await Todo.findByIdAndUpdate(body._id, body, { new: true });
+    return NextResponse.json(todos, { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json({ error: error?.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const session: UserDataTypes | null = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    await startDb();
+    await Todo.findByIdAndDelete(req.nextUrl.searchParams.get('_id'));
+    return NextResponse.json(null, { status: 500 });
   } catch (error: any) {
     return NextResponse.json({ error: error?.message }, { status: 500 });
   }

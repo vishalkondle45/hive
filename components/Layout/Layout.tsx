@@ -23,7 +23,7 @@ import { App } from '../App';
 import { APPS } from '@/lib/constants';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
+  const [mobileOpened, { toggle: toggleMobile, close }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const session = useSession();
   const loading = session?.status === 'loading';
@@ -36,10 +36,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   const navigateTo = useCallback(
     (path?: string) => {
-      if (path && path !== pathname) {
-        router.push(path);
+      if (path) {
+        if (path !== pathname) {
+          router.push(path);
+        }
+        close();
       }
-      toggleMobile();
     },
     [pathname]
   );

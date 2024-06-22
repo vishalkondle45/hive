@@ -13,31 +13,22 @@ import {
   IconShare,
 } from '@tabler/icons-react';
 import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { nprogress } from '@mantine/nprogress';
 import { DatePickerInput } from '@mantine/dates';
 import { failure } from '@/lib/client_functions';
-import { COLORS } from '@/lib/constants';
+import { COLORS, STYLES } from '@/lib/constants';
 import FormButtons from '../FormButtons';
-
-const STYLES = {
-  input: {
-    backgroundColor: 'transparent',
-    border: 'none',
-    fontSize: 16,
-    paddingInline: 0,
-    fontWeight: 'bold',
-  },
-};
 
 interface Props {
   refetch: () => void;
+  getTodoLists: () => void;
+  todoList: any[];
 }
 
-const TodoPageActions = ({ refetch }: Props) => {
+const TodoPageActions = ({ refetch, getTodoLists, todoList }: Props) => {
   const ref = useRef<any>();
   const [opened, { open, close }] = useDisclosure(false);
-  const [todoList, setTodoList] = useState([]);
 
   const form = useForm({
     initialValues: {
@@ -57,15 +48,6 @@ const TodoPageActions = ({ refetch }: Props) => {
     },
   });
 
-  const getTodoLists = async () => {
-    try {
-      const res = await axios.get('/api/todos/todo-list');
-      setTodoList(res?.data);
-    } catch (error) {
-      failure('Something went wrong');
-    }
-  };
-
   const onSubmit = async () => {
     if (!form.values.todo) {
       ref.current.focus();
@@ -84,10 +66,6 @@ const TodoPageActions = ({ refetch }: Props) => {
     form.reset();
     close();
   };
-
-  useEffect(() => {
-    getTodoLists();
-  }, []);
 
   return (
     <>

@@ -2,6 +2,7 @@ import { Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons-react';
+import axios from 'axios';
 
 export const failure = (message: string) =>
   notifications.show({
@@ -36,3 +37,8 @@ export const openModal = (onConfirm: () => void) =>
     confirmProps: { color: 'red' },
     onConfirm,
   });
+
+export const updateTodo = async (_id: string, data: any) => {
+  const res = await axios.put('/api/todos', { ...data, _id });
+  return res;
+};
