@@ -25,6 +25,7 @@ import { APPS } from '@/lib/constants';
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [mobileOpened, { toggle: toggleMobile, close }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
+  const [opened, setOpened] = useState(false);
   const session = useSession();
   const loading = session?.status === 'loading';
   const isLoggedIn = session?.status === 'authenticated';
@@ -107,16 +108,33 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <Group gap={0}>
             {isLoggedIn && (
               <>
-                <Popover position="bottom" withArrow shadow="md">
+                <Popover
+                  opened={opened}
+                  onChange={setOpened}
+                  position="bottom"
+                  withArrow
+                  shadow="md"
+                >
                   <Popover.Target>
-                    <ActionIcon variant="subtle" color="gray" radius="xl" size="lg">
+                    <ActionIcon
+                      variant="subtle"
+                      color="gray"
+                      radius="xl"
+                      size="lg"
+                      onClick={() => setOpened((o) => !o)}
+                    >
                       <IconGridDots stroke={3} style={{ width: rem(20), height: rem(20) }} />
                     </ActionIcon>
                   </Popover.Target>
                   <Popover.Dropdown p="xs">
                     <SimpleGrid spacing="xs" cols={3}>
                       {APPS.map((app) => (
-                        <App isCurrent={APP?.path === app?.path} key={app?.path} app={app} />
+                        <App
+                          setOpened={setOpened}
+                          isCurrent={APP?.path === app?.path}
+                          key={app?.path}
+                          app={app}
+                        />
                       ))}
                     </SimpleGrid>
                   </Popover.Dropdown>

@@ -13,6 +13,7 @@ import {
   getTodaysTodos,
   getRecentTodos,
 } from '@/lib/functions';
+import '@/models/TodoList';
 
 export async function GET(req: NextRequest) {
   try {
