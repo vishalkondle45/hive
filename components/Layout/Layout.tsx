@@ -16,6 +16,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconGridDots, IconList } from '@tabler/icons-react';
 import { signOut, useSession } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
+import { nprogress } from '@mantine/nprogress';
 import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import { App } from '../App';
@@ -25,6 +26,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const session = useSession();
+  const loading = session?.status === 'loading';
   const isLoggedIn = session?.status === 'authenticated';
   const isLoggedOff = session?.status === 'unauthenticated';
   const router = useRouter();
@@ -34,8 +36,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   const navigateTo = useCallback(
     (path?: string) => {
-      if (path !== pathname) {
-        router.push(path || '');
+      if (path && path !== pathname) {
+        router.push(path);
       }
       toggleMobile();
     },
@@ -48,9 +50,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     setAPP((old = { sidebar: [] }) => ({ ...old, sidebar: [...old.sidebar, ...data] }));
   };
 
+  if (isLoggedOff) {
+    router.push('/auth/login');
+  }
+
   useEffect(() => {
+    nprogress.start();
     getList();
+    nprogress.complete();
   }, [rootpath]);
+
+  if (loading) {
+    return <></>;
+  }
 
   return (
     <AppShell
