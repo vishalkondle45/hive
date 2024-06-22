@@ -1,7 +1,8 @@
 import {
   IconArchive,
   IconCalendar,
-  IconCalendarEvent,
+  IconCalendarDown,
+  IconCalendarUp,
   IconCheckbox,
   IconClipboardText,
   IconCloud,
@@ -48,8 +49,9 @@ export const APPS: AppType[] = [
     sidebar: [
       { label: 'All', path: '/todos', icon: <IconCheckbox /> },
       { label: 'Today', path: '/todos/today', icon: <IconCalendar /> },
-      { label: 'Scheduled', path: '/todos/scheduled', icon: <IconCalendarEvent /> },
       { label: 'Important', path: '/todos/important', icon: <IconStar /> },
+      { label: 'Recent', path: '/todos/recent', icon: <IconCalendarUp /> },
+      { label: 'Upcoming', path: '/todos/upcoming', icon: <IconCalendarDown /> },
     ],
   },
   { label: 'Calendar', path: '/calendar', icon: <IconCalendar />, color: 'green', sidebar: [] },
@@ -80,3 +82,13 @@ export const COLORS = [
   'grape',
   'lime',
 ];
+
+export const STYLES = {
+  input: {
+    backgroundColor: 'transparent',
+    border: 'none',
+    fontSize: 16,
+    paddingInline: 0,
+    fontWeight: 'bold',
+  },
+};

@@ -1,55 +1,83 @@
 import React from 'react';
 import { ActionIcon, Badge, Group, Paper, Stack, Text } from '@mantine/core';
-import { IconCalendar, IconCircleCheckFilled, IconList, IconStarFilled } from '@tabler/icons-react';
+import {
+  IconCalendar,
+  IconCircle,
+  IconCircleCheckFilled,
+  IconList,
+  IconStar,
+  IconStarFilled,
+} from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { TodoType } from '@/models/Todo';
+import { updateTodo } from '@/lib/client_functions';
 
 interface Props {
-  todos: TodoType[];
+  todo: TodoType;
+  refetch: () => void;
+  setSelected?: (todo: TodoType) => void;
 }
+const Todo = ({ todo, refetch, setSelected }: Props) => {
+  const update = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, data: any) => {
+    e.stopPropagation();
+    await updateTodo(String(todo?._id), data);
+    refetch();
+  };
 
-const Todos = ({ todos }: Props) => (
-  <Stack>
-    {todos?.map((i: TodoType) => (
-      <Paper bg={`${i.color}.3`} p="md" key={String(i._id)}>
-        <Stack gap="xs">
-          <Group gap="xs" wrap="nowrap" justify="space-between">
-            <Group gap="xs" wrap="nowrap">
-              <ActionIcon color="gray.0" variant="transparent">
-                <IconCircleCheckFilled />
-              </ActionIcon>
-              <Text fw={700} c="gray.0" lineClamp={2}>
-                {i.todo}
-              </Text>
-            </Group>
-            <ActionIcon color="gray.0" variant="transparent">
-              <IconStarFilled />
+  return (
+    <Paper
+      bg={`${todo?.color}.3`}
+      p="md"
+      key={String(todo?._id)}
+      style={{ cursor: 'pointer' }}
+      onClick={() => setSelected?.(todo)}
+    >
+      <Stack gap="xs">
+        <Group gap="xs" wrap="nowrap" justify="space-between">
+          <Group gap="xs" wrap="nowrap">
+            <ActionIcon
+              color="gray.0"
+              variant="transparent"
+              onClick={(e) => update(e, { isCompleted: !todo?.isCompleted })}
+            >
+              {todo?.isCompleted ? <IconCircleCheckFilled /> : <IconCircle />}
             </ActionIcon>
+            <Text fw={700} c="gray.0" lineClamp={2}>
+              {todo?.todo}
+            </Text>
           </Group>
-          <Group display={i?.list || i?.date ? 'flex' : 'none'}>
-            <Badge
-              c={i?.list?.color || 'dark'}
-              leftSection={<IconList size={14} />}
-              radius="xs"
-              variant="white"
-              display={i?.list ? 'block' : 'none'}
-            >
-              {i?.list?.title}
-            </Badge>
-            <Badge
-              c={i?.list?.color || 'dark'}
-              leftSection={<IconCalendar size={14} />}
-              radius="xs"
-              variant="white"
-              display={i?.date ? 'block' : 'none'}
-            >
-              {dayjs(i?.date).format('DD MMM YYYY')}
-            </Badge>
-          </Group>
-        </Stack>
-      </Paper>
-    ))}
-  </Stack>
-);
+          <ActionIcon
+            color="gray.0"
+            variant="transparent"
+            onClick={(e) => update(e, { isImportant: !todo?.isImportant })}
+          >
+            {todo?.isImportant ? <IconStarFilled /> : <IconStar />}
+          </ActionIcon>
+        </Group>
+        <Group display={todo?.list || todo?.date ? 'flex' : 'none'}>
+          <Badge
+            c={todo?.list?.color || 'dark'}
+            leftSection={<IconList size={14} />}
+            radius="xs"
+            variant="white"
+            display={todo?.list ? 'flex' : 'none'}
+            onClick={() => {}}
+          >
+            {todo?.list?.title}
+          </Badge>
+          <Badge
+            c={todo?.list?.color || 'dark'}
+            leftSection={<IconCalendar size={14} />}
+            radius="xs"
+            variant="white"
+            display={todo?.date ? 'flex' : 'none'}
+          >
+            {dayjs(todo?.date).format('DD MMM YYYY')}
+          </Badge>
+        </Group>
+      </Stack>
+    </Paper>
+  );
+};
 
-export default Todos;
+export default Todo;

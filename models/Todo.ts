@@ -5,8 +5,9 @@ export interface TodoDocument extends Document {
   _id?: Types.ObjectId;
   todo: string;
   list: mongoose.Types.ObjectId;
+  isImportant: boolean;
   isCompleted: boolean;
-  date: Date;
+  date: Date | null;
   user: mongoose.Types.ObjectId;
   color: string;
 }
@@ -25,6 +26,10 @@ const todoSchema = new Schema<TodoDocument, {}>(
     date: {
       type: Date,
       default: null,
+    },
+    isImportant: {
+      type: Boolean,
+      default: false,
     },
     isCompleted: {
       type: Boolean,
