@@ -1,6 +1,7 @@
 import {
   IconArchive,
   IconCalendar,
+  IconCalendarEvent,
   IconCheckbox,
   IconClipboardText,
   IconCloud,
@@ -9,11 +10,25 @@ import {
   IconMessageQuestion,
   IconMessages,
   IconNote,
+  IconStar,
   IconTrash,
   IconWallet,
 } from '@tabler/icons-react';
 
-export const APPS = [
+interface AppType {
+  label?: string;
+  path?: string;
+  icon?: JSX.Element;
+  color?: string;
+  sidebar: {
+    label?: string;
+    path?: string;
+    icon?: JSX.Element;
+    color?: string;
+  }[];
+}
+
+export const APPS: AppType[] = [
   {
     label: 'Notes',
     path: '/notes',
@@ -30,7 +45,12 @@ export const APPS = [
     path: '/todos',
     icon: <IconCheckbox />,
     color: 'red',
-    sidebar: [],
+    sidebar: [
+      { label: 'All', path: '/todos', icon: <IconCheckbox /> },
+      { label: 'Today', path: '/todos/today', icon: <IconCalendar /> },
+      { label: 'Scheduled', path: '/todos/scheduled', icon: <IconCalendarEvent /> },
+      { label: 'Important', path: '/todos/important', icon: <IconStar /> },
+    ],
   },
   { label: 'Calendar', path: '/calendar', icon: <IconCalendar />, color: 'green', sidebar: [] },
   { label: 'Forum', path: '/forum', icon: <IconMessageQuestion />, color: 'indigo', sidebar: [] },

@@ -13,10 +13,12 @@ import {
   Stack,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconGridDots } from '@tabler/icons-react';
+import { IconGridDots, IconList } from '@tabler/icons-react';
 import { signOut, useSession } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
-import React from 'react';
+import { nprogress } from '@mantine/nprogress';
+import React, { useCallback, useEffect, useState } from 'react';
+import axios from 'axios';
 import { App } from '../App';
 import { APPS } from '@/lib/constants';
 
@@ -24,16 +26,43 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const session = useSession();
+  const loading = session?.status === 'loading';
   const isLoggedIn = session?.status === 'authenticated';
   const isLoggedOff = session?.status === 'unauthenticated';
   const router = useRouter();
   const pathname = usePathname();
-  const APP = APPS.find((app) => `/${pathname.split('/')[1]}` === app.path);
+  const rootpath = pathname.split('/')[1];
+  const [APP, setAPP] = useState(APPS.find((app) => `/${rootpath}` === app?.path));
 
-  const navigateTo = (path: string) => {
-    router.push(path);
-    toggleMobile();
+  const navigateTo = useCallback(
+    (path?: string) => {
+      if (path && path !== pathname) {
+        router.push(path);
+      }
+      toggleMobile();
+    },
+    [pathname]
+  );
+
+  const getList = async () => {
+    setAPP(APPS.find((app) => `/${rootpath}` === app?.path));
+    const { data } = await axios.get(`/api/list?schema=${rootpath}`);
+    setAPP((old = { sidebar: [] }) => ({ ...old, sidebar: [...old.sidebar, ...data] }));
   };
+
+  if (isLoggedOff) {
+    router.push('/auth/login');
+  }
+
+  useEffect(() => {
+    nprogress.start();
+    getList();
+    nprogress.complete();
+  }, [rootpath]);
+
+  if (loading) {
+    return <></>;
+  }
 
   return (
     <AppShell
@@ -85,7 +114,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <Popover.Dropdown p="xs">
                     <SimpleGrid spacing="xs" cols={3}>
                       {APPS.map((app) => (
-                        <App isCurrent={APP?.path === app.path} key={app.path} app={app} />
+                        <App isCurrent={APP?.path === app?.path} key={app?.path} app={app} />
                       ))}
                     </SimpleGrid>
                   </Popover.Dropdown>
@@ -126,19 +155,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       {isLoggedIn ? (
         <>
           <AppShell.Navbar>
-            <Stack gap="xs" my="xs">
-              {APP?.sidebar.map((item) => (
+            <Stack gap={0} my="xs">
+              {APP?.sidebar?.map((item) => (
                 <Button
-                  key={item.label}
+                  key={item?.label}
                   justify="left"
-                  onClick={() => navigateTo(item.path)}
-                  leftSection={item.icon}
+                  onClick={() => navigateTo(item?.path)}
+                  leftSection={item?.icon || <IconList />}
                   radius={0}
-                  variant={pathname === item.path ? 'filled' : 'subtle'}
-                  color={APP.color}
+                  variant={pathname === item?.path ? 'filled' : 'subtle'}
+                  color={item?.color || APP.color}
                   fullWidth
                 >
-                  {item.label}
+                  {item?.label}
                 </Button>
               ))}
             </Stack>
