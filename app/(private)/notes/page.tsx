@@ -10,7 +10,7 @@ import Note, { NewNote, NoteModal } from '@/components/Note';
 import useFetchData from '@/hooks/useFetchData';
 import { failure } from '@/lib/client_functions';
 import { NoteDocument } from '@/models/Note';
-import TodoSkelton from '@/components/Todo/TodoSkelton';
+import Skelton from '@/components/Skelton/Skelton';
 
 export default function NotesPage() {
   const { data, loading, refetch } = useFetchData('/api/notes');
@@ -124,7 +124,7 @@ export default function NotesPage() {
       <Container px={0} size="md">
         {loading ? (
           <SimpleGrid cols={{ base: 1, xs: 2, md: 3 }}>
-            <TodoSkelton items={6} />
+            <Skelton items={6} />
           </SimpleGrid>
         ) : (
           <>
