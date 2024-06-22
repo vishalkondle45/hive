@@ -17,7 +17,7 @@ const App = ({ app, isCurrent }: Props) => {
       ref={ref}
       bg={hovered || isCurrent ? `${app.color}.3` : 'transparent'}
       key={app.path}
-      onClick={() => router.push(app.path)}
+      onClick={() => router.push(app?.path || '')}
       style={{ cursor: 'pointer' }}
       c={hovered || isCurrent ? 'white' : 'dark'}
     >
