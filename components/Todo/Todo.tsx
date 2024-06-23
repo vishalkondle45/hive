@@ -17,6 +17,7 @@ interface Props {
   refetch: () => void;
   setSelected?: (todo: TodoType) => void;
 }
+
 const Todo = ({ todo, refetch, setSelected }: Props) => {
   const update = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, data: any) => {
     e.stopPropagation();
@@ -31,23 +32,24 @@ const Todo = ({ todo, refetch, setSelected }: Props) => {
       key={String(todo?._id)}
       style={{ cursor: 'pointer' }}
       onClick={() => setSelected?.(todo)}
+      radius="lg"
     >
       <Stack gap="xs">
         <Group gap="xs" wrap="nowrap" justify="space-between">
           <Group gap="xs" wrap="nowrap">
             <ActionIcon
-              color="gray.0"
+              color={todo.color ? 'gray.0' : 'dark'}
               variant="transparent"
               onClick={(e) => update(e, { isCompleted: !todo?.isCompleted })}
             >
               {todo?.isCompleted ? <IconCircleCheckFilled /> : <IconCircle />}
             </ActionIcon>
-            <Text fw={700} c="gray.0" lineClamp={2}>
+            <Text fw={700} c={todo.color ? 'gray.0' : 'dark'} lineClamp={2}>
               {todo?.todo}
             </Text>
           </Group>
           <ActionIcon
-            color="gray.0"
+            color={todo.color ? 'gray.0' : 'dark'}
             variant="transparent"
             onClick={(e) => update(e, { isImportant: !todo?.isImportant })}
           >
@@ -61,7 +63,6 @@ const Todo = ({ todo, refetch, setSelected }: Props) => {
             radius="xs"
             variant="white"
             display={todo?.list ? 'flex' : 'none'}
-            onClick={() => {}}
           >
             {todo?.list?.title}
           </Badge>

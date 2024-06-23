@@ -61,7 +61,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     nprogress.start();
     getList();
     nprogress.complete();
-  }, [rootpath]);
+  }, [pathname]);
 
   if (loading) {
     return <></>;

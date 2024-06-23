@@ -98,7 +98,7 @@ export async function DELETE(req: NextRequest) {
     }
     await startDb();
     await Todo.findByIdAndDelete(req.nextUrl.searchParams.get('_id'));
-    return NextResponse.json(null, { status: 500 });
+    return NextResponse.json(null, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error?.message }, { status: 500 });
   }
