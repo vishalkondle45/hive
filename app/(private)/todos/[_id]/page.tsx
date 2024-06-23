@@ -103,7 +103,12 @@ const TodosPage = ({ params }: { params: { _id: string } }) => {
     >
       <AppShell.Main p={0}>
         <Container size="sm">
-          <TodoPageActions getTodoLists={getTodoLists} todoList={todoList} refetch={refetch} />
+          <TodoPageActions
+            getTodoLists={getTodoLists}
+            todoList={todoList}
+            refetch={refetch}
+            isListPage
+          />
           {loading ? (
             <TodoSkelton />
           ) : (

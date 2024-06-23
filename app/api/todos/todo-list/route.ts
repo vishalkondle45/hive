@@ -25,9 +25,30 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     const body = await req.json();
+    let todoList;
+    if (body._id) {
+      const { _id, ...remaining } = body;
+      todoList = await TodoList.findByIdAndUpdate(_id, remaining);
+    } else {
+      delete body._id;
+      todoList = await TodoList.create({ ...body, user: session?.user._id });
+    }
     await startDb();
-    const todoList = await TodoList.create({ ...body, user: session?.user._id });
     return NextResponse.json(todoList, { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json({ error: error?.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const session: UserDataTypes | null = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    await startDb();
+    await TodoList.findByIdAndDelete(req.nextUrl.searchParams.get('_id'));
+    return NextResponse.json(null, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error?.message }, { status: 500 });
   }

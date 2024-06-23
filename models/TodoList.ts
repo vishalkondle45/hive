@@ -22,7 +22,7 @@ const todoListSchema = new Schema<TodoListDocument, {}>(
     color: {
       type: String,
       enum: [
-        'gray.0',
+        '',
         'blue',
         'red',
         'green',
@@ -34,7 +34,8 @@ const todoListSchema = new Schema<TodoListDocument, {}>(
         'grape',
         'lime',
       ],
-      default: 'gray.0',
+      required: false,
+      default: '',
     },
   },
   { timestamps: true }

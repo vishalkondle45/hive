@@ -42,20 +42,8 @@ const todoSchema = new Schema<TodoDocument, {}>(
     },
     color: {
       type: String,
-      enum: [
-        'gray.0',
-        'blue',
-        'red',
-        'green',
-        'indigo',
-        'teal',
-        'violet',
-        'pink',
-        'cyan',
-        'grape',
-        'lime',
-      ],
-      default: 'gray.0',
+      enum: ['blue', 'red', 'green', 'indigo', 'teal', 'violet', 'pink', 'cyan', 'grape', 'lime'],
+      default: '',
     },
   },
   { timestamps: true }
