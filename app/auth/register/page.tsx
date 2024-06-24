@@ -13,7 +13,7 @@ import { useForm } from '@mantine/form';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import FormButtons from '@/components/FormButtons';
-import { apiCall, failure, success } from '@/lib/client_functions';
+import { apiCall, success } from '@/lib/client_functions';
 
 const Register = () => {
   const router = useRouter();
@@ -36,12 +36,10 @@ const Register = () => {
   });
 
   const sumbitRegister = async () => {
-    await apiCall('/api/users/register', form.values, 'POST')
-      .then(() => {
-        success('User registered successfully');
-        router.push('/auth/login');
-      })
-      .catch((error) => failure(error.response.data.error));
+    await apiCall('/api/users/register', form.values, 'POST').then(() => {
+      success('User registered successfully');
+      router.push('/auth/login');
+    });
   };
 
   if (session.status === 'authenticated') {

@@ -10,7 +10,7 @@ import {
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { TodoType } from '@/models/Todo';
-import { updateTodo } from '@/lib/client_functions';
+import { apiCall } from '@/lib/client_functions';
 
 interface Props {
   todo: TodoType;
@@ -21,7 +21,7 @@ interface Props {
 const Todo = ({ todo, refetch, setSelected }: Props) => {
   const update = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, data: any) => {
     e.stopPropagation();
-    await updateTodo(String(todo?._id), data);
+    await apiCall('/api/todos', { ...data, _id: todo?._id }, 'PUT');
     refetch();
   };
 

@@ -57,7 +57,9 @@ export const NoteModal = ({ opened, form, onSave, onDelete = () => {} }: Props) 
             variant="transparent"
             size="sm"
             radius="xl"
-            onClick={() => openModal(() => onDelete?.(form.values._id))}
+            onClick={() =>
+              openModal('This note will be deleted permanently', () => onDelete?.(form.values._id))
+            }
             color="dark"
             title="Delete permanently"
           >

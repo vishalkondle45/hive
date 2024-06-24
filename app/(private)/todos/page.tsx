@@ -28,7 +28,7 @@ import useFetchData from '@/hooks/useFetchData';
 import { TodoType } from '@/models/Todo';
 import Todo from '@/components/Todo/Todo';
 import { COLORS, STYLES } from '@/lib/constants';
-import { apiCall, failure, openModal } from '@/lib/client_functions';
+import { apiCall, openModal } from '@/lib/client_functions';
 
 const TodosPage = () => {
   const { data, refetch, loading } = useFetchData('/api/todos');
@@ -66,25 +66,16 @@ const TodosPage = () => {
   };
 
   const getTodoLists = async () => {
-    try {
-      await apiCall('/api/todos/todo-list').then((res) => {
-        setTodoList(res?.data);
-      });
-    } catch (error) {
-      failure('Something went wrong');
-    }
+    const res = await apiCall('/api/todos/todo-list');
+    setTodoList(res?.data);
   };
 
   const onDelete = () => {
-    openModal(() => {
-      apiCall(`/api/todos?_id=${form.values._id}`, {}, 'DELETE')
-        .then(() => {
-          form.reset();
-          refetch();
-        })
-        .catch((err) => {
-          failure(err.response.data.error || 'Something went wrong');
-        });
+    openModal('This todo will be deleted permanently', () => {
+      apiCall(`/api/todos?_id=${form.values._id}`, {}, 'DELETE').then(() => {
+        form.reset();
+        refetch();
+      });
     });
   };
 
