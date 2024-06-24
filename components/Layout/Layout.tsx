@@ -206,7 +206,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <Stack gap={0} my="xs">
               {APP?.sidebar?.map((item) => (
                 <Button
-                  key={item?.label}
+                  key={item?.path}
                   justify="left"
                   onClick={() => navigateTo(item?.path)}
                   leftSection={item?.icon || <IconList />}

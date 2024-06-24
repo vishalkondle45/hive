@@ -119,7 +119,7 @@ const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }
   return (
     <Group mt="sm" mb="xl" justify="space-between">
       <Text c={selected?.color} tt="capitalize" fw={700}>
-        {selected?.title}
+        {isListPage ? selected?.title : pathname.split('/')[2]}
       </Text>
       <Group gap={rem(6)} justify="right">
         <ActionIcon variant="subtle" color="gray" onClick={() => window.print()} title="Print">
