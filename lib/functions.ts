@@ -37,25 +37,27 @@ export const getTodaysTodos = async (user: any) =>
     date: { $gte: dayjs().startOf('day').toDate(), $lte: dayjs().endOf('day').toDate() },
   })
     .populate({ path: 'list', select: 'title color' })
-    .sort('-updatedAt');
+    .sort({ isCompleted: -1 });
 export const getUpcomingTodos = async (user: any) =>
   Todo.find({ user, date: { $gt: dayjs().startOf('day').toDate() } })
     .populate({ path: 'list', select: 'title color' })
-    .sort('-updatedAt');
+    .sort({ isCompleted: -1 });
 export const getRecentTodos = async (user: any) =>
   Todo.find({ user, date: { $lt: dayjs().startOf('day').toDate() } })
     .populate({ path: 'list', select: 'title color' })
-    .sort('-updatedAt');
+    .sort({ isCompleted: -1 });
 export const getImportantTodos = async (user: any) =>
   Todo.find({ user, isImportant: true })
     .populate({ path: 'list', select: 'title color' })
-    .sort('-updatedAt');
+    .sort({ isCompleted: -1 });
 export const getListTodos = async (user: any, list: string) =>
-  Todo.find({ user, list }).populate({ path: 'list', select: 'title color' }).sort('-updatedAt');
+  Todo.find({ user, list })
+    .populate({ path: 'list', select: 'title color' })
+    .sort({ isCompleted: -1 });
 export const getAllTodos = async (user: any) =>
   Todo.find({ user })
     .populate({
       path: 'list',
       select: 'title color',
     })
-    .sort('-updatedAt');
+    .sort({ isCompleted: -1 });

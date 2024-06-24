@@ -32,7 +32,7 @@ import { COLORS, STYLES } from '@/lib/constants';
 import { failure, openModal } from '@/lib/client_functions';
 
 const TodosPage = ({ params }: { params: { _id: string } }) => {
-  const { data, refetch, loading } = useFetchData(`/api/todos?type=list&_id=${params._id}`);
+  const { data, refetch, loading } = useFetchData(`/api/todos?type=list&list=${params._id}`);
   const [todoList, setTodoList] = useState<any[]>([]);
 
   const form = useForm({

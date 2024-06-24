@@ -21,6 +21,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import { App } from '../App';
 import { APPS } from '@/lib/constants';
+import { failure } from '@/lib/client_functions';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [mobileOpened, { toggle: toggleMobile, close }] = useDisclosure();
@@ -48,9 +49,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   );
 
   const getList = async () => {
-    setAPP(APPS.find((app) => `/${rootpath}` === app?.path));
-    const { data } = await axios.get(`/api/list?schema=${rootpath}`);
-    setAPP((old = { sidebar: [] }) => ({ ...old, sidebar: [...old.sidebar, ...data] }));
+    try {
+      setAPP(APPS.find((app) => `/${rootpath}` === app?.path));
+      const { data } = await axios.get(`/api/list?schema=${rootpath}`);
+      setAPP((old = { sidebar: [] }) => ({ ...old, sidebar: [...old.sidebar, ...data] }));
+    } catch (error) {
+      failure('Something went wrong');
+    }
   };
 
   if (isLoggedOff) {
@@ -184,7 +189,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   leftSection={item?.icon || <IconList />}
                   radius={0}
                   variant={pathname === item?.path ? 'filled' : 'subtle'}
-                  color={item?.color || APP.color}
+                  color={`${item?.color || APP.color}${pathname === item?.path ? '.3' : '.5'}`}
                   fullWidth
                 >
                   {item?.label}

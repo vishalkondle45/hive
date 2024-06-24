@@ -22,7 +22,6 @@ import {
   IconPlaylistAdd,
   IconPlus,
   IconPrinter,
-  IconShare,
   IconTrash,
 } from '@tabler/icons-react';
 import axios from 'axios';
@@ -52,6 +51,7 @@ const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }
     color: '',
     title: '',
   });
+  const selected = todoList.find((l) => l._id === pathname.split('/')[2]);
 
   const form = useForm({
     initialValues: {
@@ -124,13 +124,12 @@ const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }
 
   return (
     <Group mt="sm" mb="xl" justify="space-between">
-      <Text fw={700}>{todoList.find((l) => l._id === pathname.split('/')[2])?.title}</Text>
+      <Text c={selected?.color} fw={700}>
+        {selected?.title}
+      </Text>
       <Group gap={rem(6)} justify="right">
         <ActionIcon variant="subtle" color="gray" onClick={() => window.print()} title="Print">
           <IconPrinter />
-        </ActionIcon>
-        <ActionIcon variant="subtle" color="gray" title="Share">
-          <IconShare />
         </ActionIcon>
         <ActionIcon onClick={open} variant="subtle" color="gray" title="Add new todo">
           <IconPlus />
@@ -153,7 +152,6 @@ const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }
               color="gray"
               title="Rename list"
               onClick={() => {
-                const selected = todoList.find((l) => l._id === pathname.split('/')[2]);
                 setList({
                   _id: pathname.split('/')[2],
                   title: selected?.title,

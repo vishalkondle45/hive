@@ -44,8 +44,8 @@ export const APPS: AppType[] = [
   {
     label: 'Todos',
     path: '/todos',
+    color: 'teal',
     icon: <IconCheckbox />,
-    color: 'red',
     sidebar: [
       { label: 'All', path: '/todos', icon: <IconCheckbox /> },
       { label: 'Today', path: '/todos/today', icon: <IconCalendar /> },
@@ -56,7 +56,7 @@ export const APPS: AppType[] = [
   },
   { label: 'Calendar', path: '/calendar', icon: <IconCalendar />, color: 'green', sidebar: [] },
   { label: 'Forum', path: '/forum', icon: <IconMessageQuestion />, color: 'indigo', sidebar: [] },
-  { label: 'Passwords', path: '/passwords', icon: <IconLock />, color: 'teal', sidebar: [] },
+  { label: 'Passwords', path: '/passwords', icon: <IconLock />, color: 'red', sidebar: [] },
   {
     label: 'Document',
     path: '/document',
