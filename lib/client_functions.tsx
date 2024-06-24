@@ -9,7 +9,7 @@ export const failure = (message: string) =>
     title: 'Error',
     message,
     color: 'red',
-    autoClose: 5000,
+    autoClose: 2000,
     withCloseButton: true,
     icon: <IconX />,
   });
@@ -19,7 +19,7 @@ export const success = (message: string) =>
     title: 'Success',
     message,
     color: 'green',
-    autoClose: 5000,
+    autoClose: 2000,
     withCloseButton: true,
     icon: <IconCheck />,
   });

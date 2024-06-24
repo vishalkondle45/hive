@@ -97,7 +97,7 @@ const TodosPage = () => {
     <AppShell
       aside={{
         width: 400,
-        breakpoint: 'xs',
+        breakpoint: 'sm',
         collapsed: { mobile: !form.values._id, desktop: !form.values._id },
       }}
     >
