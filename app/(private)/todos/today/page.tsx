@@ -21,7 +21,6 @@ import {
   IconCircleCheck,
   IconTrash,
 } from '@tabler/icons-react';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { TodoPageActions } from '@/components/Todo';
 import TodoSkelton from '@/components/Todo/TodoSkelton';
@@ -29,7 +28,7 @@ import useFetchData from '@/hooks/useFetchData';
 import { TodoType } from '@/models/Todo';
 import Todo from '@/components/Todo/Todo';
 import { COLORS, STYLES } from '@/lib/constants';
-import { failure, openModal } from '@/lib/client_functions';
+import { apiCall, failure, openModal } from '@/lib/client_functions';
 
 const TodosPage = () => {
   const { data, refetch, loading } = useFetchData('/api/todos?type=today');
@@ -60,7 +59,7 @@ const TodosPage = () => {
 
   const onSubmit = async () => {
     const { _id, todo, list, date, color } = form.values;
-    await axios.put('/api/todos', { _id, todo, list: list || null, date, color }).then(() => {
+    await apiCall('/api/todos', { _id, todo, list: list || null, date, color }, 'PUT').then(() => {
       form.reset();
       refetch();
     });
@@ -68,7 +67,7 @@ const TodosPage = () => {
 
   const getTodoLists = async () => {
     try {
-      const res = await axios.get('/api/todos/todo-list');
+      const res = await apiCall('/api/todos/todo-list');
       setTodoList(res?.data);
     } catch (error) {
       failure('Something went wrong');
@@ -77,8 +76,7 @@ const TodosPage = () => {
 
   const onDelete = () => {
     openModal(() => {
-      axios
-        .delete(`/api/todos?_id=${form.values._id}`)
+      apiCall(`/api/todos?_id=${form.values._id}`, {}, 'DELETE')
         .then(() => {
           form.reset();
           refetch();

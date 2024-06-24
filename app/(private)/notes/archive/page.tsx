@@ -3,16 +3,13 @@
 import { Container, SimpleGrid } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
-import { nprogress } from '@mantine/nprogress';
-import axios from 'axios';
-import { useEffect } from 'react';
 import Note, { NewNote, NoteModal } from '@/components/Note';
 import useFetchData from '@/hooks/useFetchData';
-import { failure } from '@/lib/client_functions';
+import { apiCall, failure } from '@/lib/client_functions';
 import { NoteDocument } from '@/models/Note';
 
 export default function NotesPage() {
-  const { data, loading, refetch } = useFetchData('/api/notes/archived');
+  const { data, refetch } = useFetchData('/api/notes/archived');
   const [opened, { close, open }] = useDisclosure(false);
 
   const form = useForm({
@@ -26,14 +23,6 @@ export default function NotesPage() {
       isTrashed: false,
     },
   });
-
-  useEffect(() => {
-    if (loading) {
-      nprogress.start();
-    } else {
-      nprogress.complete();
-    }
-  }, [loading]);
 
   const handleClick = (note: NoteDocument) => {
     open();
@@ -57,8 +46,7 @@ export default function NotesPage() {
   const createNote = async (note: any) => {
     if (form.values.title || form.values.note) {
       const { _id, ...remainingNote } = note;
-      await axios
-        .post('/api/notes', { ...remainingNote })
+      await apiCall('/api/notes', remainingNote, 'POST')
         .then(() => {
           refetch();
         })
@@ -69,8 +57,7 @@ export default function NotesPage() {
   };
 
   const updateNote = async (note: any) => {
-    await axios
-      .put('/api/notes', { ...note })
+    await apiCall('/api/notes', note, 'POST')
       .then(() => {
         refetch();
       })
@@ -80,7 +67,6 @@ export default function NotesPage() {
   };
 
   const onSave = async (note: any) => {
-    nprogress.start();
     if (note.title || note.note) {
       if (note._id) {
         const _note = data?.find((n: any) => n._id === note._id);
@@ -109,7 +95,6 @@ export default function NotesPage() {
         await createNote(note);
       }
     }
-    nprogress.complete();
     form.reset();
     close();
   };

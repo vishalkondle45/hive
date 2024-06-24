@@ -1,8 +1,7 @@
 'use client';
 
-import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { failure } from '@/lib/client_functions';
+import { apiCall, failure } from '@/lib/client_functions';
 
 export default function useFetchData(url: string) {
   const [data, setData] = useState(null) as any;
@@ -11,7 +10,7 @@ export default function useFetchData(url: string) {
   const refetch = async () => {
     try {
       setLoading(true);
-      const res: any[] | any = await axios.get(url);
+      const res: any[] | any = await apiCall(url);
       setData(res?.data);
     } catch (err: any) {
       failure(err?.response?.data?.error || 'Something went wrong');
