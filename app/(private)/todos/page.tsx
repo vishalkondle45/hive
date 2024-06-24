@@ -97,7 +97,7 @@ const TodosPage = () => {
     <AppShell
       aside={{
         width: 400,
-        breakpoint: 'xs',
+        breakpoint: 'sm',
         collapsed: { mobile: !form.values._id, desktop: !form.values._id },
       }}
     >
@@ -109,7 +109,12 @@ const TodosPage = () => {
           ) : (
             <Stack>
               {data?.map((todo: TodoType) => (
-                <Todo setSelected={setSelected} refetch={refetch} todo={todo} />
+                <Todo
+                  key={String(todo._id)}
+                  setSelected={setSelected}
+                  refetch={refetch}
+                  todo={todo}
+                />
               ))}
             </Stack>
           )}

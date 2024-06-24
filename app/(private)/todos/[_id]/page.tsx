@@ -32,7 +32,7 @@ import { COLORS, STYLES } from '@/lib/constants';
 import { failure, openModal } from '@/lib/client_functions';
 
 const TodosPage = ({ params }: { params: { _id: string } }) => {
-  const { data, refetch, loading } = useFetchData(`/api/todos?type=list&_id=${params._id}`);
+  const { data, refetch, loading } = useFetchData(`/api/todos?type=list&list=${params._id}`);
   const [todoList, setTodoList] = useState<any[]>([]);
 
   const form = useForm({
@@ -97,7 +97,7 @@ const TodosPage = ({ params }: { params: { _id: string } }) => {
     <AppShell
       aside={{
         width: 400,
-        breakpoint: 'xs',
+        breakpoint: 'sm',
         collapsed: { mobile: !form.values._id, desktop: !form.values._id },
       }}
     >

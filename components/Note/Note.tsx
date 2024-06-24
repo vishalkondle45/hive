@@ -10,7 +10,7 @@ const Note = ({ note, handleClick }: Props) => (
   <Paper
     shadow="sm"
     p="md"
-    radius="md"
+    radius="lg"
     withBorder
     bg={`${note.color}.3`}
     onClick={() => handleClick(note)}

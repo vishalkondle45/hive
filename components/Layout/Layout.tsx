@@ -7,12 +7,14 @@ import {
   Button,
   Container,
   Group,
+  Indicator,
   Popover,
   rem,
   SimpleGrid,
   Stack,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useNetwork } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import { IconGridDots, IconList } from '@tabler/icons-react';
 import { signOut, useSession } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -21,8 +23,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import { App } from '../App';
 import { APPS } from '@/lib/constants';
+import { failure } from '@/lib/client_functions';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const network = useNetwork();
   const [mobileOpened, { toggle: toggleMobile, close }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const [opened, setOpened] = useState(false);
@@ -48,9 +52,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   );
 
   const getList = async () => {
-    setAPP(APPS.find((app) => `/${rootpath}` === app?.path));
-    const { data } = await axios.get(`/api/list?schema=${rootpath}`);
-    setAPP((old = { sidebar: [] }) => ({ ...old, sidebar: [...old.sidebar, ...data] }));
+    try {
+      setAPP(APPS.find((app) => `/${rootpath}` === app?.path));
+      const { data } = await axios.get(`/api/list?schema=${rootpath}`);
+      setAPP((old = { sidebar: [] }) => ({ ...old, sidebar: [...old.sidebar, ...data] }));
+    } catch (error) {
+      failure('Something went wrong');
+    }
   };
 
   if (isLoggedOff) {
@@ -62,6 +70,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     getList();
     nprogress.complete();
   }, [pathname]);
+
+  useEffect(() => {
+    if (!network.online) {
+      notifications.clean();
+      notifications.show({
+        title: 'Waiting for connection.. ',
+        message: 'Please connect to the internet...',
+        color: 'red',
+        autoClose: false,
+        loading: true,
+        withCloseButton: false,
+      });
+    } else {
+      notifications.clean();
+    }
+  }, [network.online]);
 
   if (loading) {
     return <></>;
@@ -116,15 +140,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   shadow="md"
                 >
                   <Popover.Target>
-                    <ActionIcon
-                      variant="subtle"
-                      color="gray"
-                      radius="xl"
-                      size="lg"
-                      onClick={() => setOpened((o) => !o)}
-                    >
-                      <IconGridDots stroke={3} style={{ width: rem(20), height: rem(20) }} />
-                    </ActionIcon>
+                    <Indicator color={network.online ? 'teal' : 'red'} offset={5}>
+                      <ActionIcon
+                        variant="subtle"
+                        color="gray"
+                        radius="xl"
+                        size="lg"
+                        onClick={() => setOpened((o) => !o)}
+                      >
+                        <IconGridDots stroke={3} style={{ width: rem(20), height: rem(20) }} />
+                      </ActionIcon>
+                    </Indicator>
                   </Popover.Target>
                   <Popover.Dropdown p="xs">
                     <SimpleGrid spacing="xs" cols={3}>
@@ -184,7 +210,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   leftSection={item?.icon || <IconList />}
                   radius={0}
                   variant={pathname === item?.path ? 'filled' : 'subtle'}
-                  color={item?.color || APP.color}
+                  color={`${item?.color || APP.color}${pathname === item?.path ? '.3' : '.5'}`}
                   fullWidth
                 >
                   {item?.label}
