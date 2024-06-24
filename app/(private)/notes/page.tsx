@@ -3,12 +3,9 @@
 import { useForm } from '@mantine/form';
 import { Container, SimpleGrid, Stack, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { nprogress } from '@mantine/nprogress';
-import axios from 'axios';
-import { useEffect } from 'react';
 import Note, { NewNote, NoteModal } from '@/components/Note';
 import useFetchData from '@/hooks/useFetchData';
-import { failure } from '@/lib/client_functions';
+import { apiCall, failure } from '@/lib/client_functions';
 import { NoteDocument } from '@/models/Note';
 import Skelton from '@/components/Skelton/Skelton';
 
@@ -27,15 +24,6 @@ export default function NotesPage() {
       isTrashed: false,
     },
   });
-
-  useEffect(() => {
-    if (loading) {
-      nprogress.start();
-    } else {
-      nprogress.complete();
-    }
-  }, [loading]);
-
   const handleClick = (note: NoteDocument) => {
     open();
     form.setValues({
@@ -56,10 +44,9 @@ export default function NotesPage() {
   };
 
   const createNote = async (note: any) => {
-    if (form.values.title || form.values.note) {
+    if (note.title || note.note) {
       const { _id, ...remainingNote } = note;
-      await axios
-        .post('/api/notes', { ...remainingNote })
+      await apiCall('/api/notes', remainingNote, 'POST')
         .then(() => {
           refetch();
         })
@@ -70,8 +57,7 @@ export default function NotesPage() {
   };
 
   const updateNote = async (note: any) => {
-    await axios
-      .put('/api/notes', { ...note })
+    await apiCall('/api/notes', note, 'PUT')
       .then(() => {
         refetch();
       })
@@ -81,7 +67,6 @@ export default function NotesPage() {
   };
 
   const onSave = async (note: any) => {
-    nprogress.start();
     if (note.title || note.note) {
       if (note._id) {
         const _note = data?.find((n: any) => n._id === note._id);
@@ -104,13 +89,13 @@ export default function NotesPage() {
           isPinned: _note.isPinned,
         });
         if (formValuesString !== noteString) {
+          console.log(formValuesString, noteString);
           await updateNote(note);
         }
       } else {
         await createNote(note);
       }
     }
-    nprogress.complete();
     form.reset();
     close();
   };

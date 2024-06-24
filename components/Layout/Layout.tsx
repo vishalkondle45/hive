@@ -18,12 +18,10 @@ import { notifications } from '@mantine/notifications';
 import { IconGridDots, IconList } from '@tabler/icons-react';
 import { signOut, useSession } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
-import { nprogress } from '@mantine/nprogress';
 import React, { useCallback, useEffect, useState } from 'react';
-import axios from 'axios';
 import { App } from '../App';
 import { APPS } from '@/lib/constants';
-import { failure } from '@/lib/client_functions';
+import { apiCall, failure } from '@/lib/client_functions';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const network = useNetwork();
@@ -54,8 +52,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const getList = async () => {
     try {
       setAPP(APPS.find((app) => `/${rootpath}` === app?.path));
-      const { data } = await axios.get(`/api/list?schema=${rootpath}`);
-      setAPP((old = { sidebar: [] }) => ({ ...old, sidebar: [...old.sidebar, ...data] }));
+      const res = await apiCall(`/api/list?schema=${rootpath}`);
+      if (res?.data) {
+        setAPP((old = { sidebar: [] }) => ({ ...old, sidebar: [...old.sidebar, ...res.data] }));
+      }
     } catch (error) {
       failure('Something went wrong');
     }
@@ -66,9 +66,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    nprogress.start();
     getList();
-    nprogress.complete();
   }, [pathname]);
 
   useEffect(() => {
@@ -104,20 +102,24 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
           <Group>
-            <Burger
-              opened={mobileOpened}
-              hidden={!isLoggedIn}
-              onClick={toggleMobile}
-              hiddenFrom="sm"
-              size="sm"
-            />
-            <Burger
-              opened={desktopOpened}
-              hidden={!isLoggedIn}
-              onClick={toggleDesktop}
-              visibleFrom="sm"
-              size="sm"
-            />
+            {APP?.sidebar?.length && (
+              <>
+                <Burger
+                  opened={mobileOpened}
+                  hidden={!isLoggedIn}
+                  onClick={toggleMobile}
+                  hiddenFrom="sm"
+                  size="sm"
+                />
+                <Burger
+                  opened={desktopOpened}
+                  hidden={!isLoggedIn}
+                  onClick={toggleDesktop}
+                  visibleFrom="sm"
+                  size="sm"
+                />
+              </>
+            )}
             <Button
               variant="transparent"
               size="compact-md"
@@ -198,7 +200,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Group>
         </Group>
       </AppShell.Header>
-      {isLoggedIn ? (
+      {isLoggedIn && APP?.sidebar?.length ? (
         <>
           <AppShell.Navbar>
             <Stack gap={0} my="xs">
@@ -218,10 +220,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               ))}
             </Stack>
           </AppShell.Navbar>
-          <AppShell.Main>{children}</AppShell.Main>
+          <AppShell.Main pt={rem(80)}>{children}</AppShell.Main>
         </>
       ) : (
-        <Container size="100%" mt={rem(80)}>
+        <Container size="100%" pt={rem(80)}>
           {children}
         </Container>
       )}

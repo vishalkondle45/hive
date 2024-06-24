@@ -24,12 +24,10 @@ import {
   IconPrinter,
   IconTrash,
 } from '@tabler/icons-react';
-import axios from 'axios';
 import React, { useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { nprogress } from '@mantine/nprogress';
 import { DatePickerInput } from '@mantine/dates';
-import { failure, openModal } from '@/lib/client_functions';
+import { apiCall, failure, openModal } from '@/lib/client_functions';
 import { COLORS, STYLES } from '@/lib/constants';
 import FormButtons from '../FormButtons';
 
@@ -77,10 +75,8 @@ const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }
       failure('Please enter a todo');
       return;
     }
-    nprogress.start();
-    await axios.post('/api/todos', form.values);
+    await apiCall('/api/todos', form.values, 'POST');
     refetch();
-    nprogress.complete();
     onClose();
     setOpened1(false);
     getTodoLists();
@@ -94,8 +90,7 @@ const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }
 
   const onDelete = () => {
     openModal(() => {
-      axios
-        .delete(`/api/todos/todo-list?_id=${pathname.split('/')[2]}`)
+      apiCall(`/api/todos/todo-list?_id=${pathname.split('/')[2]}`, {}, 'DELETE')
         .then(() => {
           form.reset();
           refetch();
@@ -109,15 +104,14 @@ const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }
   };
 
   const createTodoList = () => {
-    axios
-      .post('/api/todos/todo-list', list)
+    apiCall('/api/todos/todo-list', list, 'POST')
       .then((res) => {
         form.reset();
         refetch();
         getTodoLists();
         close();
         setOpened1(false);
-        router.push(`/todos/${res.data._id}`);
+        router.push(`/todos/${res?.data._id}`);
       })
       .catch(() => failure('Something went wrong'));
   };
@@ -125,7 +119,7 @@ const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }
   return (
     <Group mt="sm" mb="xl" justify="space-between">
       <Text c={selected?.color} tt="capitalize" fw={700}>
-        {selected?.title || pathname.split('/')[pathname.split('/').length - 1]}
+        {selected?.title}
       </Text>
       <Group gap={rem(6)} justify="right">
         <ActionIcon variant="subtle" color="gray" onClick={() => window.print()} title="Print">

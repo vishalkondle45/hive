@@ -1,6 +1,7 @@
 import { Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
+import { nprogress } from '@mantine/nprogress';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import axios from 'axios';
 
@@ -40,5 +41,35 @@ export const openModal = (onConfirm: () => void) =>
 
 export const updateTodo = async (_id: string, data: any) => {
   const res = await axios.put('/api/todos', { ...data, _id });
+  return res;
+};
+
+export const apiCall = async (url: string, body?: any, method: string = 'GET') => {
+  console.log(url, body, method);
+
+  let res;
+  nprogress.start();
+  try {
+    switch (method) {
+      case 'GET':
+        res = await axios.get(url);
+        break;
+      case 'POST':
+        res = await axios.post(url, body);
+        break;
+      case 'PUT':
+        res = await axios.put(url, body);
+        break;
+      case 'DELETE':
+        res = await axios.delete(url, body);
+        break;
+      default:
+        break;
+    }
+  } catch (error) {
+    failure('Error while calling API');
+  } finally {
+    nprogress.complete();
+  }
   return res;
 };

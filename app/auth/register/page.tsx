@@ -10,11 +10,10 @@ import {
   Title,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import FormButtons from '@/components/FormButtons';
-import { failure, success } from '@/lib/client_functions';
+import { apiCall, failure, success } from '@/lib/client_functions';
 
 const Register = () => {
   const router = useRouter();
@@ -37,8 +36,7 @@ const Register = () => {
   });
 
   const sumbitRegister = async () => {
-    await axios
-      .post('/api/users/register', form.values)
+    await apiCall('/api/users/register', form.values, 'POST')
       .then(() => {
         success('User registered successfully');
         router.push('/auth/login');
