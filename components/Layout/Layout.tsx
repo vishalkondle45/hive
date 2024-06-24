@@ -3,39 +3,40 @@
 import {
   ActionIcon,
   AppShell,
+  Avatar,
   Burger,
   Button,
-  Container,
   Group,
   Indicator,
   Popover,
   rem,
   SimpleGrid,
   Stack,
+  Text,
 } from '@mantine/core';
 import { useDisclosure, useNetwork } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { IconGridDots, IconList } from '@tabler/icons-react';
+import { IconGridDots, IconList, IconLogout, IconUser } from '@tabler/icons-react';
 import { signOut, useSession } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import { App } from '../App';
 import { APPS } from '@/lib/constants';
-import { apiCall, failure } from '@/lib/client_functions';
+import { apiCall, getInitials } from '@/lib/client_functions';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const session = useSession();
+  const isLoggedIn = session?.status === 'authenticated';
+  const router = useRouter();
+
   const network = useNetwork();
   const [mobileOpened, { toggle: toggleMobile, close }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const [opened, setOpened] = useState(false);
-  const session = useSession();
-  const loading = session?.status === 'loading';
-  const isLoggedIn = session?.status === 'authenticated';
-  const isLoggedOff = session?.status === 'unauthenticated';
-  const router = useRouter();
+  const [opened1, setOpened1] = useState(false);
   const pathname = usePathname();
   const rootpath = pathname.split('/')[1];
-  const [APP, setAPP] = useState(APPS.find((app) => `/${rootpath}` === app?.path));
+  const [APP, setAPP] = useState(APPS?.find((app) => `/${rootpath}` === app?.path));
 
   const navigateTo = useCallback(
     (path?: string) => {
@@ -50,20 +51,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   );
 
   const getList = async () => {
-    try {
-      setAPP(APPS.find((app) => `/${rootpath}` === app?.path));
-      const res = await apiCall(`/api/list?schema=${rootpath}`);
-      if (res?.data) {
-        setAPP((old = { sidebar: [] }) => ({ ...old, sidebar: [...old.sidebar, ...res.data] }));
-      }
-    } catch (error) {
-      failure('Something went wrong');
+    if (session.status === 'unauthenticated') {
+      return;
+    }
+    setAPP(APPS?.find((app) => `/${rootpath}` === app?.path));
+    const res = await apiCall(`/api/list?schema=${rootpath}`);
+    if (res?.data) {
+      setAPP((old = { sidebar: [] }) => ({ ...old, sidebar: [...old.sidebar, ...res.data] }));
     }
   };
-
-  if (isLoggedOff) {
-    router.push('/auth/login');
-  }
 
   useEffect(() => {
     getList();
@@ -85,15 +81,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }
   }, [network.online]);
 
-  if (loading) {
-    return <></>;
-  }
-
   return (
     <AppShell
       header={{ height: 60 }}
       navbar={{
-        width: 200,
+        width: isLoggedIn ? 200 : 0,
         breakpoint: 'sm',
         collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
       }}
@@ -133,30 +125,29 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Group>
           <Group gap={0}>
             {isLoggedIn && (
-              <>
+              <Group gap="xs">
                 <Popover
                   opened={opened}
                   onChange={setOpened}
                   position="bottom"
                   withArrow
                   shadow="md"
+                  radius="lg"
                 >
                   <Popover.Target>
-                    <Indicator color={network.online ? 'teal' : 'red'} offset={5}>
-                      <ActionIcon
-                        variant="subtle"
-                        color="gray"
-                        radius="xl"
-                        size="lg"
-                        onClick={() => setOpened((o) => !o)}
-                      >
-                        <IconGridDots stroke={3} style={{ width: rem(20), height: rem(20) }} />
-                      </ActionIcon>
-                    </Indicator>
+                    <ActionIcon
+                      variant="light"
+                      color="gray"
+                      radius="xl"
+                      size={rem(40)}
+                      onClick={() => setOpened((o) => !o)}
+                    >
+                      <IconGridDots stroke={3} style={{ width: rem(20), height: rem(20) }} />
+                    </ActionIcon>
                   </Popover.Target>
                   <Popover.Dropdown p="xs">
                     <SimpleGrid spacing="xs" cols={3}>
-                      {APPS.map((app) => (
+                      {APPS?.map((app) => (
                         <App
                           setOpened={setOpened}
                           isCurrent={APP?.path === app?.path}
@@ -167,17 +158,73 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </SimpleGrid>
                   </Popover.Dropdown>
                 </Popover>
-                <Button
-                  variant="transparent"
-                  size="compact-md"
-                  color="red"
-                  onClick={() => signOut()}
+                <Popover
+                  opened={opened1}
+                  onChange={setOpened1}
+                  position="bottom"
+                  withArrow
+                  shadow="xl"
+                  width={300}
+                  radius="lg"
                 >
-                  Logout
-                </Button>
-              </>
+                  <Popover.Target>
+                    <Indicator color={network.online ? 'teal' : 'red'} offset={5}>
+                      <Avatar
+                        variant=""
+                        color={APP?.color}
+                        radius="xl"
+                        size={rem(40)}
+                        onClick={() => setOpened1((o) => !o)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {getInitials(session?.data?.user?.name)}
+                      </Avatar>
+                    </Indicator>
+                  </Popover.Target>
+                  <Popover.Dropdown p="xs">
+                    <Stack align="center">
+                      <Text fw={700} size="xs">
+                        {session?.data?.user?.email}
+                      </Text>
+                      <Stack align="center" gap={rem(4)}>
+                        <Indicator color={network.online ? 'teal' : 'red'} offset={8}>
+                          <Avatar variant="" color={APP?.color} radius="xl" size={rem(60)}>
+                            {getInitials(session?.data?.user?.name)}
+                          </Avatar>
+                        </Indicator>
+                        <Text fw={700} size="xs" c={network.online ? 'teal' : 'red'}>
+                          {network.online ? 'Online' : 'Offline'}
+                        </Text>
+                      </Stack>
+                      <Text fw={700} size="sm">
+                        Hi {session?.data?.user?.name},
+                      </Text>
+                      <Group>
+                        <Button
+                          variant="outline"
+                          radius="xl"
+                          color="teal"
+                          onClick={() => router.push('/profile')}
+                          leftSection={<IconUser />}
+                        >
+                          Profile
+                        </Button>
+                        <Button
+                          variant="outline"
+                          radius="xl"
+                          color="red"
+                          onClick={() => signOut()}
+                          leftSection={<IconLogout />}
+                        >
+                          Logout
+                        </Button>
+                      </Group>
+                    </Stack>
+                  </Popover.Dropdown>
+                </Popover>
+              </Group>
             )}
-            {isLoggedOff && (
+            {!isLoggedIn && (
               <>
                 <Button
                   variant="transparent"
@@ -200,8 +247,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Group>
         </Group>
       </AppShell.Header>
-      {isLoggedIn && APP?.sidebar?.length ? (
-        <>
+      <>
+        {isLoggedIn && APP?.sidebar?.length && (
           <AppShell.Navbar>
             <Stack gap={0} my="xs">
               {APP?.sidebar?.map((item) => (
@@ -220,13 +267,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               ))}
             </Stack>
           </AppShell.Navbar>
-          <AppShell.Main pt={rem(80)}>{children}</AppShell.Main>
-        </>
-      ) : (
-        <Container size="100%" pt={rem(80)}>
-          {children}
-        </Container>
-      )}
+        )}
+        <AppShell.Main pt={rem(80)}>{children}</AppShell.Main>
+      </>
     </AppShell>
   );
 }

@@ -25,24 +25,14 @@ export const success = (message: string) =>
     icon: <IconCheck />,
   });
 
-export const openModal = (onConfirm: () => void) =>
+export const openModal = (message: string, onConfirm: () => void) =>
   modals.openConfirmModal({
     title: 'Please confirm your action',
-    children: (
-      <Text size="sm">
-        This action is so important that you are required to confirm it with a modal. Please click
-        one of these buttons to proceed.
-      </Text>
-    ),
+    children: <Text size="sm">{message}</Text>,
     labels: { confirm: 'Confirm', cancel: 'Cancel' },
     confirmProps: { color: 'red' },
     onConfirm,
   });
-
-export const updateTodo = async (_id: string, data: any) => {
-  const res = await axios.put('/api/todos', { ...data, _id });
-  return res;
-};
 
 export const apiCall = async (url: string, body?: any, method: string = 'GET') => {
   let res;

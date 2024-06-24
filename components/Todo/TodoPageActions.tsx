@@ -49,7 +49,7 @@ const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }
     color: '',
     title: '',
   });
-  const selected = todoList.find((l) => l._id === pathname.split('/')[2]);
+  const selected = todoList?.find((l) => l._id === pathname.split('/')[2]);
 
   const form = useForm({
     initialValues: {
@@ -89,31 +89,27 @@ const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }
   };
 
   const onDelete = () => {
-    openModal(() => {
-      apiCall(`/api/todos/todo-list?_id=${pathname.split('/')[2]}`, {}, 'DELETE')
-        .then(() => {
-          form.reset();
-          refetch();
-          getTodoLists();
-          close();
-          setOpened1(false);
-          router.push('/todos');
-        })
-        .catch(() => failure('Something went wrong'));
-    });
-  };
-
-  const createTodoList = () => {
-    apiCall('/api/todos/todo-list', list, 'POST')
-      .then((res) => {
+    openModal('This list and its todos will be deleted', () => {
+      apiCall(`/api/todos/todo-list?_id=${pathname.split('/')[2]}`, {}, 'DELETE').then(() => {
         form.reset();
         refetch();
         getTodoLists();
         close();
         setOpened1(false);
-        router.push(`/todos/${res?.data._id}`);
-      })
-      .catch(() => failure('Something went wrong'));
+        router.push('/todos');
+      });
+    });
+  };
+
+  const createTodoList = () => {
+    apiCall('/api/todos/todo-list', list, 'POST').then((res) => {
+      form.reset();
+      refetch();
+      getTodoLists();
+      close();
+      setOpened1(false);
+      router.push(`/todos/${res?.data._id}`);
+    });
   };
 
   return (
@@ -174,7 +170,7 @@ const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }
             />
             <Select
               {...form.getInputProps('list')}
-              data={todoList.map(({ _id, title }) => ({ label: title, value: _id }))}
+              data={todoList?.map(({ _id, title }) => ({ label: title, value: _id }))}
               placeholder="Select a list (optional)"
               rightSection={<IconCaretUpDown />}
               clearable

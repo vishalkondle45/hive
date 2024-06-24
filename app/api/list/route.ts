@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
         break;
     }
     return NextResponse.json(
-      list.map((i) => ({ path: `/${schema}/${i?._id}`, label: i?.title, color: i?.color })),
+      list?.map((i) => ({ path: `/${schema}/${i?._id}`, label: i?.title, color: i?.color })),
       { status: 200 }
     );
   } catch (error: any) {
