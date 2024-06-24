@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   try {
     const session: UserDataTypes | null = await getServerSession(authOptions);
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json([], { status: 200 });
     }
     await startDb();
     let list: any[] = [];
