@@ -10,5 +10,5 @@ interface Props {
 export default async function RootLayout({ children }: Props) {
   const session: UserDataTypes | null = await getServerSession(authOptions);
   if (!session?.user) redirect('/auth/login');
-  return <>{children}</>;
+  return <>{session?.user && children}</>;
 }

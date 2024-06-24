@@ -9,7 +9,7 @@ export async function GET() {
   try {
     const session: UserDataTypes | null = await getServerSession(authOptions);
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'You are not authorized' }, { status: 401 });
     }
     await startDb();
     const note = await Note.find({

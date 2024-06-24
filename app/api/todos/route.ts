@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   try {
     const session: UserDataTypes | null = await getServerSession(authOptions);
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'You are not authorized' }, { status: 401 });
     }
     const user = session?.user._id;
     await startDb();
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
   try {
     const session: UserDataTypes | null = await getServerSession(authOptions);
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'You are not authorized' }, { status: 401 });
     }
     const body = await req.json();
     await startDb();
@@ -79,7 +79,7 @@ export async function PUT(req: NextRequest) {
   try {
     const session: UserDataTypes | null = await getServerSession(authOptions);
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'You are not authorized' }, { status: 401 });
     }
     const body = await req.json();
     await startDb();
@@ -94,7 +94,7 @@ export async function DELETE(req: NextRequest) {
   try {
     const session: UserDataTypes | null = await getServerSession(authOptions);
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'You are not authorized' }, { status: 401 });
     }
     await startDb();
     await Todo.findByIdAndDelete(req.nextUrl.searchParams.get('_id'));

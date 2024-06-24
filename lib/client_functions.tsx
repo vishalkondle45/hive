@@ -64,10 +64,16 @@ export const apiCall = async (url: string, body?: any, method: string = 'GET') =
       default:
         break;
     }
-  } catch (error) {
-    failure('Error while calling API');
+  } catch (error: any) {
+    failure(error?.response?.data.error || 'Error while calling API');
   } finally {
     nprogress.complete();
   }
   return res;
 };
+
+export const getInitials = (name: string | undefined | null) =>
+  name
+    ?.split(' ')
+    .map((n) => n[0])
+    .join('');
