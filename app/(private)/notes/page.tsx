@@ -89,7 +89,6 @@ export default function NotesPage() {
           isPinned: _note.isPinned,
         });
         if (formValuesString !== noteString) {
-          console.log(formValuesString, noteString);
           await updateNote(note);
         }
       } else {

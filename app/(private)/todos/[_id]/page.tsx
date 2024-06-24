@@ -99,7 +99,7 @@ const TodosPage = ({ params }: { params: { _id: string } }) => {
         collapsed: { mobile: !form.values._id, desktop: !form.values._id },
       }}
     >
-      <AppShell.Main p={0}>
+      <AppShell.Main p={0} mt={rem(-100)} pt={rem(80)}>
         <Container size="sm">
           <TodoPageActions
             getTodoLists={getTodoLists}
@@ -112,7 +112,12 @@ const TodosPage = ({ params }: { params: { _id: string } }) => {
           ) : (
             <Stack>
               {data?.map((todo: TodoType) => (
-                <Todo setSelected={setSelected} refetch={refetch} todo={todo} />
+                <Todo
+                  key={String(todo._id)}
+                  setSelected={setSelected}
+                  refetch={refetch}
+                  todo={todo}
+                />
               ))}
             </Stack>
           )}

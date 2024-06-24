@@ -45,8 +45,6 @@ export const updateTodo = async (_id: string, data: any) => {
 };
 
 export const apiCall = async (url: string, body?: any, method: string = 'GET') => {
-  console.log(url, body, method);
-
   let res;
   nprogress.start();
   try {
