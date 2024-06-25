@@ -100,7 +100,7 @@ const TodosPage = () => {
         collapsed: { mobile: !form.values._id, desktop: !form.values._id },
       }}
     >
-      <AppShell.Main p={0} mt={rem(-100)} pt={rem(80)}>
+      <AppShell.Main p={0} mt={rem(-80)} pt={rem(80)}>
         <Container size="sm">
           <TodoPageActions getTodoLists={getTodoLists} todoList={todoList} refetch={refetch} />
           {loading ? (

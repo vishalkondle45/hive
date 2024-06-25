@@ -38,18 +38,18 @@ const Todo = ({ todo, refetch, setSelected }: Props) => {
         <Group gap="xs" wrap="nowrap" justify="space-between">
           <Group gap="xs" wrap="nowrap">
             <ActionIcon
-              color={todo.color ? 'gray.0' : 'dark'}
+              color={todo.color ? 'gray.0' : 'gray'}
               variant="transparent"
               onClick={(e) => update(e, { isCompleted: !todo?.isCompleted })}
             >
               {todo?.isCompleted ? <IconCircleCheckFilled /> : <IconCircle />}
             </ActionIcon>
-            <Text fw={700} c={todo.color ? 'gray.0' : 'dark'} lineClamp={2}>
+            <Text fw={700} c={todo.color ? 'gray.0' : 'gray'} lineClamp={2}>
               {todo?.todo}
             </Text>
           </Group>
           <ActionIcon
-            color={todo.color ? 'gray.0' : 'dark'}
+            color={todo.color ? 'gray.0' : 'gray'}
             variant="transparent"
             onClick={(e) => update(e, { isImportant: !todo?.isImportant })}
           >
@@ -58,7 +58,7 @@ const Todo = ({ todo, refetch, setSelected }: Props) => {
         </Group>
         <Group display={todo?.list || todo?.date ? 'flex' : 'none'}>
           <Badge
-            c={todo?.list?.color || 'dark'}
+            c={todo?.list?.color || 'gray'}
             leftSection={<IconList size={14} />}
             radius="xs"
             variant="white"
@@ -67,7 +67,7 @@ const Todo = ({ todo, refetch, setSelected }: Props) => {
             {todo?.list?.title}
           </Badge>
           <Badge
-            c={todo?.list?.color || 'dark'}
+            c={todo?.list?.color || 'gray'}
             leftSection={<IconCalendar size={14} />}
             radius="xs"
             variant="white"
