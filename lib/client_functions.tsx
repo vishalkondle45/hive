@@ -56,6 +56,7 @@ export const apiCall = async (url: string, body?: any, method: string = 'GET') =
     }
   } catch (error: any) {
     failure(error?.response?.data.error || 'Error while calling API');
+    apiCall(url, body, method);
   } finally {
     nprogress.complete();
   }
