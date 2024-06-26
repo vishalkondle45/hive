@@ -96,6 +96,7 @@ export const DocumentCard = ({ doc, goTo, onRename, updateDocument }: Props) => 
                     onClick={(e) => {
                       e.stopPropagation();
                       updateDocument({ _id: String(doc?._id), isTrashed: true });
+                      setOpened(!opened);
                     }}
                   >
                     Trash
