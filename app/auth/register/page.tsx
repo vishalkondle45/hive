@@ -43,7 +43,7 @@ const Register = () => {
   };
 
   if (session.status === 'authenticated') {
-    router.push('/user');
+    router.push('/notes');
   }
 
   return (
