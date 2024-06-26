@@ -11,6 +11,7 @@ import {
   IconMessageQuestion,
   IconMessages,
   IconNote,
+  IconPlus,
   IconStar,
   IconTrash,
   IconWallet,
@@ -54,16 +55,32 @@ export const APPS: AppType[] = [
       { label: 'Upcoming', path: '/todos/upcoming', icon: <IconCalendarDown /> },
     ],
   },
+  {
+    label: 'Documents',
+    path: '/documents',
+    icon: <IconClipboardText />,
+    color: 'violet',
+    sidebar: [
+      {
+        label: 'New Document',
+        path: '/documents/new',
+        icon: <IconPlus />,
+      },
+      {
+        label: 'Documents',
+        path: '/documents',
+        icon: <IconClipboardText />,
+      },
+      {
+        label: 'Trash',
+        path: '/documents/trash',
+        icon: <IconTrash />,
+      },
+    ],
+  },
   { label: 'Calendar', path: '/calendar', icon: <IconCalendar />, color: 'green', sidebar: [] },
   { label: 'Forum', path: '/forum', icon: <IconMessageQuestion />, color: 'indigo', sidebar: [] },
   { label: 'Passwords', path: '/passwords', icon: <IconLock />, color: 'red', sidebar: [] },
-  {
-    label: 'Document',
-    path: '/document',
-    icon: <IconClipboardText />,
-    color: 'violet',
-    sidebar: [],
-  },
   { label: 'Chat', path: '/chat', icon: <IconMessages />, color: 'pink', sidebar: [] },
   { label: 'Drive', path: '/drive', icon: <IconCloud />, color: 'cyan', sidebar: [] },
   { label: 'Wallet', path: '/wallet', icon: <IconWallet />, color: 'grape', sidebar: [] },
@@ -92,3 +109,26 @@ export const STYLES = {
     fontWeight: 'bold',
   },
 };
+
+export const FONTS = [
+  {
+    label: 'Default',
+    value: '',
+  },
+  {
+    label: 'Comic Sans',
+    value: 'Comic Sans MS, Comic Sans',
+  },
+  {
+    label: 'Serif',
+    value: 'serif',
+  },
+  {
+    label: 'Monospace',
+    value: 'monospace',
+  },
+  {
+    label: 'Cursive',
+    value: 'cursive',
+  },
+];

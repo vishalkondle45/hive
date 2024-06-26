@@ -27,6 +27,7 @@ import { apiCall, getInitials } from '@/lib/client_functions';
 export default function Layout({ children }: { children: React.ReactNode }) {
   const session = useSession();
   const isLoggedIn = session?.status === 'authenticated';
+  const isLoading = session?.status === 'loading';
   const router = useRouter();
 
   const network = useNetwork();
@@ -81,11 +82,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }
   }, [network.online]);
 
+  if (isLoading) return <></>;
+
   return (
     <AppShell
       header={{ height: 60 }}
       navbar={{
-        width: isLoggedIn ? 200 : 0,
+        width: isLoggedIn && APP?.sidebar?.length ? 200 : 0,
         breakpoint: 'sm',
         collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
       }}
@@ -248,7 +251,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </Group>
       </AppShell.Header>
       <>
-        {isLoggedIn && APP?.sidebar?.length && (
+        {isLoggedIn && APP?.sidebar?.length ? (
           <AppShell.Navbar>
             <Stack gap={0} my="xs">
               {APP?.sidebar?.map((item) => (
@@ -267,6 +270,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               ))}
             </Stack>
           </AppShell.Navbar>
+        ) : (
+          <></>
         )}
         <AppShell.Main pt={rem(80)}>{children}</AppShell.Main>
       </>
