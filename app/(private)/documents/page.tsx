@@ -48,7 +48,7 @@ const DocumentsPage = () => {
         <Text my="xs" fw={700}>
           Recent Documents
         </Text>
-        <SimpleGrid cols={{ base: 1, xs: 2, sm: 2, md: 3, lg: 4 }}>
+        <SimpleGrid cols={{ base: 1, xs: 2, sm: 2, md: 3 }}>
           {docs?.map((doc) => (
             <DocumentCard
               doc={doc}
