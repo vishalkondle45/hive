@@ -10,15 +10,17 @@ import {
 import dayjs from 'dayjs';
 import { useHover } from '@mantine/hooks';
 import { DocumentType } from '@/models/Document';
+import { openModal } from '@/lib/client_functions';
 
 interface Props {
   doc: DocumentType;
   goTo: (_id: string) => void;
   onRename: (_id: string, title: string) => void;
   updateDocument: (updatedData: any) => Promise<void>;
+  deleteDocument: (updatedData: any) => Promise<void>;
 }
 
-export const DocumentCard = ({ doc, goTo, onRename, updateDocument }: Props) => {
+export const DocumentCard = ({ doc, goTo, onRename, updateDocument, deleteDocument }: Props) => {
   const [opened, setOpened] = useState(false);
   const { hovered, ref } = useHover();
   return (
@@ -45,16 +47,30 @@ export const DocumentCard = ({ doc, goTo, onRename, updateDocument }: Props) => 
             )}
           </Text>
           {doc?.isTrashed ? (
-            <ActionIcon
-              variant="subtle"
-              color="gray"
-              onClick={(e) => {
-                e.stopPropagation();
-                updateDocument({ _id: String(doc?._id), isTrashed: false });
-              }}
-            >
-              <IconRestore style={{ width: rem(18), height: rem(18) }} />
-            </ActionIcon>
+            <Group gap={0}>
+              <ActionIcon
+                variant="subtle"
+                color="green"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  updateDocument({ _id: String(doc?._id), isTrashed: false });
+                }}
+              >
+                <IconRestore style={{ width: rem(18), height: rem(18) }} />
+              </ActionIcon>
+              <ActionIcon
+                variant="subtle"
+                color="red"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openModal('This document will be deleted permanently', () =>
+                    deleteDocument({ _id: String(doc?._id) })
+                  );
+                }}
+              >
+                <IconTrash style={{ width: rem(18), height: rem(18) }} />
+              </ActionIcon>
+            </Group>
           ) : (
             <Popover opened={opened} onChange={setOpened}>
               <Popover.Target>

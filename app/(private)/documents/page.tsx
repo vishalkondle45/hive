@@ -22,6 +22,11 @@ const DocumentsPage = () => {
     getDocuments();
   };
 
+  const deleteDocument = async (updatedData: any) => {
+    await apiCall(`/api/documents?_id=${updatedData?._id}`, null, 'DELETE');
+    getDocuments();
+  };
+
   const goTo = (_id: string) => {
     router.push(`/documents/${_id}`);
   };
@@ -51,10 +56,12 @@ const DocumentsPage = () => {
         <SimpleGrid cols={{ base: 1, xs: 2, sm: 2, md: 3 }}>
           {docs?.map((doc) => (
             <DocumentCard
+              key={String(doc?._id)}
               doc={doc}
               goTo={goTo}
               onRename={onRename}
               updateDocument={updateDocument}
+              deleteDocument={deleteDocument}
             />
           ))}
         </SimpleGrid>
