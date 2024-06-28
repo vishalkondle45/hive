@@ -23,6 +23,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { App } from '../App';
 import { APPS } from '@/lib/constants';
 import { apiCall, getInitials } from '@/lib/client_functions';
+import SpotLight from '../SpotLight';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const session = useSession();
@@ -129,6 +130,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <Group gap={0}>
             {isLoggedIn && (
               <Group gap="xs">
+                <SpotLight />
                 <Popover
                   opened={opened}
                   onChange={setOpened}

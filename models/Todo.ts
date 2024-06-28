@@ -4,7 +4,12 @@ import { TodoListDocument } from './TodoList';
 export interface TodoDocument extends Document {
   _id?: Types.ObjectId;
   todo: string;
-  list: mongoose.Types.ObjectId;
+  list: {
+    _id?: Types.ObjectId;
+    title: string;
+    color: string;
+    user: mongoose.Types.ObjectId;
+  };
   isImportant: boolean;
   isCompleted: boolean;
   date: Date | null;

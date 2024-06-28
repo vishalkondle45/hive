@@ -132,3 +132,5 @@ export const FONTS = [
     value: 'cursive',
   },
 ];
+
+export const spotlightItems = [];
