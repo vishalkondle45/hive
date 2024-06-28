@@ -22,7 +22,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import { App } from '../App';
 import { APPS } from '@/lib/constants';
-import { apiCall, getInitials } from '@/lib/client_functions';
+import { apiCall } from '@/lib/client_functions';
 import SpotLight from '../SpotLight';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -175,15 +175,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <Popover.Target>
                     <Indicator color={network.online ? 'teal' : 'red'} offset={5}>
                       <Avatar
-                        variant=""
-                        color={APP?.color}
+                        color="initials"
+                        name={session?.data?.user?.name || ''}
                         radius="xl"
-                        size={rem(40)}
                         onClick={() => setOpened1((o) => !o)}
                         style={{ cursor: 'pointer' }}
-                      >
-                        {getInitials(session?.data?.user?.name)}
-                      </Avatar>
+                      />
                     </Indicator>
                   </Popover.Target>
                   <Popover.Dropdown p="xs">
@@ -193,9 +190,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       </Text>
                       <Stack align="center" gap={rem(4)}>
                         <Indicator color={network.online ? 'teal' : 'red'} offset={8}>
-                          <Avatar variant="" color={APP?.color} radius="xl" size={rem(60)}>
-                            {getInitials(session?.data?.user?.name)}
-                          </Avatar>
+                          <Avatar
+                            color="initials"
+                            name={session?.data?.user?.name || ''}
+                            radius="xl"
+                            size={rem(60)}
+                          />
                         </Indicator>
                         <Text fw={700} size="xs" c={network.online ? 'teal' : 'red'}>
                           {network.online ? 'Online' : 'Offline'}
