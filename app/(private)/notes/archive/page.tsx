@@ -53,7 +53,7 @@ export default function NotesPage() {
   };
 
   const updateNote = async (note: any) => {
-    await apiCall('/api/notes', note, 'POST').then(() => {
+    await apiCall('/api/notes', note, 'PUT').then(() => {
       refetch();
     });
   };
