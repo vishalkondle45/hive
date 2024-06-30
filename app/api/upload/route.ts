@@ -24,7 +24,7 @@ async function uploadImageToS3(file: Buffer, name: string) {
       Key: name,
       Body: fileBuffer,
       ACL: ObjectCannedACL.public_read,
-      Bucket: process.env.AWS_BUCKET_NAME,
+      Bucket: 'dream-by-vishal',
       ContentType: 'image/*',
     };
     const command = new PutObjectCommand(params);
