@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic';
 
 const Bucket = process.env.AWS_BUCKET_NAME as string;
 
-export const s3Client = new S3Client({
+const s3Client = new S3Client({
   region: process.env.AWS_REGION as string,
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
