@@ -10,8 +10,6 @@ import File from '@/models/File';
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
 
-const Bucket = process.env.AWS_BUCKET_NAME as string;
-
 const s3Client = new S3Client({
   region: process.env.AWS_REGION as string,
   credentials: {
@@ -36,7 +34,7 @@ export async function POST(req: Request) {
       files.map(async (file) => {
         const Body = (await file.arrayBuffer()) as Buffer;
         const Key = encodeURI(parent ? `${parent}/${file.name}` : file.name);
-        await s3Client.send(new PutObjectCommand({ Bucket, Key, Body }));
+        await s3Client.send(new PutObjectCommand({ Bucket: 'dream-by-vishal', Key, Body }));
         await File.create({
           user: session?.user._id,
           parent,
@@ -61,7 +59,7 @@ export async function GET(req: NextRequest) {
     }
     await startDb();
     const Key = req.nextUrl.searchParams.get('Key') || '';
-    const command = new GetObjectCommand({ Bucket, Key });
+    const command = new GetObjectCommand({ Bucket: 'dream-by-vishal', Key });
     const src = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
     return NextResponse.json(src, { status: 200 });
   } catch (error: any) {

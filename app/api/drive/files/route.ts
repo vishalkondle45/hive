@@ -7,8 +7,6 @@ import File from '@/models/File';
 import { authOptions } from '../../auth/[...nextauth]/authOptions';
 import { UserDataTypes } from '../../auth/[...nextauth]/next-auth.interfaces';
 
-const Bucket = process.env.AWS_BUCKET_NAME as string;
-
 const s3Client = new S3Client({
   region: process.env.AWS_REGION as string,
   credentials: {
@@ -71,12 +69,14 @@ export async function PUT(req: NextRequest) {
         let link = null;
         if (fl?.link) {
           const input = {
-            Bucket,
-            CopySource: `${Bucket}/${fl.link}`,
+            Bucket: 'dream-by-vishal',
+            CopySource: `dream-by-vishal/${fl.link}`,
             Key: encodeURI(`${body?.parent}/${fl?.name}`),
           };
           await s3Client.send(new CopyObjectCommand(input));
-          await s3Client.send(new DeleteObjectCommand({ Bucket, Key: encodeURI(fl.link) }));
+          await s3Client.send(
+            new DeleteObjectCommand({ Bucket: 'dream-by-vishal', Key: encodeURI(fl.link) })
+          );
           link = encodeURI(`${body?.parent}/${fl?.name}`);
         }
         const input = {
@@ -96,7 +96,10 @@ export async function PUT(req: NextRequest) {
 const deleteAllChilds = async (fl: any) => {
   if (fl?.link) {
     await s3Client.send(
-      new DeleteObjectCommand({ Bucket, Key: encodeURI(`${fl?.parent}/${fl?.name}`) })
+      new DeleteObjectCommand({
+        Bucket: 'dream-by-vishal',
+        Key: encodeURI(`${fl?.parent}/${fl?.name}`),
+      })
     );
   }
   await fl?.deleteOne();
