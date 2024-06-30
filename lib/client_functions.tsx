@@ -34,7 +34,7 @@ export const openModal = (message: string, onConfirm: () => void) =>
     onConfirm,
   });
 
-export const apiCall = async (url: string, body?: any, method: string = 'GET') => {
+export const apiCall = async (url: string, body?: any, method: string = 'GET', cb?: () => void) => {
   let res;
   nprogress.start();
   try {
@@ -56,7 +56,8 @@ export const apiCall = async (url: string, body?: any, method: string = 'GET') =
     }
   } catch (error: any) {
     failure(error?.response?.data.error || 'Error while calling API');
-    apiCall(url, body, method);
+    // apiCall(url, body, method);
+    if (cb) cb();
   } finally {
     nprogress.complete();
   }

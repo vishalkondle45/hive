@@ -3,13 +3,13 @@
 import { useEffect, useState } from 'react';
 import { apiCall } from '@/lib/client_functions';
 
-export default function useFetchData(url: string) {
+export default function useFetchData(url: string, cb?: () => void) {
   const [data, setData] = useState(null) as any;
   const [loading, setLoading] = useState(true);
 
   const refetch = async () => {
     setLoading(true);
-    const res: any[] | any = await apiCall(url);
+    const res: any[] | any = await apiCall(url, null, 'GET', cb);
     setData(res?.data);
     setLoading(false);
   };

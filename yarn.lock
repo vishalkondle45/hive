@@ -616,6 +616,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-sdk/s3-request-presigner@npm:^3.606.0":
+  version: 3.606.0
+  resolution: "@aws-sdk/s3-request-presigner@npm:3.606.0"
+  dependencies:
+    "@aws-sdk/signature-v4-multi-region": "npm:3.598.0"
+    "@aws-sdk/types": "npm:3.598.0"
+    "@aws-sdk/util-format-url": "npm:3.598.0"
+    "@smithy/middleware-endpoint": "npm:^3.0.2"
+    "@smithy/protocol-http": "npm:^4.0.1"
+    "@smithy/smithy-client": "npm:^3.1.2"
+    "@smithy/types": "npm:^3.1.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/95a5783f0d6a2ea4d593ce81cbee4f8e83738f7ca7402e80ba13af7576e3c09a0d96c492e3f138f0db9069481e66b6c78d28a697b0f31658c4ea25aa386180fc
+  languageName: node
+  linkType: hard
+
 "@aws-sdk/signature-v4-multi-region@npm:3.598.0":
   version: 3.598.0
   resolution: "@aws-sdk/signature-v4-multi-region@npm:3.598.0"
@@ -673,6 +689,18 @@ __metadata:
     "@smithy/util-endpoints": "npm:^2.0.2"
     tslib: "npm:^2.6.2"
   checksum: 10c0/2d9b30e59a4970f7796fc859915980a840f3bfe61a4f807b4dcc758ac582837199560dea94a83f818d4a45e3efb8973498a61a6baa5adeb4b88bfc4b862c1fc7
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/util-format-url@npm:3.598.0":
+  version: 3.598.0
+  resolution: "@aws-sdk/util-format-url@npm:3.598.0"
+  dependencies:
+    "@aws-sdk/types": "npm:3.598.0"
+    "@smithy/querystring-builder": "npm:^3.0.1"
+    "@smithy/types": "npm:^3.1.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/1099d075d0e7259c656c346845cd5639d7ae8ca1b2d4fabdb0799a0ed69734ebc23637d2a92fcd5a0d5333d27005715132d549867556f9ae0ea5076f630d42df
   languageName: node
   linkType: hard
 
@@ -4797,6 +4825,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@smithy/querystring-builder@npm:^3.0.1":
+  version: 3.0.3
+  resolution: "@smithy/querystring-builder@npm:3.0.3"
+  dependencies:
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/util-uri-escape": "npm:^3.0.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/0fd88fb2f3b494981e286b840b7eeb90896d8cc2f47ce3964f65ae95eb74c82691af205bdc17abc39fd483e1952359459204686bb1741c9f425cd5a9a1503f65
+  languageName: node
+  linkType: hard
+
 "@smithy/querystring-builder@npm:^3.0.2":
   version: 3.0.2
   resolution: "@smithy/querystring-builder@npm:3.0.2"
@@ -4872,6 +4911,15 @@ __metadata:
   dependencies:
     tslib: "npm:^2.6.2"
   checksum: 10c0/6b82a9177ae85d9c08247675831ffeed87a671c51ab35ecf64641ea0afb6036a97b3a00a83e717529a74b416b19df0c0fc2b2930a9b55bb0d34bea2390f835ad
+  languageName: node
+  linkType: hard
+
+"@smithy/types@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "@smithy/types@npm:3.3.0"
+  dependencies:
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/ab2c2d621384a2bbdd31d5c90809395cb5c2a726afd69758895d5a630f932f6ae9a53ca7a9cd5d8c195df9278869b2420a2fb4fada47dee9e8c9d4e3c80a349e
   languageName: node
   linkType: hard
 
@@ -10076,6 +10124,7 @@ __metadata:
   resolution: "dream@workspace:."
   dependencies:
     "@aws-sdk/client-s3": "npm:^3.600.0"
+    "@aws-sdk/s3-request-presigner": "npm:^3.606.0"
     "@babel/core": "npm:^7.24.0"
     "@mantine/carousel": "npm:^7.10.2"
     "@mantine/charts": "npm:^7.10.2"
