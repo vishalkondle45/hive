@@ -35,13 +35,18 @@ export async function POST(req: Request) {
         const Body = (await file.arrayBuffer()) as Buffer;
         const Key = encodeURI(parent ? `${parent}/${file.name}` : file.name);
         await s3Client.send(new PutObjectCommand({ Bucket: 'dream-by-vishal', Key, Body }));
-        await File.create({
-          user: session?.user._id,
-          parent,
-          name: file.name,
-          size: file.size,
-          link: Key,
-        });
+        const isAlready = await File.findOne({ link: Key });
+        if (!isAlready) {
+          await File.create({
+            user: session?.user._id,
+            parent,
+            name: file.name,
+            size: file.size,
+            link: Key,
+          });
+        } else {
+          await File.updateOne({ link: Key }, { name: file.name, size: file.size });
+        }
       })
     );
 
