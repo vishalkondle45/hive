@@ -7,6 +7,9 @@ import { authOptions } from '../auth/[...nextauth]/authOptions';
 import { UserDataTypes } from '../auth/[...nextauth]/next-auth.interfaces';
 import Document from '@/models/Document';
 
+export const maxDuration = 60;
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const session: UserDataTypes | null = await getServerSession(authOptions);

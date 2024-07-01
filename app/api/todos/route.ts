@@ -15,6 +15,9 @@ import {
 } from '@/lib/functions';
 import '@/models/TodoList';
 
+export const maxDuration = 60;
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   try {
     const session: UserDataTypes | null = await getServerSession(authOptions);

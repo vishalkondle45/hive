@@ -24,7 +24,7 @@ import {
   IconFolderSymlink,
   IconTrash,
 } from '@tabler/icons-react';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import FileTable from '@/components/Drive/FileTable';
@@ -33,9 +33,9 @@ import { apiCall, failure, openModal } from '@/lib/client_functions';
 
 const DrivePage = () => {
   const searchParams = useSearchParams();
-  const params = useParams();
+  const currentFolder = searchParams.get('_id') ?? '';
   const { data, refetch } = useFetchData(
-    `/api/drive/files${searchParams.get('_id') ? `?parent=${searchParams.get('_id')}` : ''}`
+    `/api/drive/files${currentFolder ? `?parent=${currentFolder}` : ''}`
   );
 
   const [openMoveDialog, setOpenMoveDialog] = useState(false);
@@ -49,7 +49,7 @@ const DrivePage = () => {
   const ref = useRef<HTMLButtonElement>(null);
 
   const handleNewFolder = async () => {
-    await apiCall('/api/drive/files', { name: folderName, parent: params.path }, 'POST');
+    await apiCall('/api/drive/files', { name: folderName, parent: currentFolder }, 'POST');
     close();
     setFolderName('Untitled folder');
     refetch();
@@ -77,12 +77,8 @@ const DrivePage = () => {
     try {
       const formData = new FormData();
       value.forEach((file) => formData.append('file', file, file.name));
-      formData.append('parent', '');
+      formData.append('parent', currentFolder ?? '');
       await apiCall('/api/drive/files/upload', formData, 'POST');
-    } catch (err) {
-      failure('Error uploading file');
-    } finally {
-      setValue([]);
       refetch();
       notifications.update({
         id,
@@ -92,6 +88,10 @@ const DrivePage = () => {
         loading: false,
         autoClose: 2000,
       });
+    } catch (err) {
+      failure('Error uploading file');
+    } finally {
+      setValue([]);
     }
   };
 
