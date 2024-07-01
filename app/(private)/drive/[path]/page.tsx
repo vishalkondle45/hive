@@ -212,9 +212,17 @@ const DrivePage = () => {
                 </Table.Td>
               </Table.Tr>
             ))}
+          {JSON.stringify(_path)}
         </Table>
         <Group mt="md" justify="right">
-          <Button color="red" onClick={() => setOpenMoveDialog(false)}>
+          <Button
+            color="red"
+            onClick={() => {
+              setOpenMoveDialog(false);
+              _setPath([]);
+              __setPath('');
+            }}
+          >
             Cancel
           </Button>
           <Button color="teal" onClick={() => moveFile({ parent: __path, ids: checked })}>
