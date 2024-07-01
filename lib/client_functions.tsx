@@ -2,7 +2,16 @@ import { Image, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { nprogress } from '@mantine/nprogress';
-import { IconCheck, IconX } from '@tabler/icons-react';
+import {
+  IconCheck,
+  IconFile,
+  IconFileTypeDoc,
+  IconFileTypePdf,
+  IconMovie,
+  IconMusic,
+  IconVideo,
+  IconX,
+} from '@tabler/icons-react';
 import axios from 'axios';
 
 export const failure = (message: string) =>
@@ -98,5 +107,28 @@ export const Preview = (url: string) => {
       );
     default:
       return <Image alt={url} src={url} h="auto" w="auto" fit="contain" />;
+  }
+};
+
+export const fileIcon = (url: string) => {
+  if (!url) return <></>;
+  switch (url.split('?')[0].split('.').at(-1)) {
+    case 'jpeg':
+    case 'jpg':
+    case 'png':
+    case 'svg':
+      return <IconVideo size={18} />;
+    case 'pdf':
+      return <IconFileTypePdf size={18} />;
+    case 'doc':
+    case 'docs':
+    case 'docx':
+      return <IconFileTypeDoc size={18} />;
+    case 'mp3':
+      return <IconMusic size={18} />;
+    case 'mp4':
+      return <IconMovie size={18} />;
+    default:
+      return <IconFile size={18} />;
   }
 };
