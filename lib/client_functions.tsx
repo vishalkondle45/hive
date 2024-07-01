@@ -1,4 +1,4 @@
-import { Text } from '@mantine/core';
+import { Image, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { nprogress } from '@mantine/nprogress';
@@ -69,3 +69,34 @@ export const getInitials = (name: string | undefined | null) =>
     ?.split(' ')
     .map((n) => n[0])
     .join('');
+
+export const Preview = (url: string) => {
+  if (!url) return <></>;
+  switch (url.split('?')[0].split('.').at(-1)) {
+    case 'pdf':
+    case 'docs':
+    case 'doc':
+      return (
+        <iframe
+          title={url}
+          src={`https://view.officeapps.live.com/op/embed.aspx?src=${url}`}
+          style={{ width: '100%', height: '100%' }}
+        />
+      );
+    case 'mp3':
+      return (
+        <audio autoPlay title={url} src={url} controls>
+          <track kind="captions" srcLang="en" src="captions.vtt" />
+        </audio>
+      );
+
+    case 'mp4':
+      return (
+        <video autoPlay title={url} src={url} controls>
+          <track kind="captions" srcLang="en" src="captions.vtt" />
+        </video>
+      );
+    default:
+      return <Image alt={url} src={url} h="auto" w="auto" fit="contain" />;
+  }
+};
