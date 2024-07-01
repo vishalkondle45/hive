@@ -34,8 +34,10 @@ import { apiCall, failure, openModal } from '@/lib/client_functions';
 const DrivePage = () => {
   const searchParams = useSearchParams();
   const currentFolder = searchParams.get('_id') ?? '';
+  const router = useRouter();
   const { data, refetch } = useFetchData(
-    `/api/drive/files${currentFolder ? `?parent=${currentFolder}` : ''}`
+    `/api/drive/files${currentFolder ? `?parent=${currentFolder}` : ''}`,
+    () => router.push('/drive')
   );
 
   const [openMoveDialog, setOpenMoveDialog] = useState(false);
@@ -45,7 +47,6 @@ const DrivePage = () => {
   const [value, setValue] = useState<File[]>([]);
   const [opened, { open, close }] = useDisclosure(false);
   const [folderName, setFolderName] = useState('Untitled folder');
-  const router = useRouter();
   const ref = useRef<HTMLButtonElement>(null);
 
   const handleNewFolder = async () => {

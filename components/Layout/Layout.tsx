@@ -130,7 +130,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <Group gap={0}>
             {isLoggedIn && (
               <Group gap="xs">
-                {/* <SpotLight /> */}
+                <SpotLight />
                 <Popover
                   opened={opened}
                   onChange={setOpened}
