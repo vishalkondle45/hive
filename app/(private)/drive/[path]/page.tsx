@@ -212,7 +212,6 @@ const DrivePage = () => {
                 </Table.Td>
               </Table.Tr>
             ))}
-          {JSON.stringify(_path)}
         </Table>
         <Group mt="md" justify="right">
           <Button
