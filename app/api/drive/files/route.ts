@@ -66,23 +66,17 @@ export async function PUT(req: NextRequest) {
     await Promise.all(
       body?.ids?.map(async (file: string) => {
         const fl = await File.findById(file);
-        let link = null;
+        const Key = encodeURI(body?.parent ? `${body?.parent}/${fl?.name}` : fl?.name || '');
         if (fl?.link) {
           const input = {
             Bucket: 'dream-by-vishal',
-            CopySource: `dream-by-vishal/${fl.link}`,
-            Key: encodeURI(`${body?.parent}/${fl?.name}`),
+            CopySource: `dream-by-vishal/${encodeURI(fl.link)}`,
+            Key,
           };
           await s3Client.send(new CopyObjectCommand(input));
-          await s3Client.send(
-            new DeleteObjectCommand({ Bucket: 'dream-by-vishal', Key: encodeURI(fl.link) })
-          );
-          link = encodeURI(`${body?.parent}/${fl?.name}`);
+          await s3Client.send(new DeleteObjectCommand({ Bucket: 'dream-by-vishal', Key: fl.link }));
         }
-        const input = {
-          parent: body?.parent,
-          link,
-        };
+        const input = { parent: body?.parent || null, link: Key };
         await fl?.updateOne(input);
         response = [...response, fl];
       })
@@ -98,18 +92,26 @@ const deleteAllChilds = async (fl: any) => {
     await s3Client.send(
       new DeleteObjectCommand({
         Bucket: 'dream-by-vishal',
-        Key: encodeURI(`${fl?.parent}/${fl?.name}`),
+        Key: fl?.link,
       })
     );
+    await fl?.deleteOne();
+    return true;
   }
-  await fl?.deleteOne();
   const shouldDelete = await File.find({ parent: fl?._id });
+  await fl?.deleteOne();
   await Promise.all(
     shouldDelete.map(async (item) => {
       await File.findByIdAndDelete(item._id);
       deleteAllChilds(item);
     })
   );
+  return false;
+};
+
+const findAndDeleteChilds = async (file: any) => {
+  const fl = await File.findById(file);
+  return deleteAllChilds(fl);
 };
 
 export async function DELETE(req: NextRequest) {
@@ -121,9 +123,11 @@ export async function DELETE(req: NextRequest) {
     await startDb();
     const ids = JSON.parse(req.nextUrl.searchParams.get('_id') || '');
     await Promise.all(
-      ids.map(async (file: string) => {
-        const fl = await File.findById(file);
-        deleteAllChilds(fl);
+      ids.map((file: string) => {
+        const some = new Promise((resolve) => {
+          findAndDeleteChilds(file).then(resolve);
+        });
+        return some;
       })
     );
     return NextResponse.json(ids, { status: 200 });
