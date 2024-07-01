@@ -35,7 +35,7 @@ export async function POST(req: Request) {
         const Body = (await file.arrayBuffer()) as Buffer;
         const Key = encodeURI(
           parent
-            ? `${session?.user._id}/${parent}/${file.name}`
+            ? `${session?.user._id}${parent ? `/${parent}` : ''}/${file.name}`
             : `${session?.user._id}/${file.name}`
         );
         await s3Client.send(new PutObjectCommand({ Bucket: 'dream-by-vishal', Key, Body }));

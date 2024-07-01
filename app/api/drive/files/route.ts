@@ -96,7 +96,7 @@ export async function PUT(req: NextRequest) {
         const fl = await File.findById(file);
         const Key = encodeURI(
           body?.parent
-            ? `${session?.user?._id}/${body?.parent}/${fl?.name}`
+            ? `${session?.user?._id}${body?.parent ? `/${body?.parent}` : ''}/${fl?.name}`
             : `${session?.user._id}/${fl?.name}`
         );
         if (fl?.link) {
