@@ -1,7 +1,8 @@
 import { Checkbox, Group, Paper, rem, Table, Text, ThemeIcon } from '@mantine/core';
-import { IconFile, IconFolderFilled } from '@tabler/icons-react';
+import { IconFolderFilled } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import React from 'react';
+import { fileIcon } from '@/lib/client_functions';
 
 interface Props {
   data: any[];
@@ -47,7 +48,7 @@ const FileTable = ({ data, openFile, checked, setChecked }: Props) => (
                       onClick={() => openFile(item)}
                     >
                       <ThemeIcon variant="transparent" size="sm">
-                        {item?.link ? <IconFile /> : <IconFolderFilled />}
+                        {item?.link ? fileIcon(item?.link) : <IconFolderFilled />}
                       </ThemeIcon>
                       <Text style={{ overflow: 'unset', whiteSpace: 'nowrap' }}>
                         {decodeURI(item?.name)}
