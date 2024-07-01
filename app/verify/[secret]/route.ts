@@ -3,6 +3,9 @@ import startDb from '@/lib/db';
 import User from '@/models/User';
 import { sendMail } from '@/lib/functions';
 
+export const maxDuration = 60;
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: Request, { params }: { params: { secret: string } }) {
   try {
     await startDb();

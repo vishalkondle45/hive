@@ -7,6 +7,9 @@ import File from '@/models/File';
 import { authOptions } from '../../auth/[...nextauth]/authOptions';
 import { UserDataTypes } from '../../auth/[...nextauth]/next-auth.interfaces';
 
+export const maxDuration = 60;
+export const dynamic = 'force-dynamic';
+
 const s3Client = new S3Client({
   region: process.env.AWS_REGION as string,
   credentials: {
@@ -52,8 +55,8 @@ export async function GET(req: NextRequest) {
     let test: Types.ObjectId | null = currentFile?.parent;
     let path = [currentFile];
 
-    while (test !== null) {
-      const parentFile: any = await File.findById(parent).select('name parent');
+    while (test) {
+      const parentFile: any = await File.findById(test).select('name parent');
       test = parentFile?.parent;
       path = [parentFile, ...path];
     }
@@ -101,7 +104,7 @@ export async function PUT(req: NextRequest) {
           await s3Client.send(new CopyObjectCommand(input));
           await s3Client.send(new DeleteObjectCommand({ Bucket: 'dream-by-vishal', Key: fl.link }));
         }
-        const input = { parent: body?.parent || null, link: Key };
+        const input = { parent: body?.parent || null, link: fl?.link ? Key : undefined };
         await fl?.updateOne(input);
         response = [...response, fl];
       })

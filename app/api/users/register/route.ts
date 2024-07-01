@@ -3,6 +3,9 @@ import startDb from '@/lib/db';
 import User from '@/models/User';
 import { sendMail, verificationMessage } from '@/lib/functions';
 
+export const maxDuration = 60;
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
