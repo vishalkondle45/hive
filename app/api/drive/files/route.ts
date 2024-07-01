@@ -94,7 +94,11 @@ export async function PUT(req: NextRequest) {
     await Promise.all(
       body?.ids?.map(async (file: string) => {
         const fl = await File.findById(file);
-        const Key = encodeURI(body?.parent ? `${body?.parent}/${fl?.name}` : fl?.name || '');
+        const Key = encodeURI(
+          body?.parent
+            ? `${session?.user?._id}${body?.parent ? `/${body?.parent}` : ''}/${fl?.name}`
+            : `${session?.user._id}/${fl?.name}`
+        );
         if (fl?.link) {
           const input = {
             Bucket: 'dream-by-vishal',

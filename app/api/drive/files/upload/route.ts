@@ -33,7 +33,11 @@ export async function POST(req: Request) {
     await Promise.all(
       files.map(async (file) => {
         const Body = (await file.arrayBuffer()) as Buffer;
-        const Key = encodeURI(parent ? `${parent}/${file.name}` : file.name);
+        const Key = encodeURI(
+          parent
+            ? `${session?.user._id}${parent ? `/${parent}` : ''}/${file.name}`
+            : `${session?.user._id}/${file.name}`
+        );
         await s3Client.send(new PutObjectCommand({ Bucket: 'dream-by-vishal', Key, Body }));
         const isAlready = await File.findOne({ link: Key });
         if (!isAlready) {

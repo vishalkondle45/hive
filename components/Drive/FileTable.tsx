@@ -27,7 +27,6 @@ const FileTable = ({ data, openFile, checked, setChecked }: Props) => (
                 <Table.Td>Name</Table.Td>
               </Group>
             </Table.Th>
-            {/* <Table.Th style={{ whiteSpace: 'nowrap' }}>Owner</Table.Th> */}
             <Table.Th style={{ whiteSpace: 'nowrap' }}>Last modified</Table.Th>
             <Table.Th style={{ whiteSpace: 'nowrap' }}>File size</Table.Th>
           </Table.Tr>
@@ -56,16 +55,13 @@ const FileTable = ({ data, openFile, checked, setChecked }: Props) => (
                     </Group>
                   </Group>
                 </Table.Td>
-                {/* <Table.Td>
-                  <Avatar name={item?.user?.name} color="initials" size="sm" />
-                </Table.Td> */}
                 <Table.Td>
                   <Text style={{ overflow: 'unset', whiteSpace: 'nowrap' }}>
                     {dayjs(item?.updatedAt).format('MMM DD, YYYY HH:mm A')}
                   </Text>
                 </Table.Td>
                 <Table.Td style={{ whiteSpace: 'nowrap' }}>
-                  {(Number(item?.size) / 1024 / 1024).toFixed(5)} MB
+                  {item?.link && <Text>{(Number(item?.size) / 1024 / 1024).toFixed(5)} MB</Text>}
                 </Table.Td>
               </Table.Tr>
             ))
