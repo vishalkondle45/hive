@@ -24,7 +24,7 @@ import {
   IconFolderSymlink,
   IconTrash,
 } from '@tabler/icons-react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import FileTable from '@/components/Drive/FileTable';
@@ -32,8 +32,11 @@ import useFetchData from '@/hooks/useFetchData';
 import { apiCall, failure, openModal } from '@/lib/client_functions';
 
 const DrivePage = () => {
+  const searchParams = useSearchParams();
   const params = useParams();
-  const { data, refetch } = useFetchData('/api/drive/files');
+  const { data, refetch } = useFetchData(
+    `/api/drive/files${searchParams.get('_id') ? `?parent=${searchParams.get('_id')}` : ''}`
+  );
 
   const [openMoveDialog, setOpenMoveDialog] = useState(false);
   const [__path, __setPath] = useState('');
@@ -93,7 +96,7 @@ const DrivePage = () => {
   };
 
   const openFile = (item: any) =>
-    item.link ? getFile(item.link) : router.push(`/drive/${item?._id}`);
+    item.link ? getFile(item.link) : router.push(`/drive?_id=${item?._id}`);
 
   const moveFile = async (item: any) => {
     await apiCall('/api/drive/files', item, 'PUT');
@@ -105,13 +108,8 @@ const DrivePage = () => {
   };
 
   const getPath = async () => {
-    if (__path) {
-      const res = await apiCall(`/api/drive/files?parent=${__path}`);
-      _setPath(res?.data);
-    } else {
-      const res = await apiCall('/api/drive/files');
-      _setPath(res?.data);
-    }
+    const res = await apiCall(`/api/drive/files${__path ? `?parent=${__path}` : ''}`);
+    _setPath(res?.data?.files);
   };
 
   useEffect(() => {
@@ -127,7 +125,7 @@ const DrivePage = () => {
   return (
     <>
       <Group mb="md" justify="space-between">
-        <Breadcrumbs path={[{ name: 'Drive' }]} />
+        <Breadcrumbs path={data?.path} />
         <Group>
           <ActionIconGroup>
             <ActionIcon variant="outline" color="green" onClick={open}>
@@ -164,7 +162,7 @@ const DrivePage = () => {
         </Group>
       </Group>
       <FileInput style={{ display: 'none' }} ref={ref} value={value} onChange={setValue} multiple />
-      <FileTable data={data} checked={checked} setChecked={setChecked} openFile={openFile} />
+      <FileTable data={data?.files} checked={checked} setChecked={setChecked} openFile={openFile} />
       <Modal title="New Folder" opened={opened} onClose={close}>
         <TextInput
           value={folderName}
@@ -183,7 +181,7 @@ const DrivePage = () => {
         </Group>
       </Modal>
       <Modal
-        title="New Folder"
+        title={_path?.[0]?.parent?.name ? `/${_path?.[0]?.parent?.name}` : '/drive'}
         opened={!!openMoveDialog}
         onClose={() => {
           setOpenMoveDialog(false);
@@ -192,29 +190,27 @@ const DrivePage = () => {
         }}
       >
         <Table striped highlightOnHover withTableBorder withColumnBorders>
-          {_path?.[0]?.parent && (
-            <Table.Tr>
-              <Table.Td
-                style={{ cursor: 'pointer' }}
-                onClick={() => __setPath(_path?.[0]?.parent?.parent || '')}
-              >
-                ...
-              </Table.Td>
-            </Table.Tr>
-          )}
+          <Table.Tr>
+            <Table.Td
+              style={{ cursor: 'pointer' }}
+              onClick={() => __setPath(_path?.[0]?.parent?.parent || '')}
+            >
+              ...
+            </Table.Td>
+          </Table.Tr>
           {_path
             ?.filter(({ _id }) => !checked.includes(_id))
             ?.map((test) => (
               <Table.Tr key={test?._id}>
                 <Table.Td>
                   <Group
-                    style={{ cursor: !test.link ? 'pointer' : 'default' }}
-                    onClick={() => !test.link && __setPath(test._id || '')}
+                    style={{ cursor: !test?.link ? 'pointer' : 'default' }}
+                    onClick={() => !test?.link && __setPath(test?._id || '')}
                   >
                     <ThemeIcon variant="transparent" size="sm">
-                      {test.link ? <IconFile /> : <IconFolder />}
+                      {test?.link ? <IconFile /> : <IconFolder />}
                     </ThemeIcon>
-                    <Text>{test.name}</Text>
+                    <Text>{test?.name}</Text>
                   </Group>
                 </Table.Td>
               </Table.Tr>

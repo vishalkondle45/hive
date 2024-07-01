@@ -10,7 +10,7 @@ const Breadcrumbs = ({ path }: { path: any }) => {
         <Anchor
           variant="transparent"
           component={Link}
-          href={`/drive/${item?._id ?? ''}`}
+          href={`/drive${item?._id ? `?_id=${item?._id}` : ''}`}
           key={String(item?._id)}
           fw={700}
         >

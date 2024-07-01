@@ -15,7 +15,17 @@ export async function GET(req: NextRequest) {
     await startDb();
     const file = req.nextUrl.searchParams.get('file');
 
-    if (!file || !Types.ObjectId.isValid(file)) {
+    const basePath = {
+      _id: '',
+      name: 'Drive',
+      parent: '',
+    };
+
+    if (!file) {
+      return NextResponse.json([basePath], { status: 200 });
+    }
+
+    if (!Types.ObjectId.isValid(file)) {
       return NextResponse.json({ error: 'File not found' }, { status: 404 });
     }
 
@@ -33,12 +43,6 @@ export async function GET(req: NextRequest) {
       parent = parentFile?.parent;
       path = [parentFile, ...path];
     }
-
-    const basePath = {
-      _id: '',
-      name: 'Drive',
-      parent: '',
-    };
 
     return NextResponse.json([basePath, ...path], { status: 200 });
   } catch (error: any) {

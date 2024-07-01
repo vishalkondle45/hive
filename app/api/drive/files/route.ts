@@ -24,16 +24,41 @@ export async function GET(req: NextRequest) {
     await startDb();
     const parent = req.nextUrl.searchParams.get('parent') ?? null;
 
-    if (parent && !Types.ObjectId.isValid(parent)) {
+    const files = await File.find({ user: session?.user._id, parent })
+      .select('-createdAt -user -__v')
+      .populate({ path: 'parent', select: 'name parent' })
+      .sort('-updatedAt');
+
+    const basePath = {
+      _id: '',
+      name: 'Drive',
+      parent: '',
+    };
+
+    if (!parent) {
+      return NextResponse.json({ files, path: [basePath] }, { status: 200 });
+    }
+
+    if (!Types.ObjectId.isValid(parent)) {
       return NextResponse.json({ error: 'File not found' }, { status: 404 });
     }
 
-    const files = await File.find({ user: session?.user._id, parent })
-      .select('-createdAt -user -__v')
-      .populate({ path: 'parent', select: 'parent' })
-      // .populate({ path: 'user', select: 'name' })
-      .sort('-updatedAt');
-    return NextResponse.json(files, { status: 200 });
+    const currentFile = await File.findById(parent).select('name parent');
+
+    if (!currentFile) {
+      return NextResponse.json({ error: 'File not found' }, { status: 404 });
+    }
+
+    let test: Types.ObjectId | null = currentFile?.parent;
+    let path = [currentFile];
+
+    while (test !== null) {
+      const parentFile: any = await File.findById(parent).select('name parent');
+      test = parentFile?.parent;
+      path = [parentFile, ...path];
+    }
+
+    return NextResponse.json({ files, path: [basePath, ...path] }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error?.message }, { status: 500 });
   }
