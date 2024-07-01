@@ -17,6 +17,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import {
   IconCheck,
+  IconDownload,
   IconFile,
   IconFileUpload,
   IconFolder,
@@ -29,7 +30,7 @@ import { useEffect, useRef, useState } from 'react';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import FileTable from '@/components/Drive/FileTable';
 import useFetchData from '@/hooks/useFetchData';
-import { apiCall, failure, openModal } from '@/lib/client_functions';
+import { apiCall, failure, openModal, Preview } from '@/lib/client_functions';
 
 const DrivePage = () => {
   const searchParams = useSearchParams();
@@ -48,6 +49,7 @@ const DrivePage = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const [folderName, setFolderName] = useState('Untitled folder');
   const ref = useRef<HTMLButtonElement>(null);
+  const [preview, setPreview] = useState('');
 
   const handleNewFolder = async () => {
     await apiCall('/api/drive/files', { name: folderName, parent: currentFolder }, 'POST');
@@ -58,7 +60,7 @@ const DrivePage = () => {
 
   const getFile = async (Key: string) => {
     const res = await apiCall(`/api/drive/files/upload?Key=${encodeURI(Key)}`);
-    window.open(res?.data, '_blank', 'noopener,noreferrer');
+    setPreview(res?.data);
   };
 
   const deleteFile = async () => {
@@ -235,6 +237,24 @@ const DrivePage = () => {
             Move
           </Button>
         </Group>
+      </Modal>
+
+      <Modal
+        size="auto"
+        centered
+        opened={!!preview}
+        onClose={() => setPreview('')}
+        title={
+          <Button
+            onClick={() => window.open(preview, '_blank', 'noopener,noreferrer')}
+            color="teal"
+            leftSection={<IconDownload size={16} />}
+          >
+            Download
+          </Button>
+        }
+      >
+        {Preview(preview)}
       </Modal>
     </>
   );
