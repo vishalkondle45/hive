@@ -33,7 +33,7 @@ import { apiCall, failure, openModal } from '@/lib/client_functions';
 
 const DrivePage = () => {
   const searchParams = useSearchParams();
-  const currentFolder = searchParams.get('_id') ?? '';
+  const currentFolder = searchParams.get('_id') ?? null;
   const router = useRouter();
   const { data, refetch } = useFetchData(
     `/api/drive/files${currentFolder ? `?parent=${currentFolder}` : ''}`,
@@ -129,13 +129,7 @@ const DrivePage = () => {
         <Breadcrumbs path={data?.path} />
         <Group>
           <ActionIconGroup>
-            <ActionIcon variant="outline" color="green" onClick={open}>
-              <IconFolderPlus size={20} />
-            </ActionIcon>
-            <ActionIcon onClick={() => ref.current?.click()} variant="outline" color="blue">
-              <IconFileUpload size={20} />
-            </ActionIcon>
-            {!!checked.length && (
+            {checked.length ? (
               <>
                 <ActionIcon
                   variant="outline"
@@ -156,6 +150,15 @@ const DrivePage = () => {
                   color="red"
                 >
                   <IconTrash size={20} />
+                </ActionIcon>
+              </>
+            ) : (
+              <>
+                <ActionIcon variant="outline" color="green" onClick={open}>
+                  <IconFolderPlus size={20} />
+                </ActionIcon>
+                <ActionIcon onClick={() => ref.current?.click()} variant="outline" color="blue">
+                  <IconFileUpload size={20} />
                 </ActionIcon>
               </>
             )}

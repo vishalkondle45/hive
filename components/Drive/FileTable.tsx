@@ -19,7 +19,7 @@ const FileTable = ({ data, openFile, checked, setChecked }: Props) => (
             <Table.Th style={{ whiteSpace: 'nowrap' }}>
               <Group gap={0} wrap="nowrap">
                 <Checkbox
-                  checked={checked?.length === data?.length}
+                  checked={!!checked?.length && checked?.length === data?.length}
                   onChange={() =>
                     setChecked(checked?.length === data?.length ? [] : data.map((item) => item._id))
                   }
