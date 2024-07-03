@@ -7,11 +7,12 @@ import { fileIcon } from '@/lib/client_functions';
 interface Props {
   data: any[];
   openFile: (item: any) => void;
-  checked: string[];
-  setChecked: (value: string[]) => void;
+  checked?: string[];
+  setChecked?: (value: string[]) => void;
+  withDate?: boolean;
 }
 
-const FileTable = ({ data, openFile, checked, setChecked }: Props) => (
+const FileTable = ({ data, openFile, checked, setChecked, withDate = true }: Props) => (
   <Paper w="100%">
     <Table.ScrollContainer minWidth={500} type="native">
       <Table highlightOnHover withTableBorder>
@@ -19,16 +20,20 @@ const FileTable = ({ data, openFile, checked, setChecked }: Props) => (
           <Table.Tr>
             <Table.Th style={{ whiteSpace: 'nowrap' }}>
               <Group gap={0} wrap="nowrap">
-                <Checkbox
-                  checked={!!checked?.length && checked?.length === data?.length}
-                  onChange={() =>
-                    setChecked(checked?.length === data?.length ? [] : data.map((item) => item._id))
-                  }
-                />
+                {!!setChecked && (
+                  <Checkbox
+                    checked={!!checked?.length && checked?.length === data?.length}
+                    onChange={() =>
+                      setChecked(
+                        checked?.length === data?.length ? [] : data.map((item) => item._id)
+                      )
+                    }
+                  />
+                )}
                 <Table.Td>Name</Table.Td>
               </Group>
             </Table.Th>
-            <Table.Th style={{ whiteSpace: 'nowrap' }}>Last modified</Table.Th>
+            {withDate && <Table.Th style={{ whiteSpace: 'nowrap' }}>Last modified</Table.Th>}
             <Table.Th style={{ whiteSpace: 'nowrap' }}>File size</Table.Th>
           </Table.Tr>
         </Table.Thead>
@@ -38,9 +43,11 @@ const FileTable = ({ data, openFile, checked, setChecked }: Props) => (
               <Table.Tr key={item?._id}>
                 <Table.Td>
                   <Group gap="xs" wrap="nowrap">
-                    <Checkbox.Group size="xs" value={checked} onChange={setChecked}>
-                      <Checkbox value={item?._id} />
-                    </Checkbox.Group>
+                    {!!setChecked && (
+                      <Checkbox.Group size="xs" value={checked} onChange={setChecked}>
+                        <Checkbox value={item?._id} />
+                      </Checkbox.Group>
+                    )}
                     <Group
                       wrap="nowrap"
                       gap={rem(4)}
@@ -56,11 +63,13 @@ const FileTable = ({ data, openFile, checked, setChecked }: Props) => (
                     </Group>
                   </Group>
                 </Table.Td>
-                <Table.Td>
-                  <Text style={{ overflow: 'unset', whiteSpace: 'nowrap' }}>
-                    {dayjs(item?.updatedAt).format('MMM DD, YYYY HH:mm A')}
-                  </Text>
-                </Table.Td>
+                {withDate && (
+                  <Table.Td>
+                    <Text style={{ overflow: 'unset', whiteSpace: 'nowrap' }}>
+                      {dayjs(item?.updatedAt).format('MMM DD, YYYY HH:mm A')}
+                    </Text>
+                  </Table.Td>
+                )}
                 <Table.Td style={{ whiteSpace: 'nowrap' }}>
                   {item?.link && <Text>{(Number(item?.size) / 1024 / 1024).toFixed(5)} MB</Text>}
                 </Table.Td>
