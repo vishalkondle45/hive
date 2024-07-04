@@ -6,6 +6,7 @@ import { todoSlice } from './features/todoSlice';
 import { spotlightSlice } from './features/spotlightSlice';
 import { layoutSlice } from './features/layoutSlice';
 import { driveSlice } from './features/driveSlice';
+import { robotSlice } from './features/robotSlice';
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     spotlight: spotlightSlice.reducer,
     layout: layoutSlice.reducer,
     drive: driveSlice.reducer,
+    robot: robotSlice.reducer,
   },
 });
 
