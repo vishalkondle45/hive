@@ -25,48 +25,53 @@ import {
   IconFolderSymlink,
   IconTrash,
 } from '@tabler/icons-react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import FileTable from '@/components/Drive/FileTable';
-import useFetchData from '@/hooks/useFetchData';
 import { apiCall, failure, openModal, Preview } from '@/lib/client_functions';
+import {
+  __setPath,
+  _setPath,
+  setDriveData,
+  setOpenMoveDialog,
+  setChecked,
+  setValue,
+  setFolderName,
+  setPreview,
+} from '@/store/features/driveSlice';
+import { RootState } from '@/store/store';
 
 const DrivePage = () => {
   const searchParams = useSearchParams();
   const currentFolder = searchParams.get('_id') ?? null;
   const router = useRouter();
-  const { data, refetch } = useFetchData(
-    `/api/drive/files${currentFolder ? `?parent=${currentFolder}` : ''}`,
-    () => router.push('/drive')
-  );
 
-  const [openMoveDialog, setOpenMoveDialog] = useState(false);
-  const [__path, __setPath] = useState('');
-  const [_path, _setPath] = useState<any[]>();
-  const [checked, setChecked] = useState<string[]>([]);
-  const [value, setValue] = useState<File[]>([]);
   const [opened, { open, close }] = useDisclosure(false);
-  const [folderName, setFolderName] = useState('Untitled folder');
+
   const ref = useRef<HTMLButtonElement>(null);
-  const [preview, setPreview] = useState('');
+
+  const dispatch = useDispatch();
+  const { driveData, openMoveDialog, __path, _path, checked, value, folderName, preview } =
+    useSelector((state: RootState) => state.drive);
 
   const handleNewFolder = async () => {
     await apiCall('/api/drive/files', { name: folderName, parent: currentFolder }, 'POST');
     close();
-    setFolderName('Untitled folder');
-    refetch();
+    dispatch(setFolderName('Untitled folder'));
+    getPath();
   };
 
   const getFile = async (Key: string) => {
     const res = await apiCall(`/api/drive/files/upload?Key=${encodeURI(Key)}`);
-    setPreview(res?.data);
+    dispatch(setPreview(res?.data));
   };
 
   const deleteFile = async () => {
     await apiCall(`/api/drive/files?_id=${JSON.stringify(checked)}`, null, 'DELETE');
-    refetch();
-    setChecked([]);
+    getPath();
+    dispatch(setChecked([]));
   };
 
   const handleSubmit = async () => {
@@ -82,7 +87,7 @@ const DrivePage = () => {
       value.forEach((file) => formData.append('file', file, file.name));
       formData.append('parent', currentFolder ?? '');
       await apiCall('/api/drive/files/upload', formData, 'POST');
-      refetch();
+      getPath();
       notifications.update({
         id,
         color: 'green',
@@ -94,7 +99,7 @@ const DrivePage = () => {
     } catch (err) {
       failure('Error uploading file');
     } finally {
-      setValue([]);
+      dispatch(setValue([]));
     }
   };
 
@@ -103,16 +108,25 @@ const DrivePage = () => {
 
   const moveFile = async (item: any) => {
     await apiCall('/api/drive/files', item, 'PUT');
-    setOpenMoveDialog(false);
-    _setPath([]);
-    __setPath('');
-    refetch();
-    setChecked([]);
+    dispatch(setOpenMoveDialog(false));
+    dispatch(_setPath([]));
+    dispatch(__setPath(item.__path));
+    getPath();
+    dispatch(setChecked([]));
   };
 
   const getPath = async () => {
-    const res = await apiCall(`/api/drive/files${__path ? `?parent=${__path}` : ''}`);
-    _setPath(res?.data?.files);
+    try {
+      const res = await apiCall(
+        `/api/drive/files${__path ? `?parent=${__path}` : currentFolder ? `?parent=${currentFolder}` : ''}`
+      );
+      dispatch(_setPath(res?.data?.files));
+      if (!__path) {
+        dispatch(setDriveData(res?.data));
+      }
+    } catch (err) {
+      router.push('/drive');
+    }
   };
 
   useEffect(() => {
@@ -123,12 +137,13 @@ const DrivePage = () => {
 
   useEffect(() => {
     getPath();
-  }, [__path]);
+  }, [__path, currentFolder]);
 
   return (
     <>
+      {__path}
       <Group mb="md" justify="space-between">
-        <Breadcrumbs path={data?.path} />
+        <Breadcrumbs path={driveData?.path} />
         <Group>
           <ActionIconGroup>
             {checked.length ? (
@@ -137,9 +152,9 @@ const DrivePage = () => {
                   variant="outline"
                   color="indigo"
                   onClick={() => {
-                    __setPath('');
+                    dispatch(__setPath(''));
                     getPath();
-                    setOpenMoveDialog(true);
+                    dispatch(setOpenMoveDialog(true));
                   }}
                 >
                   <IconFolderSymlink size={20} />
@@ -167,12 +182,23 @@ const DrivePage = () => {
           </ActionIconGroup>
         </Group>
       </Group>
-      <FileInput style={{ display: 'none' }} ref={ref} value={value} onChange={setValue} multiple />
-      <FileTable data={data?.files} checked={checked} setChecked={setChecked} openFile={openFile} />
+      <FileInput
+        style={{ display: 'none' }}
+        ref={ref}
+        value={value}
+        onChange={(values) => dispatch(setValue(values))}
+        multiple
+      />
+      <FileTable
+        data={driveData?.files}
+        checked={checked}
+        setChecked={(checks: string[]) => dispatch(setChecked(checks))}
+        openFile={openFile}
+      />
       <Modal title="New Folder" opened={opened} onClose={close}>
         <TextInput
           value={folderName}
-          onChange={(e) => setFolderName(e.target.value)}
+          onChange={(e) => dispatch(setFolderName(e.target.value))}
           placeholder="Untitled file"
           data-autofocus
           onFocus={(e) => e.target.select()}
@@ -190,16 +216,17 @@ const DrivePage = () => {
         title={_path?.[0]?.parent?.name ? `/${_path?.[0]?.parent?.name}` : '/drive'}
         opened={!!openMoveDialog}
         onClose={() => {
-          setOpenMoveDialog(false);
-          _setPath([]);
-          __setPath('');
+          dispatch(setOpenMoveDialog(false));
+          dispatch(_setPath([]));
+          dispatch(__setPath(''));
         }}
       >
+        {__path}
         <Table striped highlightOnHover withTableBorder withColumnBorders>
           <Table.Tr>
             <Table.Td
               style={{ cursor: 'pointer' }}
-              onClick={() => __setPath(_path?.[0]?.parent?.parent || '')}
+              onClick={() => dispatch(__setPath(_path?.[0]?.parent?.parent || '/'))}
             >
               ...
             </Table.Td>
@@ -211,7 +238,7 @@ const DrivePage = () => {
                 <Table.Td>
                   <Group
                     style={{ cursor: !test?.link ? 'pointer' : 'default' }}
-                    onClick={() => !test?.link && __setPath(test?._id || '')}
+                    onClick={() => !test?.link && dispatch(__setPath(test?._id || '/'))}
                   >
                     <ThemeIcon variant="transparent" size="sm">
                       {test?.link ? <IconFile /> : <IconFolder />}
@@ -226,9 +253,9 @@ const DrivePage = () => {
           <Button
             color="red"
             onClick={() => {
-              setOpenMoveDialog(false);
-              _setPath([]);
-              __setPath('');
+              dispatch(setOpenMoveDialog(false));
+              dispatch(_setPath([]));
+              dispatch(__setPath(''));
             }}
           >
             Cancel
@@ -243,7 +270,7 @@ const DrivePage = () => {
         size="auto"
         centered
         opened={!!preview}
-        onClose={() => setPreview('')}
+        onClose={() => dispatch(setPreview(''))}
         title={
           <Button
             onClick={() => window.open(preview, '_blank', 'noopener,noreferrer')}

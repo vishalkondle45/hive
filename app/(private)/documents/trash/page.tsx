@@ -2,19 +2,21 @@
 
 import { Button, Container, Group, Modal, SimpleGrid, Text, TextInput } from '@mantine/core';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { apiCall } from '@/lib/client_functions';
-import { DocumentType } from '@/models/Document';
 import { DocumentCard } from '@/components/Document';
+import { RootState } from '@/store/store';
+import { resetRename, setDocs, setRename } from '@/store/features/documentSlice';
 
 const DocumentsPage = () => {
   const router = useRouter();
-  const [docs, setDocs] = useState<DocumentType[]>([]);
-  const [rename, setRename] = useState({ _id: '', title: '' });
+  const { docs, rename } = useSelector((state: RootState) => state.document);
+  const dispatch = useDispatch();
 
   const getDocuments = async () => {
     const res = await apiCall('/api/documents?isTrashed=true');
-    setDocs(res?.data);
+    dispatch(setDocs(res?.data));
   };
 
   const updateDocument = async (updatedData: any) => {
@@ -33,14 +35,14 @@ const DocumentsPage = () => {
 
   const onRename = (_id: string, title: string) => {
     if (_id) {
-      setRename({ _id, title });
+      dispatch(setRename({ _id, title }));
     }
   };
 
   const renameDocument = async () => {
     await apiCall('/api/documents', { title: rename?.title, _id: rename?._id }, 'PUT');
     getDocuments();
-    setRename({ _id: '', title: '' });
+    dispatch(resetRename());
   };
 
   useEffect(() => {
@@ -66,16 +68,16 @@ const DocumentsPage = () => {
           ))}
         </SimpleGrid>
       </Container>
-      <Modal opened={!!rename._id} onClose={() => setRename({ _id: '', title: '' })} title="Rename">
+      <Modal opened={!!rename._id} onClose={() => dispatch(resetRename())} title="Rename">
         <TextInput
           value={rename?.title}
-          onChange={(e) => setRename({ ...rename, title: e.target.value })}
+          onChange={(e) => dispatch(setRename({ ...rename, title: e.target.value }))}
           data-autofocus
           onFocus={(e) => e.target.select()}
           onKeyDown={(e) => e.key === 'Enter' && renameDocument()}
         />
         <Group mt="md" justify="right">
-          <Button color="red" onClick={() => setRename({ _id: '', title: '' })}>
+          <Button color="red" onClick={() => dispatch(resetRename())}>
             Cancel
           </Button>
           <Button color="teal" onClick={renameDocument}>

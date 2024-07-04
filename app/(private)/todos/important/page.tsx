@@ -21,7 +21,8 @@ import {
   IconCircleCheck,
   IconTrash,
 } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { TodoPageActions } from '@/components/Todo';
 import TodoSkelton from '@/components/Todo/TodoSkelton';
 import useFetchData from '@/hooks/useFetchData';
@@ -29,10 +30,13 @@ import { TodoType } from '@/models/Todo';
 import Todo from '@/components/Todo/Todo';
 import { COLORS, STYLES } from '@/lib/constants';
 import { apiCall, openModal } from '@/lib/client_functions';
+import { RootState } from '@/store/store';
+import { setTodoList } from '@/store/features/todoSlice';
 
 const TodosPage = () => {
   const { data, refetch, loading } = useFetchData('/api/todos?type=important');
-  const [todoList, setTodoList] = useState<any[]>([]);
+  const dispatch = useDispatch();
+  const { todoList } = useSelector((state: RootState) => state.todo);
 
   const form = useForm({
     initialValues: {
@@ -67,7 +71,7 @@ const TodosPage = () => {
 
   const getTodoLists = async () => {
     const res = await apiCall('/api/todos/todo-list');
-    setTodoList(res?.data);
+    dispatch(setTodoList(res?.data));
   };
 
   const onDelete = () => {
@@ -81,6 +85,11 @@ const TodosPage = () => {
 
   useEffect(() => {
     getTodoLists();
+
+    () => {
+      form.reset();
+      dispatch(setTodoList([]));
+    };
   }, []);
 
   return (

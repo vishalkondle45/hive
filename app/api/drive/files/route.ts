@@ -25,7 +25,11 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'You are not authorized' }, { status: 401 });
     }
     await startDb();
-    const parent = req.nextUrl.searchParams.get('parent') ?? null;
+    let parent = req.nextUrl.searchParams.get('parent') ?? null;
+
+    if (parent === '/') {
+      parent = null;
+    }
 
     const files = await File.find({ user: session?.user._id, parent })
       .select('-createdAt -user -__v')
@@ -89,6 +93,9 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: 'You are not authorized' }, { status: 401 });
     }
     const body = await req.json();
+    if (body?.parent === '/') {
+      body.parent = undefined;
+    }
     await startDb();
     let response: any[] = [];
     await Promise.all(

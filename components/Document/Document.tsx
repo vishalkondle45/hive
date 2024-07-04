@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import {
   ActionIcon,
   Button,
@@ -14,6 +13,7 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
+import { useDispatch, useSelector } from 'react-redux';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { IconPhoto, IconPrinter } from '@tabler/icons-react';
 import TaskItem from '@tiptap/extension-task-item';
@@ -33,6 +33,8 @@ import Image from '@tiptap/extension-image';
 import usePreventCtrlS from '@/hooks/usePreventCtrlS';
 import { FONTS } from '@/lib/constants';
 import { apiCall, failure } from '@/lib/client_functions';
+import { RootState } from '@/store/store';
+import { setImage } from '@/store/features/documentSlice';
 
 interface Props {
   content: string;
@@ -42,7 +44,8 @@ interface Props {
 const Document = ({ content, onUpdate }: Props) => {
   const [opened, { open, close }] = useDisclosure(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const [image, setImage] = useState<File | null>(null);
+  const dispatch = useDispatch();
+  const { image } = useSelector((state: RootState) => state.document);
   usePreventCtrlS();
 
   const editor = useEditor({
@@ -91,7 +94,7 @@ const Document = ({ content, onUpdate }: Props) => {
 
   const onClose = () => {
     close();
-    setImage(null);
+    dispatch(setImage(null));
   };
 
   const onUpload = async () => {
@@ -209,7 +212,7 @@ const Document = ({ content, onUpdate }: Props) => {
             label="Upload Image"
             placeholder="Image.jpeg"
             value={image}
-            onChange={(img) => setImage(img)}
+            onChange={(img) => dispatch(setImage(img))}
             accept="image/*"
             required
           />

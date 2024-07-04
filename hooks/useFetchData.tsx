@@ -1,17 +1,22 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
 import { apiCall } from '@/lib/client_functions';
+import { start, stop } from '@/store/features/loaderSlice';
+import { RootState } from '@/store/store';
+import { set } from '@/store/features/dataSlice';
 
 export default function useFetchData(url: string, cb?: () => void) {
-  const [data, setData] = useState(null) as any;
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const loading = useSelector((state: RootState) => state.loader.loading);
+  const data = useSelector((state: RootState) => state.data.data);
 
   const refetch = async () => {
-    setLoading(true);
+    dispatch(start());
     const res: any[] | any = await apiCall(url, null, 'GET', cb);
-    setData(res?.data);
-    setLoading(false);
+    dispatch(set(res?.data));
+    dispatch(stop());
   };
 
   useEffect(() => {

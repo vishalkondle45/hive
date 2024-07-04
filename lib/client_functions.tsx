@@ -7,8 +7,8 @@ import {
   IconFile,
   IconFileTypeDoc,
   IconFileTypePdf,
-  IconMovie,
   IconMusic,
+  IconPhoto,
   IconVideo,
   IconX,
 } from '@tabler/icons-react';
@@ -117,7 +117,7 @@ export const fileIcon = (url: string) => {
     case 'jpg':
     case 'png':
     case 'svg':
-      return <IconVideo size={18} />;
+      return <IconPhoto size={18} />;
     case 'pdf':
       return <IconFileTypePdf size={18} />;
     case 'doc':
@@ -127,7 +127,7 @@ export const fileIcon = (url: string) => {
     case 'mp3':
       return <IconMusic size={18} />;
     case 'mp4':
-      return <IconMovie size={18} />;
+      return <IconVideo size={18} />;
     default:
       return <IconFile size={18} />;
   }

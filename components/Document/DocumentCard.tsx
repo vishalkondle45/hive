@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ActionIcon, Button, Card, Group, Popover, rem, Stack, Text } from '@mantine/core';
 import {
   IconCursorText,
@@ -9,8 +9,11 @@ import {
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useHover } from '@mantine/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { DocumentType } from '@/models/Document';
 import { openModal } from '@/lib/client_functions';
+import { RootState } from '@/store/store';
+import { setOpened } from '@/store/features/documentSlice';
 
 interface Props {
   doc: DocumentType;
@@ -21,7 +24,9 @@ interface Props {
 }
 
 export const DocumentCard = ({ doc, goTo, onRename, updateDocument, deleteDocument }: Props) => {
-  const [opened, setOpened] = useState(false);
+  const { opened } = useSelector((state: RootState) => state.document);
+  const dispatch = useDispatch();
+
   const { hovered, ref } = useHover();
   return (
     <Card
@@ -72,13 +77,13 @@ export const DocumentCard = ({ doc, goTo, onRename, updateDocument, deleteDocume
               </ActionIcon>
             </Group>
           ) : (
-            <Popover opened={opened} onChange={setOpened}>
+            <Popover opened={opened} onChange={(value: boolean) => dispatch(setOpened(value))}>
               <Popover.Target>
                 <ActionIcon
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    setOpened(!opened);
+                    dispatch(setOpened(!opened));
                   }}
                   variant="subtle"
                   color="gray"
@@ -98,7 +103,7 @@ export const DocumentCard = ({ doc, goTo, onRename, updateDocument, deleteDocume
                     onClick={(e) => {
                       e.stopPropagation();
                       onRename(String(doc?._id), doc?.title);
-                      setOpened(false);
+                      dispatch(setOpened(false));
                     }}
                   >
                     Rename
@@ -112,7 +117,7 @@ export const DocumentCard = ({ doc, goTo, onRename, updateDocument, deleteDocume
                     onClick={(e) => {
                       e.stopPropagation();
                       updateDocument({ _id: String(doc?._id), isTrashed: true });
-                      setOpened(!opened);
+                      dispatch(setOpened(!opened));
                     }}
                   >
                     Trash
