@@ -1,3 +1,4 @@
+import { Container } from '@mantine/core';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
@@ -12,6 +13,6 @@ export default async function RootLayout({ children }: Props) {
   if (!session?.user) redirect('/auth/login');
 
   if (session.user) {
-    return <>{children}</>;
+    return <Container px={0}>{children}</Container>;
   }
 }

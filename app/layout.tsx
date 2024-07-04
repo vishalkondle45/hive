@@ -2,16 +2,17 @@ import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { NavigationProgress } from '@mantine/nprogress';
 import { ModalsProvider } from '@mantine/modals';
-import Layout from '@/components/Layout';
-import AuthProvider from '@/Providers/AuthProvider';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 import '@mantine/nprogress/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/tiptap/styles.css';
 import '@mantine/spotlight/styles.css';
+import '@mantine/code-highlight/styles.css';
 import { theme } from '../theme';
 import { StoreProvider } from '@/store/StoreProvder';
+import Layout from '@/components/Layout';
+import AuthProvider from '@/Providers/AuthProvider';
 
 export const metadata = { title: 'Dream', description: '' };
 

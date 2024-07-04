@@ -132,3 +132,45 @@ export const fileIcon = (url: string) => {
       return <IconFile size={18} />;
   }
 };
+
+export function getRandomElements(arr: any[]) {
+  return arr.sort(() => Math.random() - 0.5);
+}
+
+export const textToSpeech = (
+  string: string,
+  open: () => void = () => {},
+  close: () => void = () => {}
+) => {
+  if (window.speechSynthesis.speaking) {
+    speechSynthesis.cancel();
+    close();
+  } else {
+    open();
+    const msg = new SpeechSynthesisUtterance(string);
+    const [voice] = speechSynthesis.getVoices();
+    msg.voice = voice;
+    msg.lang = 'en-IN';
+    window.speechSynthesis.speak(msg);
+    window.onbeforeunload = function (e) {
+      if (window.speechSynthesis.speaking) {
+        e.preventDefault();
+        msg.addEventListener('end', () => {
+          speechSynthesis.cancel();
+          close();
+        });
+      }
+    };
+    msg.onend = function () {
+      speechSynthesis.cancel();
+      close();
+    };
+  }
+};
+
+export const renderBoldText = (text: string) => {
+  const boldRegex = /\*\*(.*?)\*\*/g;
+  return text
+    .split(boldRegex)
+    .map((part, index) => (index % 2 === 0 ? part : `<strong key={index}>${part}</strong>`));
+};

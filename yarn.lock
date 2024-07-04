@@ -3211,6 +3211,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@google/generative-ai@npm:^0.14.1":
+  version: 0.14.1
+  resolution: "@google/generative-ai@npm:0.14.1"
+  checksum: 10c0/96266e9cfa8aaf887767a10804c5d046c3e6e04a046605f72ae1cb6d49526f5b7432a26a2962f22bf1a7d6ebcce60ae819b9e47e398fb383012457da36bc45ac
+  languageName: node
+  linkType: hard
+
 "@humanwhocodes/config-array@npm:^0.11.14":
   version: 0.11.14
   resolution: "@humanwhocodes/config-array@npm:0.11.14"
@@ -10154,6 +10161,7 @@ __metadata:
     "@aws-sdk/client-s3": "npm:^3.606.0"
     "@aws-sdk/s3-request-presigner": "npm:^3.606.0"
     "@babel/core": "npm:^7.24.0"
+    "@google/generative-ai": "npm:^0.14.1"
     "@mantine/carousel": "npm:^7.11.0"
     "@mantine/charts": "npm:^7.11.0"
     "@mantine/code-highlight": "npm:^7.11.0"
