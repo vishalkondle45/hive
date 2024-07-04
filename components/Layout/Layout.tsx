@@ -14,7 +14,8 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
-import { useDisclosure, useNetwork } from '@mantine/hooks';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNetwork } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconGridDots, IconList, IconLogout, IconUser } from '@tabler/icons-react';
 import { signOut, useSession } from 'next-auth/react';
@@ -24,21 +25,30 @@ import { App } from '../App';
 import { APPS } from '@/lib/constants';
 import { apiCall, getInitials } from '@/lib/client_functions';
 import SpotLight from '../SpotLight';
+import { RootState } from '@/store/store';
+import {
+  closeMobile,
+  setAppsOpened,
+  setUserOpened,
+  toggleDesktop,
+  toggleMobile,
+} from '@/store/features/layoutSlice';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const session = useSession();
   const isLoggedIn = session?.status === 'authenticated';
   const isLoading = session?.status === 'loading';
   const router = useRouter();
-
-  const network = useNetwork();
-  const [mobileOpened, { toggle: toggleMobile, close }] = useDisclosure();
-  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
-  const [opened, setOpened] = useState(false);
-  const [opened1, setOpened1] = useState(false);
   const pathname = usePathname();
   const rootpath = pathname.split('/')[1];
+  const network = useNetwork();
+
   const [APP, setAPP] = useState(APPS?.find((app) => `/${rootpath}` === app?.path));
+
+  const { mobileOpened, desktopOpened, appsOpened, userOpened } = useSelector(
+    (state: RootState) => state.layout
+  );
+  const dispatch = useDispatch();
 
   const navigateTo = useCallback(
     (path?: string) => {
@@ -46,7 +56,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         if (path !== pathname) {
           router.push(path);
         }
-        close();
+        dispatch(closeMobile());
       }
     },
     [pathname]
@@ -103,14 +113,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Burger
                   opened={mobileOpened}
                   hidden={!isLoggedIn}
-                  onClick={toggleMobile}
+                  onClick={() => dispatch(toggleMobile())}
                   hiddenFrom="sm"
                   size="sm"
                 />
                 <Burger
                   opened={desktopOpened}
                   hidden={!isLoggedIn}
-                  onClick={toggleDesktop}
+                  onClick={() => dispatch(toggleDesktop())}
                   visibleFrom="sm"
                   size="sm"
                 />
@@ -132,8 +142,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <Group gap="xs">
                 <SpotLight />
                 <Popover
-                  opened={opened}
-                  onChange={setOpened}
+                  opened={appsOpened}
+                  onChange={(old) => dispatch(setAppsOpened(old))}
                   position="bottom"
                   withArrow
                   shadow="md"
@@ -145,7 +155,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       color="gray"
                       radius="xl"
                       size={rem(40)}
-                      onClick={() => setOpened((o) => !o)}
+                      onClick={() => dispatch(setAppsOpened(!appsOpened))}
                     >
                       <IconGridDots stroke={3} style={{ width: rem(20), height: rem(20) }} />
                     </ActionIcon>
@@ -154,7 +164,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     <SimpleGrid spacing="xs" cols={3}>
                       {APPS?.map((app) => (
                         <App
-                          setOpened={setOpened}
+                          setOpened={(value: boolean) => dispatch(setAppsOpened(value))}
                           isCurrent={APP?.path === app?.path}
                           key={app?.path}
                           app={app}
@@ -164,8 +174,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   </Popover.Dropdown>
                 </Popover>
                 <Popover
-                  opened={opened1}
-                  onChange={setOpened1}
+                  opened={userOpened}
+                  onChange={(value: boolean) => dispatch(setUserOpened(value))}
                   position="bottom"
                   withArrow
                   shadow="xl"
@@ -179,7 +189,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         color={APP?.color}
                         radius="xl"
                         size={rem(40)}
-                        onClick={() => setOpened1((o) => !o)}
+                        onClick={() => dispatch(setUserOpened(!userOpened))}
                         style={{ cursor: 'pointer' }}
                       >
                         {getInitials(session?.data?.user?.name)}

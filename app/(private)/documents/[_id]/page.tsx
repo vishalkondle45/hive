@@ -1,34 +1,31 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
 import { useDebouncedValue } from '@mantine/hooks';
 import { ActionIcon, Group, Loader, rem, Text, TextInput, ThemeIcon } from '@mantine/core';
 import { IconCloudCheck, IconStar, IconStarFilled, IconTrash } from '@tabler/icons-react';
 import Document from '@/components/Document';
 import { STYLES } from '@/lib/constants';
 import { apiCall } from '@/lib/client_functions';
+import { RootState } from '@/store/store';
+import { setData, setSyncing } from '@/store/features/documentSlice';
 
 const DocumentPage = ({ params }: { params: { _id: string } }) => {
-  const [syncing, setSyncing] = useState(false);
-  const [data, setData] = useState({
-    _id: '',
-    title: '',
-    content: '',
-    isImportant: false,
-    isTrashed: false,
-  });
+  const { syncing, data } = useSelector((state: RootState) => state.document);
+  const dispatch = useDispatch();
 
   const [debounced] = useDebouncedValue(data, 500);
 
   const getDocument = async (_id: string) => {
     const res = await apiCall(`/api/documents?_id=${_id}`);
-    setData(res?.data);
+    dispatch(setData(res?.data));
   };
 
   const updateDocument = async (updatedData: any) => {
-    setSyncing(true);
+    dispatch(setSyncing(true));
     await apiCall('/api/documents', updatedData, 'PUT');
-    setSyncing(false);
+    dispatch(setSyncing(false));
   };
 
   useEffect(() => {
@@ -52,10 +49,12 @@ const DocumentPage = ({ params }: { params: { _id: string } }) => {
         <TextInput
           styles={STYLES}
           value={data?.title}
-          onChange={(e) => setData({ ...data, title: e.target.value })}
+          onChange={(e) => dispatch(setData({ ...data, title: e.target.value }))}
           placeholder="Title"
           onBlur={() =>
-            setData({ ...data, title: data?.title ? data?.title.trim() : 'Untitled Document' })
+            dispatch(
+              setData({ ...data, title: data?.title ? data?.title.trim() : 'Untitled Document' })
+            )
           }
           miw={rem(200)}
           w={rem((data.title.length + 1) * 9)}
@@ -63,7 +62,7 @@ const DocumentPage = ({ params }: { params: { _id: string } }) => {
         <ActionIcon
           size="sm"
           variant="transparent"
-          onClick={() => setData({ ...data, isImportant: !data?.isImportant })}
+          onClick={() => dispatch(setData({ ...data, isImportant: !data?.isImportant }))}
           color="yellow"
         >
           {data?.isImportant ? <IconStarFilled /> : <IconStar />}
@@ -71,7 +70,7 @@ const DocumentPage = ({ params }: { params: { _id: string } }) => {
         <ActionIcon
           size="sm"
           variant="transparent"
-          onClick={() => setData({ ...data, isTrashed: !data?.isTrashed })}
+          onClick={() => dispatch(setData({ ...data, isTrashed: !data?.isTrashed }))}
           color="red"
         >
           <IconTrash />
@@ -90,7 +89,10 @@ const DocumentPage = ({ params }: { params: { _id: string } }) => {
         )}
         <Group gap="xs"></Group>
       </Group>
-      <Document content={data?.content} onUpdate={(content) => setData({ ...data, content })} />
+      <Document
+        content={data?.content}
+        onUpdate={(content) => dispatch(setData({ ...data, content }))}
+      />
     </>
   );
 };

@@ -1,15 +1,29 @@
 'use client';
 
+import { useEffect } from 'react';
 import { ActionIcon, rem } from '@mantine/core';
+import { useDispatch, useSelector } from 'react-redux';
 import { Spotlight, spotlight } from '@mantine/spotlight';
 import { IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import useFetchData from '@/hooks/useFetchData';
 import { APPS } from '@/lib/constants';
+import { setSpotlightItems } from '@/store/features/spotlightSlice';
+import { RootState } from '@/store/store';
+import { apiCall } from '@/lib/client_functions';
 
 export default function SpotLight() {
-  const { data } = useFetchData('/api/spotlight');
   const router = useRouter();
+  const dispatch = useDispatch();
+  const data = useSelector((state: RootState) => state.spotlight.data);
+
+  const getSpotlight = async () => {
+    const res = await apiCall('/api/spotlight', null, 'GET');
+    dispatch(setSpotlightItems(res?.data));
+  };
+
+  useEffect(() => {
+    getSpotlight();
+  }, []);
 
   if (!data) {
     return <></>;

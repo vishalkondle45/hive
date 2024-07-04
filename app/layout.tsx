@@ -11,6 +11,7 @@ import '@mantine/dates/styles.css';
 import '@mantine/tiptap/styles.css';
 import '@mantine/spotlight/styles.css';
 import { theme } from '../theme';
+import { StoreProvider } from '@/store/StoreProvder';
 
 export const metadata = { title: 'Dream', description: '' };
 
@@ -25,15 +26,17 @@ export default function RootLayout({ children }: { children: any }) {
         />
       </head>
       <body style={{ backgroundColor: '#EFF3F7' }}>
-        <AuthProvider>
-          <MantineProvider theme={theme}>
-            <NavigationProgress />
-            <Notifications />
-            <ModalsProvider>
-              <Layout>{children}</Layout>
-            </ModalsProvider>
-          </MantineProvider>
-        </AuthProvider>
+        <StoreProvider>
+          <AuthProvider>
+            <MantineProvider theme={theme}>
+              <NavigationProgress />
+              <Notifications />
+              <ModalsProvider>
+                <Layout>{children}</Layout>
+              </ModalsProvider>
+            </MantineProvider>
+          </AuthProvider>
+        </StoreProvider>
       </body>
     </html>
   );
