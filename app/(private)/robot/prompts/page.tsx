@@ -37,8 +37,9 @@ const Page = () => {
   const deleteAllPrompts = async () => {
     nprogress.start();
     await apiCall('/api/robot', null, 'DELETE');
-    setPrompts([]);
+    dispatch(setPrompts([]));
     nprogress.complete();
+    router.push('/robot');
   };
 
   const openModal = () =>
