@@ -152,7 +152,7 @@ export const textToSpeech = (
     msg.voice = voice;
     msg.lang = 'en-IN';
     window.speechSynthesis.speak(msg);
-    window.onbeforeunload = function (e) {
+    window.onbeforeunload = (e) => {
       if (window.speechSynthesis.speaking) {
         e.preventDefault();
         msg.addEventListener('end', () => {
@@ -161,7 +161,7 @@ export const textToSpeech = (
         });
       }
     };
-    msg.onend = function () {
+    msg.onend = () => {
       speechSynthesis.cancel();
       close();
     };
@@ -170,7 +170,5 @@ export const textToSpeech = (
 
 export const renderBoldText = (text: string) => {
   const boldRegex = /\*\*(.*?)\*\*/g;
-  return text
-    .split(boldRegex)
-    .map((part, index) => (index % 2 === 0 ? part : `<strong key={index}>${part}</strong>`));
+  return text.split(boldRegex);
 };

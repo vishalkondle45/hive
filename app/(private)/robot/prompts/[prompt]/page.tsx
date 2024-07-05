@@ -1,9 +1,8 @@
 'use client';
 
-import { CodeHighlight } from '@mantine/code-highlight';
+import { CodeHighlightTabs } from '@mantine/code-highlight';
 import {
   ActionIcon,
-  Box,
   Container,
   CopyButton,
   Divider,
@@ -35,14 +34,27 @@ const CodeRenderer = ({ text }: { text: string }) => {
   const codeRegex = /```([\s\S]*?)```/g;
   return text.split(codeRegex).map((part, index) => {
     if (index % 2 === 0) {
-      return <Text key={index} dangerouslySetInnerHTML={{ __html: part }} />;
+      return (
+        <Text
+          key={index}
+          dangerouslySetInnerHTML={{ __html: text.split(codeRegex).length === 1 ? part : '' }}
+        />
+      );
     }
     const [firstLine, ...remainingLines] = part.split('\n');
     return (
-      <Box key={index}>
-        <Text key={index} dangerouslySetInnerHTML={{ __html: firstLine }} fw={700} />
-        <CodeHighlight code={remainingLines.join('\n')} language={firstLine || 'tsx'} />
-      </Box>
+      <Paper key={index} withBorder>
+        <CodeHighlightTabs
+          code={[
+            {
+              fileName: text.split(codeRegex)[index - 1] || 'Code:',
+              code: remainingLines.join('\n') || '',
+              language: firstLine || 'tsx',
+            },
+          ]}
+          withExpandButton
+        />
+      </Paper>
     );
   });
 };
@@ -78,14 +90,13 @@ const Page = () => {
     getPrompt();
   }, []);
 
-  useEffect(() => {
-    console.log('prompt genearated');
-
-    return () => {
+  useEffect(
+    () => () => {
       speechSynthesis.cancel();
       nprogress.stop();
-    };
-  }, []);
+    },
+    []
+  );
 
   const sendMessage = async (prompt: string) => {
     if (prompt === '') {
