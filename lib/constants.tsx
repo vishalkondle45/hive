@@ -140,7 +140,6 @@ export const APPS: AppType[] = [
 export const COLORS = [
   'blue',
   'red',
-  'green',
   'indigo',
   'teal',
   'violet',
@@ -148,6 +147,8 @@ export const COLORS = [
   'cyan',
   'grape',
   'lime',
+  'orange',
+  'yellow',
 ];
 
 export const STYLES = {

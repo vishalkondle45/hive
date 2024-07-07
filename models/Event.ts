@@ -1,4 +1,5 @@
 import mongoose, { Model, model, models, Schema, Types } from 'mongoose';
+import { COLORS } from '@/lib/constants';
 
 export interface EventDocument extends Document {
   _id?: Types.ObjectId;
@@ -7,7 +8,7 @@ export interface EventDocument extends Document {
   from: Date;
   to: Date;
   isAllDay: boolean;
-  category?: mongoose.Types.ObjectId;
+  color: string;
 }
 
 const eventSchema = new Schema<EventDocument, {}>(
@@ -34,10 +35,11 @@ const eventSchema = new Schema<EventDocument, {}>(
       type: Boolean,
       default: false,
     },
-    category: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      default: null,
+    color: {
+      type: String,
+      enum: COLORS,
+      default: 'blue',
+      required: true,
     },
   },
   { timestamps: true }

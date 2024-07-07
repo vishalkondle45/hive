@@ -8,7 +8,7 @@ import {
   ScrollArea,
   Stack,
   Text,
-  ThemeIcon,
+  Tooltip,
 } from '@mantine/core';
 import {
   IconCalendar,
@@ -31,10 +31,11 @@ interface Props {
   setDate: (date: Date) => void;
   close: () => void;
   events?: EventDocument[];
-  newEvent: () => void;
+  newEvent: (time?: number) => void;
+  handleOpenEvent: (event: EventDocument) => void;
 }
 
-export const SelectedDay = ({ date, setDate, close, newEvent, events }: Props) => {
+export const SelectedDay = ({ date, setDate, close, newEvent, events, handleOpenEvent }: Props) => {
   const ref = useRef(null);
 
   useMemo(() => {
@@ -45,7 +46,7 @@ export const SelectedDay = ({ date, setDate, close, newEvent, events }: Props) =
 
   return (
     <>
-      <Group my="xs" justify="space-between">
+      <Group mb="xs" justify="space-between">
         <ActionIcon size="md" color="red" variant="outline" onClick={close}>
           <IconX />
         </ActionIcon>
@@ -79,7 +80,7 @@ export const SelectedDay = ({ date, setDate, close, newEvent, events }: Props) =
           </ActionIconGroup>
         </Group>
         <ActionIconGroup>
-          <ActionIcon size="md" color="green" variant="outline" onClick={newEvent}>
+          <ActionIcon size="md" color="green" variant="outline" onClick={() => newEvent()}>
             <IconPlus />
           </ActionIcon>
         </ActionIconGroup>
@@ -94,30 +95,33 @@ export const SelectedDay = ({ date, setDate, close, newEvent, events }: Props) =
                 dayjs(event?.to).add(1, 'day').startOf('day')
               )
           )
-          ?.map((event, id) => (
-            <Button
-              size="compact-md"
-              key={String(id)}
-              variant="light"
-              radius={0}
-              style={{
-                display: 'flex',
-                position: 'relative',
-                textAlign: 'left',
-                cursor: 'pointer',
-              }}
-              fullWidth
-              onClick={() => {}}
-              title={`${dayjs(event?.from).format('DD MMM YY')} - ${dayjs(event?.to).format('DD MMM YY')}`}
-              autoContrast
-              leftSection={<IconCalendar />}
+          ?.map((event) => (
+            <Tooltip
+              key={String(event._id)}
+              label={`${dayjs(event?.from).format('DD MMM YY')} - ${dayjs(event?.to).format('DD MMM YY')}`}
             >
-              {event?.title}
-            </Button>
+              <Button
+                size="compact-md"
+                variant="filled"
+                radius={0}
+                style={{
+                  display: 'flex',
+                  position: 'relative',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                }}
+                fullWidth
+                onClick={() => handleOpenEvent(event)}
+                leftSection={<IconCalendar />}
+                color={event?.color}
+              >
+                {event?.title}
+              </Button>
+            </Tooltip>
           ))
           .reverse()}
       </Stack>
-      <ScrollArea.Autosize mt="sm" h="auto" viewportRef={ref}>
+      <ScrollArea.Autosize pt="xs" h="auto" w="100%" viewportRef={ref} mx="auto">
         <Stack pt="md" gap={0}>
           {new Array(24).fill(0).map((_, i) => (
             <Blockquote
@@ -130,16 +134,20 @@ export const SelectedDay = ({ date, setDate, close, newEvent, events }: Props) =
               radius={0}
               ml="md"
               icon={
-                <ThemeIcon
-                  variant="filled"
-                  color={i > 5 && i < 18 ? 'yellow.7' : 'dark.4'}
-                  radius="xl"
-                >
-                  {hoursIcons[i]}
-                </ThemeIcon>
+                <Tooltip label={`Create event at ${i}:00`}>
+                  <ActionIcon
+                    variant="filled"
+                    color={i > 5 && i < 18 ? 'yellow.7' : 'dark.4'}
+                    radius="xl"
+                    style={{ zIndex: 2 }}
+                    onClick={() => newEvent(i)}
+                  >
+                    {hoursIcons[i]}
+                  </ActionIcon>
+                </Tooltip>
               }
             >
-              <Group wrap="nowrap" gap={0} align="self-start">
+              <Group pl="lg" w="100%" wrap="nowrap" gap={0} align="self-start">
                 {events
                   ?.filter(
                     (event) =>
@@ -152,7 +160,8 @@ export const SelectedDay = ({ date, setDate, close, newEvent, events }: Props) =
                       event={event}
                       height={dayjs(event?.to).diff(dayjs(event?.from), 'minutes')}
                       maxHeight={(24 - dayjs(event?.from).get('hour')) * 60}
-                      title={`${dayjs(event?.from).format('HH:mm')} - ${dayjs(event?.to).format('HH:mm')}`}
+                      title={`${event?.title} | ${dayjs(event?.from).format('HH:mm')} - ${dayjs(event?.to).format('HH:mm')}`}
+                      handleOpenEvent={handleOpenEvent}
                     />
                   ))}
                 {i === 0 &&
@@ -169,7 +178,8 @@ export const SelectedDay = ({ date, setDate, close, newEvent, events }: Props) =
                         event={event}
                         height={dayjs(event?.to).diff(dayjs(date).startOf('day'), 'minutes')}
                         maxHeight={(0 + dayjs(event?.to).get('hour')) * 60}
-                        title={`${dayjs(event?.from).format('DD MMM YY HH:mm')} - ${dayjs(event?.to).format('DD MMM YY HH:mm')}`}
+                        title={`${event?.title} | ${dayjs(event?.from).format('DD MMM YY HH:mm')} - ${dayjs(event?.to).format('DD MMM YY HH:mm')}`}
+                        handleOpenEvent={handleOpenEvent}
                       />
                     ))}
               </Group>
