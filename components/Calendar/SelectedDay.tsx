@@ -47,7 +47,7 @@ export const SelectedDay = ({ date, setDate, close, newEvent, events, handleOpen
   return (
     <>
       <Group mb="xs" justify="space-between">
-        <ActionIcon size="md" color="red" variant="outline" onClick={close}>
+        <ActionIcon size="md" color="red" variant="filled" onClick={close}>
           <IconX />
         </ActionIcon>
         <Group style={{ overflow: 'scroll' }} wrap="nowrap">
@@ -55,7 +55,6 @@ export const SelectedDay = ({ date, setDate, close, newEvent, events, handleOpen
           <ActionIconGroup>
             <ActionIcon
               size="md"
-              color="gray"
               variant="outline"
               onClick={() => setDate(dayjs(date).subtract(1, 'day').toDate())}
             >
@@ -63,7 +62,6 @@ export const SelectedDay = ({ date, setDate, close, newEvent, events, handleOpen
             </ActionIcon>
             <ActionIcon
               size="md"
-              color="gray"
               variant="outline"
               onClick={() => setDate(dayjs().startOf('day').toDate())}
             >
@@ -71,7 +69,6 @@ export const SelectedDay = ({ date, setDate, close, newEvent, events, handleOpen
             </ActionIcon>
             <ActionIcon
               size="md"
-              color="gray"
               variant="outline"
               onClick={() => setDate(dayjs(date).add(1, 'day').toDate())}
             >
@@ -80,7 +77,7 @@ export const SelectedDay = ({ date, setDate, close, newEvent, events, handleOpen
           </ActionIconGroup>
         </Group>
         <ActionIconGroup>
-          <ActionIcon size="md" color="green" variant="outline" onClick={() => newEvent()}>
+          <ActionIcon size="md" color="green" variant="filled" onClick={() => newEvent()}>
             <IconPlus />
           </ActionIcon>
         </ActionIconGroup>
