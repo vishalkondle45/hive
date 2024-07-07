@@ -9,6 +9,7 @@ import '@mantine/dates/styles.css';
 import '@mantine/tiptap/styles.css';
 import '@mantine/spotlight/styles.css';
 import '@mantine/code-highlight/styles.css';
+import { DatesProvider } from '@mantine/dates';
 import { theme } from '../theme';
 import { StoreProvider } from '@/store/StoreProvder';
 import Layout from '@/components/Layout';
@@ -33,7 +34,9 @@ export default function RootLayout({ children }: { children: any }) {
               <NavigationProgress />
               <Notifications />
               <ModalsProvider>
-                <Layout>{children}</Layout>
+                <DatesProvider settings={{ timezone: 'Asia/Kolkata' }}>
+                  <Layout>{children}</Layout>
+                </DatesProvider>
               </ModalsProvider>
             </MantineProvider>
           </AuthProvider>
