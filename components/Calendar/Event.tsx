@@ -32,7 +32,7 @@ export const Event = ({ event, height, maxHeight, title, handleOpenEvent }: Prop
       h={height}
       mah={maxHeight}
       color={event?.color}
-      maw={200}
+      // maw={200}
     >
       {event?.title}
     </Button>
