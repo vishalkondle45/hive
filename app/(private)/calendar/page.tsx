@@ -4,45 +4,135 @@ import {
   ActionIcon,
   ActionIconGroup,
   AppShell,
-  Blockquote,
+  Badge,
+  Box,
   Button,
+  Checkbox,
   Group,
+  Indicator,
+  Modal,
   Paper,
   rem,
-  ScrollArea,
   Stack,
   Text,
-  ThemeIcon,
+  TextInput,
 } from '@mantine/core';
-import { DatePicker, MonthPickerInput } from '@mantine/dates';
-import { useDisclosure, useViewportSize } from '@mantine/hooks';
-import { IconCalendar, IconChevronLeft, IconChevronRight, IconX } from '@tabler/icons-react';
+import { DatePicker, DatePickerInput, DateTimePicker, MonthPickerInput } from '@mantine/dates';
+import { useForm } from '@mantine/form';
+import { useDisclosure, useMediaQuery, useViewportSize } from '@mantine/hooks';
+import { IconCalendar, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useState } from 'react';
-import { hoursIcons } from '@/lib/constants';
+import { apiCall, failure, success } from '@/lib/client_functions';
+import useFetchData from '@/hooks/useFetchData';
+import { SelectedDay } from '@/components/Calendar';
 
-const Page = () => {
+const CalendarPage = () => {
+  const [date, setDate] = useState<Date>(dayjs().startOf('day').toDate());
   const { height } = useViewportSize();
-  const [value, setValue] = useState<Date>(dayjs().startOf('day').toDate());
   const [opened, { open, close }] = useDisclosure();
+  const [isModalOpened, modalHandlers] = useDisclosure(false);
+  const {
+    loading,
+    data: events,
+    refetch,
+  } = useFetchData(`/api/events?month=${dayjs(date).format('MMM-YYYY')}`);
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isTablet = useMediaQuery('(max-width: 1366px)');
 
-  const [events] = useState([
-    {
-      id: 1,
-      event: 'Event 1',
-      from: '07-05-2024 0:00',
-      to: '07-05-2024 1:20',
-      color: 'blue',
+  const form = useForm({
+    initialValues: {
+      title: '',
+      from: dayjs(date).set('hour', 9).toDate(),
+      to: dayjs(date).set('hour', 10).toDate(),
+      isAllDay: false,
     },
-    {
-      id: 1,
-      event: 'Event 1',
-      from: '07-06-2024 00:00',
-      to: '07-06-2024 2:20',
-      color: 'red',
+    validate: {
+      title: (value) => (!value ? 'Title is required' : null),
+      from: (value) => (!value ? 'From is required' : null),
+      to: (value) => (!value ? 'To is required' : null),
     },
-  ]);
+  });
 
+  const handleNewEvent = async (values: typeof form.values) => {
+    if (form.values.isAllDay) {
+      values.from = dayjs(values.from).startOf('day').toDate();
+      values.to = dayjs(values.to).endOf('day').toDate();
+    }
+    if (dayjs(values.from).isAfter(dayjs(values.to))) {
+      failure('From date cannot be after to date');
+      return;
+    }
+    try {
+      await apiCall('/api/events', values, 'POST');
+      modalHandlers.close();
+      form.reset();
+      success('Event created successfully');
+      refetch();
+    } catch (error) {
+      failure(String(error));
+    }
+  };
+
+  const newEvent = () => {
+    modalHandlers.open();
+    form.setFieldValue('from', dayjs(date).set('hour', 9).toDate());
+    form.setFieldValue('to', dayjs(date).set('hour', 10).toDate());
+    form.setFieldValue('isAllDay', false);
+  };
+
+  const renderDay = (day: Date) => (
+    <Box w="100%" p="xs" style={{ cursor: 'pointer' }}>
+      <Text fw={dayjs().isSame(day, 'day') ? 900 : 400} ta="right">
+        {day.getDate()}
+      </Text>
+      <Stack gap={rem(4)}>
+        {events
+          ?.filter((i) => dayjs(i.from).isSame(day, 'day') || dayjs(i.to).isSame(day, 'day'))
+          .slice(0, 2)
+          .map((event) => (
+            <Badge
+              variant={dayjs(date).isSame(day, 'day') ? 'filled' : 'outline'}
+              color="blue"
+              radius={0}
+              fullWidth
+              key={String(event._id)}
+            >
+              {event.title}
+            </Badge>
+          ))}
+      </Stack>
+      {events?.filter((i) => dayjs(i.from).isSame(day, 'day') || dayjs(i.to).isSame(day, 'day'))
+        ?.length > 2 && (
+        <Text c={dayjs(date).isSame(day, 'day') ? 'white' : 'blue'} fz="xs">
+          {(events?.filter(
+            (i) => dayjs(i.from).isSame(day, 'day') || dayjs(i.to).isSame(day, 'day')
+          )?.length || 0) - 2}{' '}
+          more...
+        </Text>
+      )}
+    </Box>
+  );
+
+  const _renderDay = (day: Date) => {
+    const noOfEvents = events?.filter(
+      (i) => dayjs(i.from).isSame(day, 'day') || dayjs(i.to).isSame(day, 'day')
+    ).length;
+    return (
+      <Indicator
+        size={18}
+        color="blue"
+        offset={-2}
+        disabled={!noOfEvents}
+        label={noOfEvents}
+        processing
+      >
+        <div>{day.getDate()}</div>
+      </Indicator>
+    );
+  };
+
+  if (loading) return <></>;
   return (
     <AppShell
       aside={{
@@ -57,160 +147,131 @@ const Page = () => {
           <Group wrap="nowrap">
             <ActionIconGroup>
               <ActionIcon
-                radius="50%"
                 size="lg"
                 color="gray"
                 variant="outline"
-                onClick={() => setValue(dayjs(value).subtract(1, 'month').toDate())}
+                onClick={() => setDate(dayjs(date).subtract(1, 'month').startOf('month').toDate())}
               >
                 <IconChevronLeft />
               </ActionIcon>
               <ActionIcon
-                radius="50%"
                 size="lg"
                 color="gray"
                 variant="outline"
-                onClick={() => setValue(dayjs().startOf('day').toDate())}
+                onClick={() => setDate(dayjs().startOf('day').toDate())}
               >
                 <IconCalendar />
               </ActionIcon>
               <ActionIcon
-                radius="50%"
                 size="lg"
                 color="gray"
                 variant="outline"
-                onClick={() => setValue(dayjs(value).add(1, 'month').toDate())}
+                onClick={() => setDate(dayjs(date).add(1, 'month').startOf('month').toDate())}
               >
                 <IconChevronRight />
               </ActionIcon>
             </ActionIconGroup>
             <MonthPickerInput
-              value={value}
-              onChange={(v) => v && setValue(v)}
+              value={date}
+              onChange={(v) => v && setDate(v)}
               leftSection={
                 <IconCalendar color="#000" stroke={2} style={{ width: rem(20), height: rem(20) }} />
               }
-              styles={{ input: { fontWeight: 700 } }}
-              radius="xl"
+              styles={{ input: { fontWeight: 700, whiteSpace: 'nowrap' } }}
             />
-            <Text>{JSON.stringify(value)}</Text>
           </Group>
           <DatePicker
-            date={dayjs(value).toDate()}
+            date={dayjs(date).toDate()}
             maxLevel="month"
             size="xl"
             mt="md"
-            value={value}
+            value={date}
             onChange={(v) => {
               if (v) {
-                setValue(v);
+                setDate(v);
                 open();
               }
             }}
+            renderDay={(day) =>
+              isMobile || (isTablet && opened) ? _renderDay(day) : renderDay(day)
+            }
             styles={{
               month: { width: '100%' },
               monthRow: { width: '100%' },
-              day: { width: '100%', height: rem((height * 0.54) / 5) },
+              day: { width: '100%', height: rem((height * 0.54) / 5), padding: 0 },
               levelsGroup: { minWidth: '100%' },
               calendarHeader: { visibility: 'hidden', display: 'none' },
             }}
           />
         </Paper>
+        <Modal opened={isModalOpened} onClose={modalHandlers.close} title="New Event">
+          <form onSubmit={form.onSubmit((values) => handleNewEvent(values))}>
+            <Stack gap="xs">
+              <Group wrap="nowrap" align="center">
+                <TextInput
+                  type="text"
+                  placeholder="Title"
+                  w="100%"
+                  {...form.getInputProps('title')}
+                />
+                <Checkbox
+                  {...form.getInputProps('isAllDay', { type: 'checkbox' })}
+                  style={{ whiteSpace: 'nowrap' }}
+                  size="md"
+                  label="All day"
+                />
+              </Group>
+              {form.values.isAllDay ? (
+                <Group wrap="nowrap">
+                  <DatePickerInput
+                    label="From"
+                    {...form.getInputProps('from')}
+                    valueFormat="DD MMM YYYY"
+                    w="100%"
+                    required
+                  />
+                  <DatePickerInput
+                    label="To"
+                    {...form.getInputProps('to')}
+                    valueFormat="DD MMM YYYY"
+                    w="100%"
+                    required
+                  />
+                </Group>
+              ) : (
+                <Group wrap="nowrap">
+                  <DateTimePicker
+                    label="From"
+                    {...form.getInputProps('from')}
+                    valueFormat="DD MMM YYYY HH:mm"
+                    w="100%"
+                    required
+                  />
+                  <DateTimePicker
+                    label="To"
+                    {...form.getInputProps('to')}
+                    valueFormat="DD MMM YYYY HH:mm"
+                    w="100%"
+                    required
+                  />
+                </Group>
+              )}
+              <Button type="submit">Submit</Button>
+            </Stack>
+          </form>
+        </Modal>
       </AppShell.Main>
       <AppShell.Aside p="md">
-        <Group my="xs" justify="space-between">
-          <ActionIcon size="lg" color="red" variant="transparent" onClick={close}>
-            <IconX />
-          </ActionIcon>
-          <Text fw={700}>{dayjs(value).format('DD MMM YYYY')}</Text>
-          <ActionIconGroup>
-            <ActionIcon
-              size="lg"
-              color="gray"
-              variant="outline"
-              onClick={() => setValue(dayjs(value).subtract(1, 'day').toDate())}
-              radius="50%"
-            >
-              <IconChevronLeft />
-            </ActionIcon>
-            <ActionIcon
-              size="lg"
-              color="gray"
-              variant="outline"
-              onClick={() => setValue(dayjs().startOf('day').toDate())}
-              radius="50%"
-            >
-              <IconCalendar />
-            </ActionIcon>
-            <ActionIcon
-              size="lg"
-              color="gray"
-              variant="outline"
-              onClick={() => setValue(dayjs(value).add(1, 'day').toDate())}
-              radius="50%"
-            >
-              <IconChevronRight />
-            </ActionIcon>
-          </ActionIconGroup>
-        </Group>
-        <ScrollArea.Autosize h="auto">
-          <Stack pt="md" gap={0}>
-            {new Array(24).fill(0).map((_, i) => (
-              <Blockquote
-                key={i}
-                color="white"
-                iconSize={24}
-                p={0}
-                style={{ border: '1px solid #EFF3F7' }}
-                h={60}
-                radius={0}
-                ml="md"
-                icon={
-                  <ThemeIcon
-                    variant="filled"
-                    color={i > 5 && i < 18 ? 'orange' : 'dark'}
-                    radius="xl"
-                    autoContrast
-                  >
-                    {hoursIcons[i]}
-                  </ThemeIcon>
-                }
-              >
-                <Group wrap="nowrap" gap={0} align="self-start">
-                  {events
-                    .filter((e) => dayjs(e.from).isSame(dayjs(value).add(i, 'hour'), 'hour'))
-                    .map((e, id) => (
-                      <Button
-                        key={String(id)}
-                        variant="light"
-                        radius={0}
-                        h={dayjs(e.to).diff(dayjs(e.from), 'minutes')}
-                        style={{
-                          display: 'flex',
-                          position: 'relative',
-                          textAlign: 'left',
-                          cursor: 'pointer',
-                          zIndex: 1,
-                          justifyContent: 'left',
-                          alignItems: 'end',
-                        }}
-                        ta="left"
-                        fullWidth
-                        color={e.color}
-                        onClick={() => {}}
-                        autoContrast
-                      >
-                        {e.event}
-                      </Button>
-                    ))}
-                </Group>
-              </Blockquote>
-            ))}
-          </Stack>
-        </ScrollArea.Autosize>
+        <SelectedDay
+          date={date}
+          close={close}
+          setDate={setDate}
+          newEvent={newEvent}
+          events={events}
+        />
       </AppShell.Aside>
     </AppShell>
   );
 };
 
-export default Page;
+export default CalendarPage;
