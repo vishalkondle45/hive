@@ -151,8 +151,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 >
                   <Popover.Target>
                     <ActionIcon
-                      variant="light"
-                      color="gray"
+                      variant="filled"
+                      color="blue"
                       radius="xl"
                       size={rem(40)}
                       onClick={() => dispatch(setAppsOpened(!appsOpened))}
@@ -185,8 +185,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <Popover.Target>
                     <Indicator color={network.online ? 'teal' : 'red'} offset={5}>
                       <Avatar
-                        variant=""
-                        color={APP?.color}
+                        variant="filled"
+                        color="green"
                         radius="xl"
                         size={rem(40)}
                         onClick={() => dispatch(setUserOpened(!userOpened))}
@@ -202,11 +202,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         {session?.data?.user?.email}
                       </Text>
                       <Stack align="center" gap={rem(4)}>
-                        <Indicator color={network.online ? 'teal' : 'red'} offset={8}>
-                          <Avatar variant="" color={APP?.color} radius="xl" size={rem(60)}>
-                            {getInitials(session?.data?.user?.name)}
-                          </Avatar>
-                        </Indicator>
+                        <Avatar variant="filled" color={APP?.color} radius="xl" size={rem(60)}>
+                          {getInitials(session?.data?.user?.name)}
+                        </Avatar>
                         <Text fw={700} size="xs" c={network.online ? 'teal' : 'red'}>
                           {network.online ? 'Online' : 'Offline'}
                         </Text>
@@ -216,7 +214,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       </Text>
                       <Group>
                         <Button
-                          variant="outline"
+                          variant="filled"
                           radius="xl"
                           color="teal"
                           onClick={() => router.push('/profile')}
@@ -225,7 +223,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                           Profile
                         </Button>
                         <Button
-                          variant="outline"
+                          variant="filled"
                           radius="xl"
                           color="red"
                           onClick={() => signOut()}
@@ -264,7 +262,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </AppShell.Header>
       <>
         {isLoggedIn && APP?.sidebar?.length ? (
-          <AppShell.Navbar>
+          <AppShell.Navbar zIndex={2}>
             <Stack gap={0} my="xs">
               {APP?.sidebar?.map((item) => (
                 <Button

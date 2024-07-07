@@ -17,7 +17,7 @@ const App = ({ app, isCurrent, setOpened }: Props) => {
     <Paper
       p="xs"
       ref={ref}
-      bg={hovered || isCurrent ? `${app.color}.3` : 'transparent'}
+      bg={hovered || isCurrent ? app.color : 'transparent'}
       key={app.path}
       onClick={() => {
         setOpened(false);

@@ -27,7 +27,7 @@ const Todo = ({ todo, refetch, setSelected }: Props) => {
 
   return (
     <Paper
-      bg={`${todo?.color}.3`}
+      bg={todo?.color}
       p="md"
       key={String(todo?._id)}
       style={{ cursor: 'pointer' }}

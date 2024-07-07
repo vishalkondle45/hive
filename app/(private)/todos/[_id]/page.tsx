@@ -160,7 +160,7 @@ const TodosPage = ({ params }: { params: { _id: string } }) => {
                 <Group wrap="nowrap" gap={rem(4)} justify="space-between">
                   {COLORS?.map((color) => (
                     <ActionIcon
-                      color={`${color}.3`}
+                      color={color}
                       size="sm"
                       radius="xl"
                       key={color}

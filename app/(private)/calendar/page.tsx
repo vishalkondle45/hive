@@ -213,7 +213,6 @@ const CalendarPage = () => {
             <ActionIconGroup>
               <ActionIcon
                 size="lg"
-                color="gray"
                 variant="outline"
                 onClick={() => setDate(dayjs(date).subtract(1, 'month').startOf('month').toDate())}
               >
@@ -221,7 +220,6 @@ const CalendarPage = () => {
               </ActionIcon>
               <ActionIcon
                 size="lg"
-                color="gray"
                 variant="outline"
                 onClick={() => setDate(dayjs().startOf('day').toDate())}
               >
@@ -229,7 +227,6 @@ const CalendarPage = () => {
               </ActionIcon>
               <ActionIcon
                 size="lg"
-                color="gray"
                 variant="outline"
                 onClick={() => setDate(dayjs(date).add(1, 'month').startOf('month').toDate())}
               >
@@ -237,6 +234,7 @@ const CalendarPage = () => {
               </ActionIcon>
             </ActionIconGroup>
             <MonthPickerInput
+              variant="filled"
               value={date}
               onChange={(v) => v && setDate(v)}
               leftSection={
@@ -358,7 +356,7 @@ const CalendarPage = () => {
           </form>
         </Modal>
       </AppShell.Main>
-      <AppShell.Aside p="md">
+      <AppShell.Aside zIndex={1} p="md">
         <SelectedDay
           date={date}
           close={close}

@@ -149,7 +149,8 @@ const DrivePage = () => {
             {checked.length ? (
               <>
                 <ActionIcon
-                  variant="outline"
+                  variant="filled"
+                  size="lg"
                   color="indigo"
                   onClick={() => {
                     dispatch(__setPath(''));
@@ -163,7 +164,8 @@ const DrivePage = () => {
                   onClick={() =>
                     openModal('Are you sure? You want to delete selected files??', deleteFile)
                   }
-                  variant="outline"
+                  variant="filled"
+                  size="lg"
                   color="red"
                 >
                   <IconTrash size={20} />
@@ -171,10 +173,15 @@ const DrivePage = () => {
               </>
             ) : (
               <>
-                <ActionIcon variant="outline" color="green" onClick={open}>
+                <ActionIcon variant="filled" size="lg" color="green" onClick={open}>
                   <IconFolderPlus size={20} />
                 </ActionIcon>
-                <ActionIcon onClick={() => ref.current?.click()} variant="outline" color="blue">
+                <ActionIcon
+                  onClick={() => ref.current?.click()}
+                  variant="filled"
+                  size="lg"
+                  color="blue"
+                >
                   <IconFileUpload size={20} />
                 </ActionIcon>
               </>
