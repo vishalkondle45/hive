@@ -145,11 +145,12 @@ const CalendarPage = () => {
           .slice(0, 2)
           .map((event) => (
             <Badge
-              variant="filled"
+              variant={dayjs(date).isSame(day, 'day') ? 'white' : 'filled'}
               color={event?.color}
               radius={0}
-              fullWidth
               key={String(event._id)}
+              style={{ flex: 1, justifyContent: 'left' }}
+              fullWidth
             >
               {event.title}
             </Badge>
