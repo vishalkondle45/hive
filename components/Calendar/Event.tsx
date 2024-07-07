@@ -32,7 +32,6 @@ export const Event = ({ event, height, maxHeight, title, handleOpenEvent }: Prop
       h={height}
       mah={maxHeight}
       color={event?.color}
-      w="fit-content"
       maw={200}
     >
       {event?.title}
