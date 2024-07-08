@@ -10,7 +10,7 @@ import {
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { TodoType } from '@/models/Todo';
-import { updateTodo } from '@/lib/client_functions';
+import { apiCall } from '@/lib/client_functions';
 
 interface Props {
   todo: TodoType;
@@ -21,13 +21,13 @@ interface Props {
 const Todo = ({ todo, refetch, setSelected }: Props) => {
   const update = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, data: any) => {
     e.stopPropagation();
-    await updateTodo(String(todo?._id), data);
+    await apiCall('/api/todos', { ...data, _id: todo?._id }, 'PUT');
     refetch();
   };
 
   return (
     <Paper
-      bg={`${todo?.color}.3`}
+      bg={todo?.color}
       p="md"
       key={String(todo?._id)}
       style={{ cursor: 'pointer' }}
@@ -38,18 +38,18 @@ const Todo = ({ todo, refetch, setSelected }: Props) => {
         <Group gap="xs" wrap="nowrap" justify="space-between">
           <Group gap="xs" wrap="nowrap">
             <ActionIcon
-              color={todo.color ? 'gray.0' : 'dark'}
+              color={todo.color ? 'gray.0' : 'gray'}
               variant="transparent"
               onClick={(e) => update(e, { isCompleted: !todo?.isCompleted })}
             >
               {todo?.isCompleted ? <IconCircleCheckFilled /> : <IconCircle />}
             </ActionIcon>
-            <Text fw={700} c={todo.color ? 'gray.0' : 'dark'} lineClamp={2}>
+            <Text fw={700} c={todo.color ? 'gray.0' : 'gray'} lineClamp={2}>
               {todo?.todo}
             </Text>
           </Group>
           <ActionIcon
-            color={todo.color ? 'gray.0' : 'dark'}
+            color={todo.color ? 'gray.0' : 'gray'}
             variant="transparent"
             onClick={(e) => update(e, { isImportant: !todo?.isImportant })}
           >
@@ -58,7 +58,7 @@ const Todo = ({ todo, refetch, setSelected }: Props) => {
         </Group>
         <Group display={todo?.list || todo?.date ? 'flex' : 'none'}>
           <Badge
-            c={todo?.list?.color || 'dark'}
+            c={todo?.list?.color || 'gray'}
             leftSection={<IconList size={14} />}
             radius="xs"
             variant="white"
@@ -67,7 +67,7 @@ const Todo = ({ todo, refetch, setSelected }: Props) => {
             {todo?.list?.title}
           </Badge>
           <Badge
-            c={todo?.list?.color || 'dark'}
+            c={todo?.list?.color || 'gray'}
             leftSection={<IconCalendar size={14} />}
             radius="xs"
             variant="white"

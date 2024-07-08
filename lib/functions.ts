@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import nodemailer from 'nodemailer';
 import Todo from '@/models/Todo';
+import '@/models/TodoList';
 
 export const transporter = nodemailer.createTransport({
   service: 'Gmail',

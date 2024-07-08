@@ -29,7 +29,7 @@ export const NoteModal = ({ opened, form, onSave, onDelete = () => {} }: Props) 
     styles={{ body: { padding: 0 } }}
     centered
   >
-    <Paper p="md" bg={`${form.values.color}.3`}>
+    <Paper p="md" bg={form.values.color}>
       <TextInput
         placeholder="Title"
         {...form.getInputProps('title')}
@@ -57,7 +57,9 @@ export const NoteModal = ({ opened, form, onSave, onDelete = () => {} }: Props) 
             variant="transparent"
             size="sm"
             radius="xl"
-            onClick={() => openModal(() => onDelete?.(form.values._id))}
+            onClick={() =>
+              openModal('This note will be deleted permanently', () => onDelete?.(form.values._id))
+            }
             color="dark"
             title="Delete permanently"
           >
@@ -67,7 +69,7 @@ export const NoteModal = ({ opened, form, onSave, onDelete = () => {} }: Props) 
           <Group wrap="nowrap" justify="left" gap="xs">
             {COLORS?.map((color) => (
               <ActionIcon
-                color={`${color}.3`}
+                color={color}
                 size="xs"
                 radius="xl"
                 key={color}

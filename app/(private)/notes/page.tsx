@@ -5,7 +5,7 @@ import { Container, SimpleGrid, Stack, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import Note, { NewNote, NoteModal } from '@/components/Note';
 import useFetchData from '@/hooks/useFetchData';
-import { apiCall, failure } from '@/lib/client_functions';
+import { apiCall } from '@/lib/client_functions';
 import { NoteDocument } from '@/models/Note';
 import Skelton from '@/components/Skelton/Skelton';
 
@@ -46,24 +46,16 @@ export default function NotesPage() {
   const createNote = async (note: any) => {
     if (note?.title || note?.note) {
       const { _id, ...remainingNote } = note;
-      await apiCall('/api/notes', remainingNote, 'POST')
-        .then(() => {
-          refetch();
-        })
-        .catch((err) => {
-          failure(err.response.data.error);
-        });
+      await apiCall('/api/notes', remainingNote, 'POST').then(() => {
+        refetch();
+      });
     }
   };
 
   const updateNote = async (note: any) => {
-    await apiCall('/api/notes', note, 'PUT')
-      .then(() => {
-        refetch();
-      })
-      .catch((err) => {
-        failure(err.response.data.error);
-      });
+    await apiCall('/api/notes', note, 'PUT').then(() => {
+      refetch();
+    });
   };
 
   const onSave = async (note: any) => {

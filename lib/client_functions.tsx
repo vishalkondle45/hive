@@ -1,8 +1,17 @@
-import { Text } from '@mantine/core';
+import { Image, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { nprogress } from '@mantine/nprogress';
-import { IconCheck, IconX } from '@tabler/icons-react';
+import {
+  IconCheck,
+  IconFile,
+  IconFileTypeDoc,
+  IconFileTypePdf,
+  IconMusic,
+  IconPhoto,
+  IconVideo,
+  IconX,
+} from '@tabler/icons-react';
 import axios from 'axios';
 
 export const failure = (message: string) =>
@@ -25,26 +34,16 @@ export const success = (message: string) =>
     icon: <IconCheck />,
   });
 
-export const openModal = (onConfirm: () => void) =>
+export const openModal = (message: string, onConfirm: () => void) =>
   modals.openConfirmModal({
     title: 'Please confirm your action',
-    children: (
-      <Text size="sm">
-        This action is so important that you are required to confirm it with a modal. Please click
-        one of these buttons to proceed.
-      </Text>
-    ),
+    children: <Text size="sm">{message}</Text>,
     labels: { confirm: 'Confirm', cancel: 'Cancel' },
     confirmProps: { color: 'red' },
     onConfirm,
   });
 
-export const updateTodo = async (_id: string, data: any) => {
-  const res = await axios.put('/api/todos', { ...data, _id });
-  return res;
-};
-
-export const apiCall = async (url: string, body?: any, method: string = 'GET') => {
+export const apiCall = async (url: string, body?: any, method: string = 'GET', cb?: () => void) => {
   let res;
   nprogress.start();
   try {
@@ -66,6 +65,8 @@ export const apiCall = async (url: string, body?: any, method: string = 'GET') =
     }
   } catch (error: any) {
     failure(error?.response?.data.error || 'Error while calling API');
+    // apiCall(url, body, method);
+    if (cb) cb();
   } finally {
     nprogress.complete();
   }
@@ -77,3 +78,97 @@ export const getInitials = (name: string | undefined | null) =>
     ?.split(' ')
     .map((n) => n[0])
     .join('');
+
+export const Preview = (url: string) => {
+  if (!url) return <></>;
+  switch (url.split('?')[0].split('.').at(-1)) {
+    case 'pdf':
+    case 'docs':
+    case 'doc':
+      return (
+        <iframe
+          title={url}
+          src={`https://view.officeapps.live.com/op/embed.aspx?src=${url}`}
+          style={{ width: '100%', height: '100%' }}
+        />
+      );
+    case 'mp3':
+      return (
+        <audio autoPlay title={url} src={url} controls>
+          <track kind="captions" srcLang="en" src="captions.vtt" />
+        </audio>
+      );
+
+    case 'mp4':
+      return (
+        <video autoPlay title={url} src={url} controls>
+          <track kind="captions" srcLang="en" src="captions.vtt" />
+        </video>
+      );
+    default:
+      return <Image alt={url} src={url} h="auto" w="auto" fit="contain" />;
+  }
+};
+
+export const fileIcon = (url: string) => {
+  if (!url) return <></>;
+  switch (url.split('?')[0].split('.').at(-1)) {
+    case 'jpeg':
+    case 'jpg':
+    case 'png':
+    case 'svg':
+      return <IconPhoto size={18} />;
+    case 'pdf':
+      return <IconFileTypePdf size={18} />;
+    case 'doc':
+    case 'docs':
+    case 'docx':
+      return <IconFileTypeDoc size={18} />;
+    case 'mp3':
+      return <IconMusic size={18} />;
+    case 'mp4':
+      return <IconVideo size={18} />;
+    default:
+      return <IconFile size={18} />;
+  }
+};
+
+export function getRandomElements(arr: any[]) {
+  return arr.sort(() => Math.random() - 0.5);
+}
+
+export const textToSpeech = (
+  string: string,
+  open: () => void = () => {},
+  close: () => void = () => {}
+) => {
+  if (window.speechSynthesis.speaking) {
+    speechSynthesis.cancel();
+    close();
+  } else {
+    open();
+    const msg = new SpeechSynthesisUtterance(string);
+    const [voice] = speechSynthesis.getVoices();
+    msg.voice = voice;
+    msg.lang = 'en-IN';
+    window.speechSynthesis.speak(msg);
+    window.onbeforeunload = (e) => {
+      if (window.speechSynthesis.speaking) {
+        e.preventDefault();
+        msg.addEventListener('end', () => {
+          speechSynthesis.cancel();
+          close();
+        });
+      }
+    };
+    msg.onend = () => {
+      speechSynthesis.cancel();
+      close();
+    };
+  }
+};
+
+export const renderBoldText = (text: string) => {
+  const boldRegex = /\*\*(.*?)\*\*/g;
+  return text.split(boldRegex);
+};

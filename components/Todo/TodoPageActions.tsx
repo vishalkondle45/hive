@@ -24,12 +24,15 @@ import {
   IconPrinter,
   IconTrash,
 } from '@tabler/icons-react';
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { usePathname, useRouter } from 'next/navigation';
 import { DatePickerInput } from '@mantine/dates';
 import { apiCall, failure, openModal } from '@/lib/client_functions';
 import { COLORS, STYLES } from '@/lib/constants';
 import FormButtons from '../FormButtons';
+import { RootState } from '@/store/store';
+import { resetList, setList, setOpened1 } from '@/store/features/todoSlice';
 
 interface Props {
   refetch: () => void;
@@ -40,16 +43,14 @@ interface Props {
 
 const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }: Props) => {
   const ref = useRef<any>();
-  const [opened, { open, close }] = useDisclosure(false);
-  const [opened1, setOpened1] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const [list, setList] = useState({
-    _id: '',
-    color: '',
-    title: '',
-  });
-  const selected = todoList.find((l) => l._id === pathname.split('/')[2]);
+
+  const [opened, { open, close }] = useDisclosure(false);
+  const { list, opened1 } = useSelector((state: RootState) => state.todo);
+  const dispatch = useDispatch();
+
+  const selected = todoList?.find((l) => l._id === pathname.split('/')[2]);
 
   const form = useForm({
     initialValues: {
@@ -78,48 +79,44 @@ const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }
     await apiCall('/api/todos', form.values, 'POST');
     refetch();
     onClose();
-    setOpened1(false);
+    dispatch(setOpened1(false));
     getTodoLists();
   };
 
   const onClose = () => {
     form.reset();
     close();
-    setOpened1(false);
+    dispatch(setOpened1(false));
   };
 
   const onDelete = () => {
-    openModal(() => {
-      apiCall(`/api/todos/todo-list?_id=${pathname.split('/')[2]}`, {}, 'DELETE')
-        .then(() => {
-          form.reset();
-          refetch();
-          getTodoLists();
-          close();
-          setOpened1(false);
-          router.push('/todos');
-        })
-        .catch(() => failure('Something went wrong'));
-    });
-  };
-
-  const createTodoList = () => {
-    apiCall('/api/todos/todo-list', list, 'POST')
-      .then((res) => {
+    openModal('This list and its todos will be deleted', () => {
+      apiCall(`/api/todos/todo-list?_id=${pathname.split('/')[2]}`, {}, 'DELETE').then(() => {
         form.reset();
         refetch();
         getTodoLists();
         close();
-        setOpened1(false);
-        router.push(`/todos/${res?.data._id}`);
-      })
-      .catch(() => failure('Something went wrong'));
+        dispatch(setOpened1(false));
+        router.push('/todos');
+      });
+    });
+  };
+
+  const createTodoList = () => {
+    apiCall('/api/todos/todo-list', list, 'POST').then((res) => {
+      form.reset();
+      refetch();
+      getTodoLists();
+      close();
+      dispatch(setOpened1(false));
+      router.push(`/todos/${res?.data._id}`);
+    });
   };
 
   return (
     <Group mt="sm" mb="xl" justify="space-between">
       <Text c={selected?.color} tt="capitalize" fw={700}>
-        {isListPage ? selected?.title : pathname.split('/')[2]}
+        {isListPage ? selected?.title : pathname.split('/')[2] || 'Todos'}
       </Text>
       <Group gap={rem(6)} justify="right">
         <ActionIcon variant="subtle" color="gray" onClick={() => window.print()} title="Print">
@@ -133,8 +130,8 @@ const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }
           color="gray"
           title="Add new list"
           onClick={() => {
-            setList({ _id: '', title: '', color: '' });
-            setOpened1(true);
+            dispatch(resetList());
+            dispatch(setOpened1(true));
           }}
         >
           <IconPlaylistAdd />
@@ -146,12 +143,14 @@ const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }
               color="gray"
               title="Rename list"
               onClick={() => {
-                setList({
-                  _id: pathname.split('/')[2],
-                  title: selected?.title,
-                  color: selected?.color,
-                });
-                setOpened1(true);
+                dispatch(
+                  setList({
+                    _id: pathname.split('/')[2],
+                    title: selected?.title,
+                    color: selected?.color,
+                  })
+                );
+                dispatch(setOpened1(true));
               }}
             >
               <IconCursorText />
@@ -174,7 +173,7 @@ const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }
             />
             <Select
               {...form.getInputProps('list')}
-              data={todoList.map(({ _id, title }) => ({ label: title, value: _id }))}
+              data={todoList?.map(({ _id, title }) => ({ label: title, value: _id }))}
               placeholder="Select a list (optional)"
               rightSection={<IconCaretUpDown />}
               clearable
@@ -189,7 +188,7 @@ const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }
             <Group wrap="nowrap" gap={rem(4)} justify="space-between">
               {COLORS?.map((color) => (
                 <ActionIcon
-                  color={`${color}.3`}
+                  color={color}
                   size="sm"
                   radius="xl"
                   key={color}
@@ -210,7 +209,7 @@ const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }
       </Modal>
       <Modal
         opened={opened1}
-        onClose={() => setOpened1(true)}
+        onClose={() => dispatch(setOpened1(true))}
         withCloseButton={false}
         bg={list.color}
         p={0}
@@ -218,7 +217,7 @@ const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }
         <Stack>
           <TextInput
             value={list.title}
-            onChange={(e) => setList((old) => ({ ...old, title: e.target.value }))}
+            onChange={(e) => setList({ ...list, title: e.target.value })}
             placeholder="Enter list name"
             styles={STYLES}
             onKeyDown={(e) => e.key === 'Enter' && createTodoList()}
@@ -226,13 +225,13 @@ const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }
           <Group wrap="nowrap" gap={rem(4)} justify="space-between">
             {COLORS?.map((color) => (
               <ActionIcon
-                color={`${color}.3`}
+                color={color}
                 size="sm"
                 radius="xl"
                 key={color}
                 style={{ border: '1px solid gray' }}
                 onClick={() =>
-                  setList((old) => ({ ...old, color: list.color === color ? '' : color }))
+                  dispatch(setList({ ...list, color: list.color === color ? '' : color }))
                 }
               >
                 {color === list.color && <IconCheck stroke={4} style={{ width: rem(14) }} />}
@@ -240,7 +239,7 @@ const TodoPageActions = ({ refetch, getTodoLists, todoList, isListPage = false }
             ))}
           </Group>
           <Group justify="right">
-            <Button color="red" onClick={() => setOpened1(false)}>
+            <Button color="red" onClick={() => dispatch(setOpened1(false))}>
               Cancel
             </Button>
             <Button color="teal" onClick={() => createTodoList()}>

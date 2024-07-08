@@ -3,39 +3,52 @@
 import {
   ActionIcon,
   AppShell,
+  Avatar,
   Burger,
   Button,
-  Container,
   Group,
   Indicator,
   Popover,
   rem,
   SimpleGrid,
   Stack,
+  Text,
 } from '@mantine/core';
-import { useDisclosure, useNetwork } from '@mantine/hooks';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNetwork } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { IconGridDots, IconList } from '@tabler/icons-react';
+import { IconGridDots, IconList, IconLogout, IconUser } from '@tabler/icons-react';
 import { signOut, useSession } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import { App } from '../App';
 import { APPS } from '@/lib/constants';
-import { apiCall, failure } from '@/lib/client_functions';
+import { apiCall, getInitials } from '@/lib/client_functions';
+import SpotLight from '../SpotLight';
+import { RootState } from '@/store/store';
+import {
+  closeMobile,
+  setAppsOpened,
+  setUserOpened,
+  toggleDesktop,
+  toggleMobile,
+} from '@/store/features/layoutSlice';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const network = useNetwork();
-  const [mobileOpened, { toggle: toggleMobile, close }] = useDisclosure();
-  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
-  const [opened, setOpened] = useState(false);
   const session = useSession();
-  const loading = session?.status === 'loading';
   const isLoggedIn = session?.status === 'authenticated';
-  const isLoggedOff = session?.status === 'unauthenticated';
+  const isLoading = session?.status === 'loading';
   const router = useRouter();
   const pathname = usePathname();
   const rootpath = pathname.split('/')[1];
-  const [APP, setAPP] = useState(APPS.find((app) => `/${rootpath}` === app?.path));
+  const network = useNetwork();
+
+  const [APP, setAPP] = useState(APPS?.find((app) => `/${rootpath}` === app?.path));
+
+  const { mobileOpened, desktopOpened, appsOpened, userOpened } = useSelector(
+    (state: RootState) => state.layout
+  );
+  const dispatch = useDispatch();
 
   const navigateTo = useCallback(
     (path?: string) => {
@@ -43,27 +56,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         if (path !== pathname) {
           router.push(path);
         }
-        close();
+        dispatch(closeMobile());
       }
     },
     [pathname]
   );
 
   const getList = async () => {
-    try {
-      setAPP(APPS.find((app) => `/${rootpath}` === app?.path));
-      const res = await apiCall(`/api/list?schema=${rootpath}`);
-      if (res?.data) {
-        setAPP((old = { sidebar: [] }) => ({ ...old, sidebar: [...old.sidebar, ...res.data] }));
-      }
-    } catch (error) {
-      failure('Something went wrong');
+    if (session.status === 'unauthenticated') {
+      return;
+    }
+    setAPP(APPS?.find((app) => `/${rootpath}` === app?.path));
+    const res = await apiCall(`/api/list?schema=${rootpath}`);
+    if (res?.data) {
+      setAPP((old = { sidebar: [] }) => ({ ...old, sidebar: [...old.sidebar, ...res.data] }));
     }
   };
-
-  if (isLoggedOff) {
-    router.push('/auth/login');
-  }
 
   useEffect(() => {
     getList();
@@ -85,15 +93,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }
   }, [network.online]);
 
-  if (loading) {
-    return <></>;
-  }
+  if (isLoading) return <></>;
 
   return (
     <AppShell
       header={{ height: 60 }}
       navbar={{
-        width: 200,
+        width: isLoggedIn && APP?.sidebar?.length ? 200 : 0,
         breakpoint: 'sm',
         collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
       }}
@@ -107,14 +113,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Burger
                   opened={mobileOpened}
                   hidden={!isLoggedIn}
-                  onClick={toggleMobile}
+                  onClick={() => dispatch(toggleMobile())}
                   hiddenFrom="sm"
                   size="sm"
                 />
                 <Burger
                   opened={desktopOpened}
                   hidden={!isLoggedIn}
-                  onClick={toggleDesktop}
+                  onClick={() => dispatch(toggleDesktop())}
                   visibleFrom="sm"
                   size="sm"
                 />
@@ -133,32 +139,32 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Group>
           <Group gap={0}>
             {isLoggedIn && (
-              <>
+              <Group gap="xs">
+                <SpotLight />
                 <Popover
-                  opened={opened}
-                  onChange={setOpened}
+                  opened={appsOpened}
+                  onChange={(old) => dispatch(setAppsOpened(old))}
                   position="bottom"
                   withArrow
                   shadow="md"
+                  radius="lg"
                 >
                   <Popover.Target>
-                    <Indicator color={network.online ? 'teal' : 'red'} offset={5}>
-                      <ActionIcon
-                        variant="subtle"
-                        color="gray"
-                        radius="xl"
-                        size="lg"
-                        onClick={() => setOpened((o) => !o)}
-                      >
-                        <IconGridDots stroke={3} style={{ width: rem(20), height: rem(20) }} />
-                      </ActionIcon>
-                    </Indicator>
+                    <ActionIcon
+                      variant="filled"
+                      color="blue"
+                      radius="xl"
+                      size={rem(40)}
+                      onClick={() => dispatch(setAppsOpened(!appsOpened))}
+                    >
+                      <IconGridDots stroke={3} style={{ width: rem(20), height: rem(20) }} />
+                    </ActionIcon>
                   </Popover.Target>
                   <Popover.Dropdown p="xs">
                     <SimpleGrid spacing="xs" cols={3}>
-                      {APPS.map((app) => (
+                      {APPS?.map((app) => (
                         <App
-                          setOpened={setOpened}
+                          setOpened={(value: boolean) => dispatch(setAppsOpened(value))}
                           isCurrent={APP?.path === app?.path}
                           key={app?.path}
                           app={app}
@@ -167,17 +173,71 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </SimpleGrid>
                   </Popover.Dropdown>
                 </Popover>
-                <Button
-                  variant="transparent"
-                  size="compact-md"
-                  color="red"
-                  onClick={() => signOut()}
+                <Popover
+                  opened={userOpened}
+                  onChange={(value: boolean) => dispatch(setUserOpened(value))}
+                  position="bottom"
+                  withArrow
+                  shadow="xl"
+                  width={300}
+                  radius="lg"
                 >
-                  Logout
-                </Button>
-              </>
+                  <Popover.Target>
+                    <Indicator color={network.online ? 'teal' : 'red'} offset={5}>
+                      <Avatar
+                        variant="filled"
+                        color="green"
+                        radius="xl"
+                        size={rem(40)}
+                        onClick={() => dispatch(setUserOpened(!userOpened))}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {getInitials(session?.data?.user?.name)}
+                      </Avatar>
+                    </Indicator>
+                  </Popover.Target>
+                  <Popover.Dropdown p="xs">
+                    <Stack align="center">
+                      <Text fw={700} size="xs">
+                        {session?.data?.user?.email}
+                      </Text>
+                      <Stack align="center" gap={rem(4)}>
+                        <Avatar variant="filled" color={APP?.color} radius="xl" size={rem(60)}>
+                          {getInitials(session?.data?.user?.name)}
+                        </Avatar>
+                        <Text fw={700} size="xs" c={network.online ? 'teal' : 'red'}>
+                          {network.online ? 'Online' : 'Offline'}
+                        </Text>
+                      </Stack>
+                      <Text fw={700} size="sm">
+                        Hi {session?.data?.user?.name},
+                      </Text>
+                      <Group>
+                        <Button
+                          variant="filled"
+                          radius="xl"
+                          color="teal"
+                          onClick={() => router.push('/profile')}
+                          leftSection={<IconUser />}
+                        >
+                          Profile
+                        </Button>
+                        <Button
+                          variant="filled"
+                          radius="xl"
+                          color="red"
+                          onClick={() => signOut()}
+                          leftSection={<IconLogout />}
+                        >
+                          Logout
+                        </Button>
+                      </Group>
+                    </Stack>
+                  </Popover.Dropdown>
+                </Popover>
+              </Group>
             )}
-            {isLoggedOff && (
+            {!isLoggedIn && (
               <>
                 <Button
                   variant="transparent"
@@ -200,9 +260,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Group>
         </Group>
       </AppShell.Header>
-      {isLoggedIn && APP?.sidebar?.length ? (
-        <>
-          <AppShell.Navbar>
+      <>
+        {isLoggedIn && APP?.sidebar?.length ? (
+          <AppShell.Navbar zIndex={2}>
             <Stack gap={0} my="xs">
               {APP?.sidebar?.map((item) => (
                 <Button
@@ -220,13 +280,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               ))}
             </Stack>
           </AppShell.Navbar>
-          <AppShell.Main pt={rem(80)}>{children}</AppShell.Main>
-        </>
-      ) : (
-        <Container size="100%" pt={rem(80)}>
-          {children}
-        </Container>
-      )}
+        ) : (
+          <></>
+        )}
+        <AppShell.Main pt={rem(80)}>{children}</AppShell.Main>
+      </>
     </AppShell>
   );
 }

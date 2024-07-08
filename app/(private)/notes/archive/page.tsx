@@ -5,7 +5,7 @@ import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import Note, { NewNote, NoteModal } from '@/components/Note';
 import useFetchData from '@/hooks/useFetchData';
-import { apiCall, failure } from '@/lib/client_functions';
+import { apiCall } from '@/lib/client_functions';
 import { NoteDocument } from '@/models/Note';
 
 export default function NotesPage() {
@@ -46,24 +46,16 @@ export default function NotesPage() {
   const createNote = async (note: any) => {
     if (form.values.title || form.values.note) {
       const { _id, ...remainingNote } = note;
-      await apiCall('/api/notes', remainingNote, 'POST')
-        .then(() => {
-          refetch();
-        })
-        .catch((err) => {
-          failure(err.response.data.error);
-        });
+      await apiCall('/api/notes', remainingNote, 'POST').then(() => {
+        refetch();
+      });
     }
   };
 
   const updateNote = async (note: any) => {
-    await apiCall('/api/notes', note, 'POST')
-      .then(() => {
-        refetch();
-      })
-      .catch((err) => {
-        failure(err.response.data.error);
-      });
+    await apiCall('/api/notes', note, 'PUT').then(() => {
+      refetch();
+    });
   };
 
   const onSave = async (note: any) => {

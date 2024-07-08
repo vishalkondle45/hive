@@ -21,18 +21,23 @@ import {
   IconCircleCheck,
   IconTrash,
 } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { TodoPageActions } from '@/components/Todo';
 import TodoSkelton from '@/components/Todo/TodoSkelton';
 import useFetchData from '@/hooks/useFetchData';
 import { TodoType } from '@/models/Todo';
 import Todo from '@/components/Todo/Todo';
 import { COLORS, STYLES } from '@/lib/constants';
-import { apiCall, failure, openModal } from '@/lib/client_functions';
+import { apiCall, openModal } from '@/lib/client_functions';
+import { RootState } from '@/store/store';
+import { setTodoList } from '@/store/features/todoSlice';
 
 const TodosPage = () => {
   const { data, refetch, loading } = useFetchData('/api/todos');
-  const [todoList, setTodoList] = useState<any[]>([]);
+
+  const dispatch = useDispatch();
+  const { todoList } = useSelector((state: RootState) => state.todo);
 
   const form = useForm({
     initialValues: {
@@ -66,30 +71,26 @@ const TodosPage = () => {
   };
 
   const getTodoLists = async () => {
-    try {
-      await apiCall('/api/todos/todo-list').then((res) => {
-        setTodoList(res?.data);
-      });
-    } catch (error) {
-      failure('Something went wrong');
-    }
+    const res = await apiCall('/api/todos/todo-list');
+    dispatch(setTodoList(res?.data));
   };
 
   const onDelete = () => {
-    openModal(() => {
-      apiCall(`/api/todos?_id=${form.values._id}`, {}, 'DELETE')
-        .then(() => {
-          form.reset();
-          refetch();
-        })
-        .catch((err) => {
-          failure(err.response.data.error || 'Something went wrong');
-        });
+    openModal('This todo will be deleted permanently', () => {
+      apiCall(`/api/todos?_id=${form.values._id}`, {}, 'DELETE').then(() => {
+        form.reset();
+        refetch();
+      });
     });
   };
 
   useEffect(() => {
     getTodoLists();
+
+    () => {
+      form.reset();
+      dispatch(setTodoList([]));
+    };
   }, []);
 
   return (
@@ -100,7 +101,7 @@ const TodosPage = () => {
         collapsed: { mobile: !form.values._id, desktop: !form.values._id },
       }}
     >
-      <AppShell.Main p={0} mt={rem(-100)} pt={rem(80)}>
+      <AppShell.Main p={0} mt={rem(-80)} pt={rem(80)}>
         <Container size="sm">
           <TodoPageActions getTodoLists={getTodoLists} todoList={todoList} refetch={refetch} />
           {loading ? (
@@ -155,7 +156,7 @@ const TodosPage = () => {
                 <Group wrap="nowrap" gap={rem(4)} justify="space-between">
                   {COLORS?.map((color) => (
                     <ActionIcon
-                      color={`${color}.3`}
+                      color={color}
                       size="sm"
                       radius="xl"
                       key={color}

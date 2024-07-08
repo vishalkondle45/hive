@@ -4,6 +4,10 @@ import startDb from '@/lib/db';
 import TodoList from '@/models/TodoList';
 import { authOptions } from '../../auth/[...nextauth]/authOptions';
 import { UserDataTypes } from '../../auth/[...nextauth]/next-auth.interfaces';
+import Todo from '@/models/Todo';
+
+export const maxDuration = 60;
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
@@ -48,6 +52,7 @@ export async function DELETE(req: NextRequest) {
     }
     await startDb();
     await TodoList.findByIdAndDelete(req.nextUrl.searchParams.get('_id'));
+    await Todo.deleteMany({ list: req.nextUrl.searchParams.get('_id') });
     return NextResponse.json(null, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error?.message }, { status: 500 });

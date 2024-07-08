@@ -12,7 +12,7 @@ const Note = ({ note, handleClick }: Props) => (
     p="md"
     radius="lg"
     withBorder
-    bg={note?.color}
+    bg={note.color}
     onClick={() => handleClick(note)}
     mih={rem(120)}
     // mah={rem(32 * note?.note?.split('\n').length)}
