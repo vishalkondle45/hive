@@ -27,13 +27,13 @@ export default function NotesPage() {
   const handleClick = (note: NoteDocument) => {
     open();
     form.setValues({
-      _id: String(note._id),
-      title: note.title,
-      note: note.note,
-      color: note.color,
-      isArchived: note.isArchived,
-      isPinned: note.isPinned,
-      isTrashed: note.isTrashed,
+      _id: String(note?._id),
+      title: note?.title,
+      note: note?.note,
+      color: note?.color,
+      isArchived: note?.isArchived,
+      isPinned: note?.isPinned,
+      isTrashed: note?.isTrashed,
     });
   };
 
@@ -44,7 +44,7 @@ export default function NotesPage() {
   };
 
   const createNote = async (note: any) => {
-    if (note.title || note.note) {
+    if (note?.title || note?.note) {
       const { _id, ...remainingNote } = note;
       await apiCall('/api/notes', remainingNote, 'POST').then(() => {
         refetch();
@@ -59,17 +59,17 @@ export default function NotesPage() {
   };
 
   const onSave = async (note: any) => {
-    if (note.title || note.note) {
-      if (note._id) {
-        const _note = data?.find((n: any) => n._id === note._id);
+    if (note?.title || note?.note) {
+      if (note?._id) {
+        const _note = data?.find((n: any) => n._id === note?._id);
         const formValuesString = JSON.stringify({
-          _id: note._id,
-          title: note.title,
-          note: note.note,
-          color: note.color,
-          isTrashed: note.isTrashed,
-          isArchived: note.isArchived,
-          isPinned: note.isPinned,
+          _id: note?._id,
+          title: note?.title,
+          note: note?.note,
+          color: note?.color,
+          isTrashed: note?.isTrashed,
+          isArchived: note?.isArchived,
+          isPinned: note?.isPinned,
         });
         const noteString = JSON.stringify({
           _id: _note?._id,
@@ -91,8 +91,8 @@ export default function NotesPage() {
     close();
   };
 
-  const pinned = data?.filter((note: NoteDocument) => note.isPinned);
-  const others = data?.filter((note: NoteDocument) => !note.isPinned);
+  const pinned = data?.filter((note: NoteDocument) => note?.isPinned);
+  const others = data?.filter((note: NoteDocument) => !note?.isPinned);
 
   return (
     <>
@@ -111,7 +111,7 @@ export default function NotesPage() {
                 </Text>
                 <SimpleGrid cols={{ base: 1, xs: 2, md: 3 }}>
                   {pinned?.map((note: NoteDocument) => (
-                    <Note key={String(note._id)} note={note} handleClick={handleClick} />
+                    <Note key={String(note?._id)} note={note} handleClick={handleClick} />
                   ))}
                 </SimpleGrid>
                 <Text size="sm" my="xs">
@@ -121,7 +121,7 @@ export default function NotesPage() {
             )}
             <SimpleGrid cols={{ base: 1, xs: 2, md: 3 }}>
               {others?.map((note: NoteDocument) => (
-                <Note key={String(note._id)} note={note} handleClick={handleClick} />
+                <Note key={String(note?._id)} note={note} handleClick={handleClick} />
               ))}
             </SimpleGrid>
           </>

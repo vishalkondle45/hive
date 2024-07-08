@@ -5,7 +5,7 @@ export const NewNote = ({ newNote }: { newNote: any }) => (
   <Container px={0} size="xs">
     <Paper mb="xl" shadow="xl" p="md" withBorder>
       <TextInput
-        placeholder="Take a note..."
+        placeholder="Take a note?..."
         styles={{
           input: {
             backgroundColor: 'transparent',

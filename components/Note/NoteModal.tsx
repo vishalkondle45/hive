@@ -46,7 +46,7 @@ export const NoteModal = ({ opened, form, onSave, onDelete = () => {} }: Props) 
       <Textarea
         {...form.getInputProps('note')}
         styles={{ input: { backgroundColor: 'transparent', border: 'none', paddingInline: 0 } }}
-        placeholder="Take a note..."
+        placeholder="Take a note?..."
         minRows={3}
         autosize
         readOnly={form.values.isTrashed}
