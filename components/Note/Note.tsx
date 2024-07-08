@@ -12,13 +12,13 @@ const Note = ({ note, handleClick }: Props) => (
     p="md"
     radius="lg"
     withBorder
-    bg={`${note.color}.3`}
+    bg={note?.color}
     onClick={() => handleClick(note)}
     mih={rem(120)}
-    // mah={rem(32 * note.note.split('\n').length)}
+    // mah={rem(32 * note?.note?.split('\n').length)}
   >
-    <Text size="md" fw={500} dangerouslySetInnerHTML={{ __html: note.title }} />
-    <Text size="sm" dangerouslySetInnerHTML={{ __html: note.note.replace(/\r?\n/g, '<br />') }} />
+    <Text size="md" fw={500} dangerouslySetInnerHTML={{ __html: note?.title }} />
+    <Text size="sm" dangerouslySetInnerHTML={{ __html: note?.note?.replace(/\r?\n/g, '<br />') }} />
   </Paper>
 );
 
