@@ -7,11 +7,11 @@ export interface ForumDocument extends Document {
   parent?: Types.ObjectId;
   user?: Types.ObjectId | UserDocument;
   tags: string[];
-  upvotes?: Types.ObjectId[];
-  downvotes?: Types.ObjectId[];
-  views?: Types.ObjectId[];
-  saved?: Types.ObjectId[];
-  answers?: number;
+  upvotes: Types.ObjectId[];
+  downvotes: Types.ObjectId[];
+  views: Types.ObjectId[];
+  saved: Types.ObjectId[];
+  answers: number;
   createdAt?: Date;
   updatedAt?: Date;
 }

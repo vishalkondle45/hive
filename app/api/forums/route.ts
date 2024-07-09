@@ -1,5 +1,6 @@
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import startDb from '@/lib/db';
 import Forum from '@/models/Forum';
 import { authOptions } from '../auth/[...nextauth]/authOptions';
@@ -19,16 +20,25 @@ export async function GET(req: NextRequest) {
     const tags = req.nextUrl.searchParams.get('tag')?.toString() ?? '';
 
     if (_id) {
-      const forum = await Forum.find({ _id }).populate('user');
-      return NextResponse.json(forum, { status: 200 });
+      const forum = await Forum.findById(_id).populate({ path: 'user', select: 'name' });
+      const answers = await Forum.find({ parent: _id }).populate({ path: 'user', select: 'name' });
+      if (!forum?.views.includes(new mongoose.Types.ObjectId(session?.user._id))) {
+        await forum?.updateOne({ $push: { views: session?.user._id } }, { new: true });
+      }
+      return NextResponse.json([forum, answers], { status: 200 });
     }
 
     if (tags) {
-      const forums = await Forum.find({ tags }).populate('user').sort('-updatedAt');
+      const forums = await Forum.find({ tags })
+        .populate({ path: 'user', select: 'name' })
+        .sort('-updatedAt');
       return NextResponse.json(forums, { status: 200 });
     }
 
-    const forums = await Forum.find({}).populate('user').sort('-updatedAt');
+    const forums = await Forum.find({ question: { $exists: true }, description: { $exists: true } })
+      .populate({ path: 'user', select: 'name' })
+      .sort('-updatedAt');
+
     return NextResponse.json(forums, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error?.message }, { status: 500 });
@@ -58,7 +68,7 @@ export async function PUT(req: NextRequest) {
     }
     const body = await req.json();
     await startDb();
-    const forum = await Forum.findByIdAndUpdate(body._id, body);
+    const forum = await Forum.findByIdAndUpdate(body._id, body, { new: true });
     return NextResponse.json(forum, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error?.message }, { status: 500 });
@@ -73,6 +83,7 @@ export async function DELETE(req: NextRequest) {
     }
     await startDb();
     await Forum.findByIdAndDelete(req.nextUrl.searchParams.get('_id'));
+    await Forum.deleteMany({ parent: req.nextUrl.searchParams.get('_id') });
     return NextResponse.json(null, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error?.message }, { status: 500 });
