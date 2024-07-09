@@ -1,15 +1,16 @@
 'use client';
 
-import { Button, Group } from '@mantine/core';
+import { Button, Group, Stack } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { Forum, AskQuestion } from '@/components/Forum';
+import { Forum, AskQuestion, ReplyToQuestion } from '@/components/Forum';
 import useFetchData from '@/hooks/useFetchData';
+import { ForumType } from '@/components/Forum/Forum.types';
 
 const ForumPage = ({ params }: { params: { forum: string } }) => {
-  const { data, loading } = useFetchData(`/api/forums?_id=${params.forum}`);
+  const { data, refetch } = useFetchData(`/api/forums?_id=${params.forum}`);
   const [opened, { open, close }] = useDisclosure(false);
 
-  if (loading) {
+  if (!data?.length) {
     return <></>;
   }
 
@@ -18,7 +19,13 @@ const ForumPage = ({ params }: { params: { forum: string } }) => {
       <Group mb="md" justify="right">
         <Button onClick={open}>Ask Question</Button>
       </Group>
-      <Forum forum={data[0]} />
+      <Stack gap="xl">
+        <Forum forum={data?.[0]} refetch={refetch} />
+        {data?.[1]?.map((forum: ForumType) => (
+          <Forum key={String(forum._id)} forum={forum} refetch={refetch} />
+        ))}
+        <ReplyToQuestion refetch={refetch} parent={data[0]?._id} />
+      </Stack>
       <AskQuestion opened={opened} close={close} />
     </>
   );
