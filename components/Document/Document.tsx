@@ -39,9 +39,11 @@ import { setImage } from '@/store/features/documentSlice';
 interface Props {
   content: string;
   onUpdate: (str: string) => void;
+  isDocumentPage?: boolean;
+  placeholder?: string;
 }
 
-const Document = ({ content, onUpdate }: Props) => {
+const Document = ({ content, onUpdate, isDocumentPage = true, placeholder }: Props) => {
   const [opened, { open, close }] = useDisclosure(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const dispatch = useDispatch();
@@ -60,7 +62,7 @@ const Document = ({ content, onUpdate }: Props) => {
       Image,
       FontFamily.configure({ types: ['textStyle'] }),
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
-      Placeholder.configure({ placeholder: 'Start writing...' }),
+      Placeholder.configure({ placeholder: placeholder || 'Start writing...' }),
       getTaskListExtension(TipTapTaskList),
       TaskItem.configure({ nested: true, HTMLAttributes: { class: 'test-item' } }),
     ],
@@ -121,7 +123,7 @@ const Document = ({ content, onUpdate }: Props) => {
 
   return (
     <>
-      <RichTextEditor fz={rem(isMobile ? 6 : 16)} bg="white" editor={editor}>
+      <RichTextEditor bg="white" editor={editor}>
         <RichTextEditor.Toolbar sticky stickyOffset={60}>
           <RichTextEditor.ControlsGroup>
             <Select
@@ -189,9 +191,11 @@ const Document = ({ content, onUpdate }: Props) => {
               <ActionIcon variant="default" onClick={open}>
                 <IconPhoto style={{ width: rem(20) }} stroke={1.5} />
               </ActionIcon>
-              <ActionIcon variant="default" onClick={onPrint}>
-                <IconPrinter style={{ width: rem(20) }} stroke={1.5} />
-              </ActionIcon>
+              {isDocumentPage && (
+                <ActionIcon variant="default" onClick={onPrint}>
+                  <IconPrinter style={{ width: rem(20) }} stroke={1.5} />
+                </ActionIcon>
+              )}
             </ActionIcon.Group>
           </RichTextEditor.ControlsGroup>
 
@@ -201,8 +205,8 @@ const Document = ({ content, onUpdate }: Props) => {
           </RichTextEditor.ControlsGroup>
         </RichTextEditor.Toolbar>
 
-        <Container px={0}>
-          <RichTextEditor.Content py={isMobile ? 'xs' : 'xl'} />
+        <Container size={!isDocumentPage ? '100%' : undefined} px={0}>
+          <RichTextEditor.Content py={!isDocumentPage || isMobile ? 'xs' : 'xl'} />
         </Container>
       </RichTextEditor>
 

@@ -8,14 +8,14 @@ interface Props {
 
 const Note = ({ note, handleClick }: Props) => (
   <Paper
-    shadow="sm"
     p="md"
-    radius="lg"
+    radius="md"
     withBorder
     bg={note.color}
     onClick={() => handleClick(note)}
     mih={rem(120)}
-    // mah={rem(32 * note?.note?.split('\n').length)}
+    style={{ cursor: 'pointer' }}
+    c={note?.color === 'gray.0' ? 'black' : 'white'}
   >
     <Text size="md" fw={500} dangerouslySetInnerHTML={{ __html: note?.title }} />
     <Text size="sm" dangerouslySetInnerHTML={{ __html: note?.note?.replace(/\r?\n/g, '<br />') }} />
