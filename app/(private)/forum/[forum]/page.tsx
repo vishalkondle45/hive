@@ -10,7 +10,7 @@ import { ForumType } from '@/components/Forum/Forum.types';
 import { FORUM_ANSWERS_SORT_OPTIONS } from '@/lib/constants';
 
 const ForumPage = ({ params }: { params: { forum: string } }) => {
-  const { data, refetch } = useFetchData(`/api/forums?_id=${params.forum}`);
+  const { data, refetch, loading } = useFetchData(`/api/forums?_id=${params.forum}`);
   const [opened, { open, close }] = useDisclosure(false);
   const [value, setValue] = useState<string | null>('highest');
   const [answers, setAnswers] = useState(data?.[1]);
@@ -37,7 +37,7 @@ const ForumPage = ({ params }: { params: { forum: string } }) => {
     setAnswers(sortIt);
   }, [value, data]);
 
-  if (!data?.length) {
+  if (loading) {
     return <></>;
   }
 
@@ -80,9 +80,10 @@ const ForumPage = ({ params }: { params: { forum: string } }) => {
             placeholder="Sort by"
           />
         </Group>
-        {answers?.map((forum: ForumType) => (
-          <Forum key={String(forum._id)} forum={forum} refetch={refetch} />
-        ))}
+        {answers &&
+          answers?.map((forum: ForumType) => (
+            <Forum key={String(forum._id)} forum={forum} refetch={refetch} />
+          ))}
         <ReplyToQuestion refetch={refetch} parent={data[0]?._id} />
       </Stack>
       <AskQuestion opened={opened} close={close} />

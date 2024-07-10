@@ -20,9 +20,9 @@ export default function useFetchData(url: string, cb?: () => void) {
       const res: any[] | any = await apiCall(url, null, 'GET', cb);
       dispatch(set(res?.data));
       dispatch(stop());
-    } catch (error) {
-      failure(String(error) || 'Something went wrong');
-      router.back();
+    } catch (err: any) {
+      failure(String(err) || 'Something went wrong');
+      router.push('/');
     }
   };
 

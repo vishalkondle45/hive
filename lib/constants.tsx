@@ -41,6 +41,7 @@ import {
   IconPrompt,
   IconRobot,
   IconStar,
+  IconTagsFilled,
   IconTrash,
   IconWallet,
 } from '@tabler/icons-react';
@@ -130,7 +131,16 @@ export const APPS: AppType[] = [
     color: 'green',
     sidebar: [{ label: 'Calendar', path: '/calendar', icon: <IconCalendar /> }],
   },
-  { label: 'Forum', path: '/forum', icon: <IconMessageQuestion />, color: 'indigo', sidebar: [] },
+  {
+    label: 'Forum',
+    path: '/forum',
+    icon: <IconMessageQuestion />,
+    color: 'indigo',
+    sidebar: [
+      { label: 'Home', path: '/forum', icon: <IconMessageQuestion /> },
+      { label: 'Tags', path: '/forum/tags', icon: <IconTagsFilled /> },
+    ],
+  },
   { label: 'Passwords', path: '/passwords', icon: <IconLock />, color: 'red', sidebar: [] },
   { label: 'Chat', path: '/chat', icon: <IconMessages />, color: 'pink', sidebar: [] },
   { label: 'Wallet', path: '/wallet', icon: <IconWallet />, color: 'grape', sidebar: [] },
