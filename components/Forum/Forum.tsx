@@ -1,15 +1,4 @@
-import {
-  ActionIcon,
-  Avatar,
-  Badge,
-  Button,
-  Divider,
-  Group,
-  Paper,
-  rem,
-  Stack,
-  Text,
-} from '@mantine/core';
+import { ActionIcon, Avatar, Badge, Button, Group, Paper, rem, Stack, Text } from '@mantine/core';
 import { useSession } from 'next-auth/react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -17,8 +6,8 @@ import { useRouter } from 'next/navigation';
 import {
   IconBookmark,
   IconBookmarkFilled,
-  IconChevronDown,
-  IconChevronUp,
+  IconCaretDownFilled,
+  IconCaretUpFilled,
   IconMessageReply,
   IconQuestionMark,
 } from '@tabler/icons-react';
@@ -49,7 +38,11 @@ export const Forum = ({ forum, refetch }: Props) => {
   const onDelete = () =>
     openModal('This forum will be deleted permanently', () => {
       apiCall(`/api/forums?_id=${forum?._id}`, {}, 'DELETE').then(() => {
-        router.push('/forum');
+        if (forum?.question) {
+          router.push('/forum');
+        } else {
+          refetch();
+        }
       });
     });
 
@@ -99,44 +92,25 @@ export const Forum = ({ forum, refetch }: Props) => {
             variant="filled"
             color="teal"
           >
-            <IconChevronUp />
+            <IconCaretUpFilled />
           </ActionIcon>
           <Text fw={700}>{(forum?.upvotes?.length || 0) - (forum?.downvotes?.length || 0)}</Text>
           <ActionIcon
             disabled={isDownVoted}
             onClick={onDownVote}
             radius="xl"
-            variant="outline"
+            variant="filled"
             color="red"
           >
-            <IconChevronDown />
+            <IconCaretDownFilled />
           </ActionIcon>
-          <ActionIcon onClick={onBookmark} radius="xl" variant="transparent">
-            {isSaved ? <IconBookmarkFilled /> : <IconBookmark />}
-          </ActionIcon>
+          {forum?.question && (
+            <ActionIcon onClick={onBookmark} radius="xl" variant="transparent">
+              {isSaved ? <IconBookmarkFilled /> : <IconBookmark />}
+            </ActionIcon>
+          )}
         </Stack>
         <Stack w="100%">
-          {forum?.question && (
-            <>
-              <Text
-                fw={700}
-                fz="lg"
-                dangerouslySetInnerHTML={{ __html: String(forum?.question) }}
-              />
-              <Group>
-                <Text c="dimmed" size={rem(14)}>
-                  Asked {dayjs(forum?.createdAt).fromNow()}
-                </Text>
-                <Text c="dimmed" size={rem(14)}>
-                  Modified {dayjs(forum?.updatedAt).fromNow()}
-                </Text>
-                <Text c="dimmed" size={rem(14)}>
-                  Viewed {forum?.views?.length} times
-                </Text>
-              </Group>
-              <Divider />
-            </>
-          )}
           <Text dangerouslySetInnerHTML={{ __html: String(forum?.description) }} />
           <Group>
             {forum?.tags?.map((tag) => (
@@ -154,15 +128,15 @@ export const Forum = ({ forum, refetch }: Props) => {
           </Group>
           <Group align="baseline" justify="space-between">
             <Group gap={rem(2)}>
-              <Button variant="transparent" color="gray" size="compact-xs">
+              <Button variant="transparent" color="teal" size="compact-xs">
                 Share
               </Button>
               {session.data.user._id === forum?.user?._id && (
                 <>
-                  <Button variant="transparent" color="gray" size="compact-xs">
+                  <Button variant="transparent" color="blue" size="compact-xs">
                     Edit
                   </Button>
-                  <Button variant="transparent" color="gray" size="compact-xs" onClick={onDelete}>
+                  <Button variant="transparent" color="red" size="compact-xs" onClick={onDelete}>
                     Delete
                   </Button>
                 </>

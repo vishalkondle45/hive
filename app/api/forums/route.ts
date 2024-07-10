@@ -21,7 +21,9 @@ export async function GET(req: NextRequest) {
 
     if (_id) {
       const forum = await Forum.findById(_id).populate({ path: 'user', select: 'name' });
-      const answers = await Forum.find({ parent: _id }).populate({ path: 'user', select: 'name' });
+      const answers = await Forum.find({ parent: _id })
+        .populate({ path: 'user', select: 'name' })
+        .select('-question -__v -tags -parent -views -saved -answers');
       if (!forum?.views.includes(new mongoose.Types.ObjectId(session?.user._id))) {
         await forum?.updateOne({ $push: { views: session?.user._id } }, { new: true });
       }

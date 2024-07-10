@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import {
   ActionIcon,
   Button,
@@ -120,6 +121,15 @@ const Document = ({ content, onUpdate, isDocumentPage = true, placeholder }: Pro
     printWindow?.print();
     printWindow?.close();
   };
+
+  useEffect(
+    () => () => {
+      if (editor) {
+        editor.destroy();
+      }
+    },
+    []
+  );
 
   return (
     <>
