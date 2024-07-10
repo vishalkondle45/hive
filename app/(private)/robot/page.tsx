@@ -52,7 +52,7 @@ const Page = () => {
             <Text size="xl">How can I help you today?</Text>
           </Stack>
           <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm" verticalSpacing="sm">
-            {visibleTodos.slice(0, isDesktop ? 4 : 2).map((prompt) => (
+            {visibleTodos?.slice(0, isDesktop ? 4 : 2).map((prompt) => (
               <Paper
                 radius="md"
                 w="100%"
@@ -60,7 +60,6 @@ const Page = () => {
                 withBorder
                 onClick={() => sendMessage(prompt.prompt)}
                 style={{ cursor: 'pointer' }}
-                // shadow="xs"
                 key={prompt.header}
               >
                 <Text style={{ whiteSpace: 'nowrap', overflow: 'hidden' }} fw={700}>
