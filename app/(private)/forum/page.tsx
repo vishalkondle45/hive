@@ -5,9 +5,10 @@ import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { ForumItem, AskQuestion } from '@/components/Forum';
 import useFetchData from '@/hooks/useFetchData';
 import { ForumType } from '@/components/Forum/Forum.types';
+import Skelton from '@/components/Skelton/Skelton';
 
 const ForumPage = () => {
-  const { data: forums } = useFetchData('/api/forums');
+  const { data: forums, loading } = useFetchData('/api/forums');
   const [opened, { open, close }] = useDisclosure(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
 
@@ -17,9 +18,13 @@ const ForumPage = () => {
         <Button onClick={open}>Ask Question</Button>
       </Group>
       <Stack>
-        {forums?.map((forum: ForumType) => (
-          <ForumItem key={String(forum._id)} forum={forum} isMobile={isMobile} />
-        ))}
+        {loading ? (
+          <Skelton items={6} height={90} />
+        ) : (
+          forums?.map((forum: ForumType) => (
+            <ForumItem key={String(forum._id)} forum={forum} isMobile={isMobile} />
+          ))
+        )}
       </Stack>
       <AskQuestion opened={opened} close={close} />
     </>
