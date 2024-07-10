@@ -141,9 +141,11 @@ const CalendarPage = () => {
       </Text>
       <Stack gap={rem(4)}>
         {events
-          ?.filter((i) => dayjs(i.from).isSame(day, 'day') || dayjs(i.to).isSame(day, 'day'))
+          ?.filter(
+            (i: EventDocument) => dayjs(i.from).isSame(day, 'day') || dayjs(i.to).isSame(day, 'day')
+          )
           .slice(0, 2)
-          .map((event) => (
+          .map((event: EventDocument) => (
             <Badge
               variant={dayjs(date).isSame(day, 'day') ? 'white' : 'filled'}
               color={event?.color}
@@ -156,11 +158,12 @@ const CalendarPage = () => {
             </Badge>
           ))}
       </Stack>
-      {events?.filter((i) => dayjs(i.from).isSame(day, 'day') || dayjs(i.to).isSame(day, 'day'))
-        ?.length > 2 && (
+      {events?.filter(
+        (i: EventDocument) => dayjs(i.from).isSame(day, 'day') || dayjs(i.to).isSame(day, 'day')
+      )?.length > 2 && (
         <Text c={dayjs(date).isSame(day, 'day') ? 'white' : 'blue'} fz="xs">
           {(events?.filter(
-            (i) => dayjs(i.from).isSame(day, 'day') || dayjs(i.to).isSame(day, 'day')
+            (i: EventDocument) => dayjs(i.from).isSame(day, 'day') || dayjs(i.to).isSame(day, 'day')
           )?.length || 0) - 2}{' '}
           more...
         </Text>
@@ -170,7 +173,7 @@ const CalendarPage = () => {
 
   const _renderDay = (day: Date) => {
     const noOfEvents = events?.filter(
-      (i) => dayjs(i.from).isSame(day, 'day') || dayjs(i.to).isSame(day, 'day')
+      (i: EventDocument) => dayjs(i.from).isSame(day, 'day') || dayjs(i.to).isSame(day, 'day')
     ).length;
     return (
       <Indicator

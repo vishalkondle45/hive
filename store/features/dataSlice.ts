@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface DataState {
-  data: any[];
+  data: any;
 }
 
 const initialState: DataState = {
@@ -15,9 +15,12 @@ export const dataSlice = createSlice({
     set: (state, action) => {
       state.data = action.payload;
     },
+    reset: (state) => {
+      state.data = [];
+    },
   },
 });
 
-export const { set } = dataSlice.actions;
+export const { set, reset } = dataSlice.actions;
 
 export default dataSlice.reducer;
