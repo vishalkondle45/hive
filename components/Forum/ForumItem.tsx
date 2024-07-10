@@ -67,7 +67,7 @@ export const ForumItem = ({ forum, isMobile, selectedTag }: Props) => {
                 <Avatar size="sm" name={forum?.user?.name} color="initials" />
                 <Text ta="right" inline c="dimmed" size="sm">
                   <Text c="dark" span>
-                    {forum?.user?.name.slice(0, 20)}
+                    {forum?.user?.name?.slice(0, 20)}
                   </Text>{' '}
                   asked {dayjs(forum?.createdAt).fromNow()}
                 </Text>
