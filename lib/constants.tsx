@@ -260,3 +260,18 @@ export const hoursIcons = [
   <IconNumber23Small />,
   <IconNumber24Small />,
 ];
+
+export const FORUM_ANSWERS_SORT_OPTIONS = [
+  {
+    label: 'Highest score',
+    value: 'highest',
+  },
+  {
+    label: 'Newest',
+    value: 'newest',
+  },
+  {
+    label: 'Oldest',
+    value: 'oldest',
+  },
+];

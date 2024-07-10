@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Button, Paper, Text } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { nprogress } from '@mantine/nprogress';
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export const ReplyToQuestion = ({ parent, refetch }: Props) => {
+  const [loader, setLoader] = useState(false);
   const form = useForm({
     initialValues: {
       description: '',
@@ -20,6 +22,7 @@ export const ReplyToQuestion = ({ parent, refetch }: Props) => {
   });
 
   const onSubmit = async () => {
+    setLoader(true);
     try {
       nprogress.start();
       await apiCall('/api/forums/reply', { description: form.values.description, parent }, 'POST');
@@ -29,8 +32,11 @@ export const ReplyToQuestion = ({ parent, refetch }: Props) => {
       failure(error);
     } finally {
       nprogress.complete();
+      setLoader(false);
     }
   };
+
+  if (loader) return <></>;
 
   return (
     <Paper p="lg" withBorder>
