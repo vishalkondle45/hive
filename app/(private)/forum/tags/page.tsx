@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 import { Tag } from '@/components/Forum';
 import useFetchData from '@/hooks/useFetchData';
 import Skelton from '@/components/Skelton/Skelton';
+import { TagType } from '@/components/Forum/Forum.types';
 
 const TagsPage = () => {
   const [sort, setSort] = useState('popular');
@@ -56,8 +57,8 @@ const TagsPage = () => {
             <Skelton items={8} height={70} />
           ) : (
             data
-              ?.filter((tag) => String(tag._id).includes(search))
-              ?.map((tag) => (
+              ?.filter((tag: TagType) => String(tag._id).includes(search))
+              ?.map((tag: TagType) => (
                 <Tag
                   key={String(tag._id)}
                   tag={String(tag._id)}

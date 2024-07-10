@@ -1,6 +1,7 @@
 import { HarmBlockThreshold, HarmCategory } from '@google/generative-ai';
 import {
   IconArchive,
+  IconBookmarkFilled,
   IconCalendar,
   IconCalendarDown,
   IconCalendarUp,
@@ -139,6 +140,7 @@ export const APPS: AppType[] = [
     sidebar: [
       { label: 'Home', path: '/forum', icon: <IconMessageQuestion /> },
       { label: 'Tags', path: '/forum/tags', icon: <IconTagsFilled /> },
+      { label: 'Saved', path: '/forum/saved', icon: <IconBookmarkFilled /> },
     ],
   },
   { label: 'Passwords', path: '/passwords', icon: <IconLock />, color: 'red', sidebar: [] },

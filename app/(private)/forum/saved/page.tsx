@@ -8,14 +8,14 @@ import { ForumType } from '@/components/Forum/Forum.types';
 import Skelton from '@/components/Skelton/Skelton';
 
 const ForumPage = () => {
-  const { data: forums, loading } = useFetchData('/api/forums');
+  const { data: forums, loading } = useFetchData('/api/forums/saved');
   const [opened, { open, close }] = useDisclosure(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   return (
     <>
       <Group mb="md" justify="space-between">
-        <Title>Questions</Title>
+        <Title>Saved</Title>
         <Button onClick={open}>Ask Question</Button>
       </Group>
       <Stack>
