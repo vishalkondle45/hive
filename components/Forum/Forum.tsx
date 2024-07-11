@@ -8,6 +8,7 @@ import {
   rem,
   Stack,
   Text,
+  ThemeIcon,
   Tooltip,
 } from '@mantine/core';
 import { useSession } from 'next-auth/react';
@@ -20,7 +21,6 @@ import {
   IconCaretDownFilled,
   IconCaretUpFilled,
   IconCheck,
-  IconX,
 } from '@tabler/icons-react';
 import { ForumType } from './Forum.types';
 import { apiCall, openModal } from '@/lib/client_functions';
@@ -124,16 +124,11 @@ export const Forum = ({ forum, refetch, answer, onMarkAsAnswer }: Props) => {
               {isSaved ? <IconBookmarkFilled /> : <IconBookmark />}
             </ActionIcon>
           )}
-          {!forum?.question && forum?.user?._id === session.data.user._id && (
-            <Tooltip label={`${isThisAnswer ? 'Remove as answer' : 'Mark as answer'}`}>
-              <ActionIcon
-                onClick={() => onMarkAsAnswer?.(isThisAnswer ? null : String(forum._id))}
-                radius="xl"
-                color={isThisAnswer ? 'red' : 'teal'}
-                variant="subtle"
-              >
-                {isThisAnswer ? <IconX /> : <IconCheck />}
-              </ActionIcon>
+          {!forum?.question && isThisAnswer && (
+            <Tooltip label="Verified Answer">
+              <ThemeIcon radius="xl" color="green" variant="transparent">
+                <IconCheck stroke={5} />
+              </ThemeIcon>
             </Tooltip>
           )}
         </Stack>
@@ -160,11 +155,11 @@ export const Forum = ({ forum, refetch, answer, onMarkAsAnswer }: Props) => {
               </Button>
               {session.data.user._id === forum?.user?._id && (
                 <>
-                  <Button variant="transparent" color="blue" size="compact-xs">
-                    Edit
-                  </Button>
                   <Button variant="transparent" color="red" size="compact-xs" onClick={onDelete}>
                     Delete
+                  </Button>
+                  <Button variant="transparent" color="blue" size="compact-xs">
+                    Edit
                   </Button>
                 </>
               )}
@@ -172,6 +167,18 @@ export const Forum = ({ forum, refetch, answer, onMarkAsAnswer }: Props) => {
                 <Button variant="transparent" color="gray" size="compact-xs">
                   Follow
                 </Button>
+              )}
+              {!forum?.question && forum?.user?._id === session.data.user._id && (
+                <Tooltip label={`${isThisAnswer ? 'Remove as answer' : 'Mark as answer'}`}>
+                  <Button
+                    variant="transparent"
+                    color={isThisAnswer ? 'red' : 'teal'}
+                    size="compact-xs"
+                    onClick={() => onMarkAsAnswer?.(isThisAnswer ? null : String(forum._id))}
+                  >
+                    {isThisAnswer ? 'Remove' : 'Mark'} as Answer
+                  </Button>
+                </Tooltip>
               )}
             </Group>
             <Paper p="xs" withBorder>
