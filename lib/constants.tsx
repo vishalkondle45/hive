@@ -1,7 +1,7 @@
 import { HarmBlockThreshold, HarmCategory } from '@google/generative-ai';
 import {
   IconArchive,
-  IconBookmarkFilled,
+  IconBookmark,
   IconCalendar,
   IconCalendarDown,
   IconCalendarUp,
@@ -11,6 +11,7 @@ import {
   IconCode,
   IconLock,
   IconMessageQuestion,
+  IconMessageReply,
   IconMessages,
   IconNote,
   IconNumber0Small,
@@ -40,9 +41,10 @@ import {
   IconNumber9Small,
   IconPlus,
   IconPrompt,
+  IconQuestionMark,
   IconRobot,
   IconStar,
-  IconTagsFilled,
+  IconTags,
   IconTrash,
   IconWallet,
 } from '@tabler/icons-react';
@@ -139,8 +141,10 @@ export const APPS: AppType[] = [
     color: 'indigo',
     sidebar: [
       { label: 'Home', path: '/forum', icon: <IconMessageQuestion /> },
-      { label: 'Tags', path: '/forum/tags', icon: <IconTagsFilled /> },
-      { label: 'Saved', path: '/forum/saved', icon: <IconBookmarkFilled /> },
+      { label: 'Tags', path: '/forum/tags', icon: <IconTags /> },
+      { label: 'Saved', path: '/forum/saved', icon: <IconBookmark /> },
+      { label: 'You Asked', path: '/forum/my-questions', icon: <IconQuestionMark /> },
+      { label: 'You Answered', path: '/forum/my-answers', icon: <IconMessageReply /> },
     ],
   },
   { label: 'Passwords', path: '/passwords', icon: <IconLock />, color: 'red', sidebar: [] },
