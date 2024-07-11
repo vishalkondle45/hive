@@ -87,8 +87,9 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'You are not authorized' }, { status: 401 });
     }
     await startDb();
+    const fourm = await Forum.findById(req.nextUrl.searchParams.get('_id'));
     await Forum.findByIdAndDelete(req.nextUrl.searchParams.get('_id'));
-    await Forum.deleteMany({ parent: req.nextUrl.searchParams.get('_id') });
+    await Forum.deleteMany({ _id: { $in: fourm?.answers } });
     return NextResponse.json(null, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error?.message }, { status: 500 });
