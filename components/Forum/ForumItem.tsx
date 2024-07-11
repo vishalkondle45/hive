@@ -1,5 +1,4 @@
 import { Avatar, Badge, Flex, Group, Paper, rem, Stack, Text } from '@mantine/core';
-import { IconCheck } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { ForumType } from './Forum.types';
@@ -32,11 +31,11 @@ export const ForumItem = ({ forum, isMobile, selectedTag }: Props) => {
             </Badge>
             <Badge
               radius="xs"
-              variant="filled"
-              leftSection={<IconCheck style={{ width: rem(18), height: rem(18) }} />}
+              variant={forum?.answer ? 'filled' : 'transparent'}
               color="teal"
+              px={0}
             >
-              {forum?.answers} answers
+              {forum?.answers?.length} answers
             </Badge>
             <Badge radius="xs" color="brown" variant="transparent" px={0}>
               {forum?.views?.length} views

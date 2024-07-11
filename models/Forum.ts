@@ -4,14 +4,14 @@ import { UserDocument } from './User';
 export interface ForumDocument extends Document {
   question?: string;
   description?: string;
-  parent?: Types.ObjectId;
   user?: Types.ObjectId | UserDocument;
   tags: string[];
   upvotes: Types.ObjectId[];
   downvotes: Types.ObjectId[];
   views: Types.ObjectId[];
   saved: Types.ObjectId[];
-  answers: number;
+  answers: Types.ObjectId[];
+  answer?: Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -20,14 +20,14 @@ const forumSchema = new Schema<ForumDocument>(
   {
     question: { type: String, required: false, trim: true },
     description: { type: String, required: false, trim: true },
-    parent: { type: Types.ObjectId, ref: 'Forum', default: null },
     user: { type: Types.ObjectId, required: true, ref: 'User' },
     tags: [{ type: String }],
     views: { type: [Types.ObjectId], default: [], ref: 'User' },
     upvotes: { type: [Types.ObjectId], default: [], ref: 'User' },
     downvotes: { type: [Types.ObjectId], default: [], ref: 'User' },
     saved: { type: [Types.ObjectId], default: [], ref: 'User' },
-    answers: { type: Number, default: 0 },
+    answers: { type: [Types.ObjectId], default: [], ref: 'Forum' },
+    answer: { type: Types.ObjectId, default: null, ref: 'Forum' },
   },
   { timestamps: true }
 );

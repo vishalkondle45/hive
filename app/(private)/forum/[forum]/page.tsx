@@ -9,6 +9,7 @@ import { ForumType } from '@/components/Forum/Forum.types';
 import { FORUM_ANSWERS_SORT_OPTIONS } from '@/lib/constants';
 import { ForumDocument } from '@/models/Forum';
 import { apiCall } from '@/lib/client_functions';
+import Skelton from '@/components/Skelton/Skelton';
 
 const ForumPage = ({ params }: { params: { forum: string } }) => {
   const [forum, setForum] = useState<ForumDocument | null | any>(null);
@@ -19,9 +20,33 @@ const ForumPage = ({ params }: { params: { forum: string } }) => {
   const getForum = async () => {
     const res: any | undefined = await apiCall(`/api/forums?_id=${params.forum}`);
     if (res?.data) {
-      setForum(res?.data?.[0]);
-      setAnswers(res?.data?.[1]);
+      const { answers: Answers, ...rest } = res.data;
+      setForum(rest);
+      SortIt(Answers);
     }
+  };
+
+  const SortIt = (data: ForumType[]) => {
+    if (!data) {
+      return;
+    }
+    const sortIt = [...data];
+    switch (value) {
+      case 'newest':
+        sortIt.sort((a: any, b: any) => dayjs(b.createdAt).diff(dayjs(a.createdAt), 'seconds'));
+        break;
+      case 'oldest':
+        sortIt.sort((a: any, b: any) => dayjs(a.createdAt).diff(dayjs(b.createdAt), 'seconds'));
+        break;
+      default:
+        sortIt.sort((a: any, b: any) => {
+          const aScore = a.upvotes.length - a.downvotes.length;
+          const bScore = b.upvotes.length - b.downvotes.length;
+          return bScore - aScore;
+        });
+        break;
+    }
+    setAnswers(sortIt);
   };
 
   useEffect(() => {
@@ -29,27 +54,17 @@ const ForumPage = ({ params }: { params: { forum: string } }) => {
   }, [params.forum]);
 
   useEffect(() => {
-    if (!forum || !answers) {
-      return;
-    }
-    const sortIt = [...answers];
-    switch (value) {
-      case 'newest':
-        sortIt.sort((a: any, b: any) => dayjs(b.updatedAt).diff(dayjs(a.updatedAt), 'seconds'));
-        break;
-      case 'oldest':
-        sortIt.sort((a: any, b: any) => dayjs(a.updatedAt).diff(dayjs(b.updatedAt), 'seconds'));
-        break;
-      default:
-        sortIt.sort(
-          (a: any, b: any) =>
-            b.upvotes.length - b.downvotes.length - (a.upvotes.length - a.downvotes.length)
-        );
-        break;
-    }
-
-    setAnswers(sortIt);
+    SortIt(answers);
   }, [value]);
+
+  const onMarkAsAnswer = async (answer: string | null) => {
+    await apiCall('/api/forums', { ...forum, answer }, 'PUT');
+    getForum();
+  };
+
+  if (!forum) {
+    return <Skelton height={200} />;
+  }
 
   return (
     <>
@@ -87,7 +102,13 @@ const ForumPage = ({ params }: { params: { forum: string } }) => {
           />
         </Group>
         {answers?.map((forumItem: ForumType) => (
-          <Forum key={String(forumItem._id)} forum={forumItem} refetch={getForum} />
+          <Forum
+            key={String(forumItem._id)}
+            forum={forumItem}
+            answer={String(forum.answer)}
+            refetch={getForum}
+            onMarkAsAnswer={onMarkAsAnswer}
+          />
         ))}
         <ReplyToQuestion refetch={getForum} parent={forum?._id} />
       </Stack>

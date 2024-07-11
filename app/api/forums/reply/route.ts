@@ -16,8 +16,10 @@ export async function POST(req: NextRequest) {
     }
     const body = await req.json();
     await startDb();
-    const forum = await Forum.create({ ...body, user: session?.user._id });
-    return NextResponse.json(forum, { status: 200 });
+    const { parent, ...remainingBody } = body;
+    const reply = await Forum.create({ ...remainingBody, user: session?.user._id });
+    await Forum.findByIdAndUpdate(parent, { $push: { answers: reply._id } });
+    return NextResponse.json(reply, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error?.message }, { status: 500 });
   }

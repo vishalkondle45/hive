@@ -1,4 +1,15 @@
-import { ActionIcon, Avatar, Badge, Button, Group, Paper, rem, Stack, Text } from '@mantine/core';
+import {
+  ActionIcon,
+  Avatar,
+  Badge,
+  Button,
+  Group,
+  Paper,
+  rem,
+  Stack,
+  Text,
+  Tooltip,
+} from '@mantine/core';
 import { useSession } from 'next-auth/react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -8,8 +19,8 @@ import {
   IconBookmarkFilled,
   IconCaretDownFilled,
   IconCaretUpFilled,
-  IconMessageReply,
-  IconQuestionMark,
+  IconCheck,
+  IconX,
 } from '@tabler/icons-react';
 import { ForumType } from './Forum.types';
 import { apiCall, openModal } from '@/lib/client_functions';
@@ -19,9 +30,11 @@ dayjs.extend(relativeTime);
 interface Props {
   forum: ForumType;
   refetch: () => void;
+  answer?: string;
+  onMarkAsAnswer?: (answer: string | null) => void;
 }
 
-export const Forum = ({ forum, refetch }: Props) => {
+export const Forum = ({ forum, refetch, answer, onMarkAsAnswer }: Props) => {
   const session: any = useSession();
   const router = useRouter();
 
@@ -34,6 +47,8 @@ export const Forum = ({ forum, refetch }: Props) => {
   const removeFromUpVotes = forum?.upvotes?.filter((_id) => _id !== session?.data?.user?._id);
   const removeFromDownVotes = forum?.downvotes?.filter((_id) => _id !== session?.data?.user?._id);
   const removeFromSaved = forum?.saved?.filter((_id) => _id !== session?.data?.user?._id);
+
+  const isThisAnswer = forum._id === answer;
 
   const onDelete = () =>
     openModal('This forum will be deleted permanently', () => {
@@ -109,6 +124,18 @@ export const Forum = ({ forum, refetch }: Props) => {
               {isSaved ? <IconBookmarkFilled /> : <IconBookmark />}
             </ActionIcon>
           )}
+          {!forum?.question && forum?.user?._id === session.data.user._id && (
+            <Tooltip label={`${isThisAnswer ? 'Remove as answer' : 'Mark as answer'}`}>
+              <ActionIcon
+                onClick={() => onMarkAsAnswer?.(isThisAnswer ? null : String(forum._id))}
+                radius="xl"
+                color={isThisAnswer ? 'red' : 'teal'}
+                variant="subtle"
+              >
+                {isThisAnswer ? <IconX /> : <IconCheck />}
+              </ActionIcon>
+            </Tooltip>
+          )}
         </Stack>
         <Stack w="100%">
           <Text dangerouslySetInnerHTML={{ __html: String(forum?.description) }} />
@@ -148,48 +175,15 @@ export const Forum = ({ forum, refetch }: Props) => {
               )}
             </Group>
             <Paper p="xs" withBorder>
-              <Stack gap={rem(4)}>
-                <Text c="dimmed" size={rem(12)}>
-                  {forum?.question ? 'asked' : 'answered'} on{' '}
-                  {dayjs(forum?.createdAt).format('MMM DD YYYY @ HH:mm')}
-                </Text>
-                <Group gap={rem(4)}>
-                  <Avatar name={forum?.user?.name} color="initials" />
-                  <Stack gap={rem(4)}>
-                    <Text size="xs">{forum?.user?.name}</Text>
-                    <Group gap="xs">
-                      <Badge
-                        variant="light"
-                        color="red"
-                        radius="xs"
-                        title="Questions"
-                        leftSection={
-                          <IconQuestionMark
-                            stroke={4}
-                            style={{ width: rem(14), height: rem(14) }}
-                          />
-                        }
-                      >
-                        0
-                      </Badge>
-                      <Badge
-                        variant="light"
-                        color="teal"
-                        radius="xs"
-                        title="Replies"
-                        leftSection={
-                          <IconMessageReply
-                            stroke={3}
-                            style={{ width: rem(14), height: rem(14) }}
-                          />
-                        }
-                      >
-                        0
-                      </Badge>
-                    </Group>
-                  </Stack>
-                </Group>
-              </Stack>
+              <Group wrap="nowrap" gap={rem(4)}>
+                <Avatar name={forum?.user?.name} color="initials" />
+                <Stack gap={rem(4)}>
+                  <Text size="xs">{forum?.user?.name}</Text>
+                  <Text c="dimmed" size={rem(12)}>
+                    {dayjs(forum?.createdAt).format('MMM DD YYYY @ HH:mm')}
+                  </Text>
+                </Stack>
+              </Group>
             </Paper>
           </Group>
         </Stack>
