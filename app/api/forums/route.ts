@@ -20,14 +20,17 @@ export async function GET(req: NextRequest) {
     const tags = req.nextUrl.searchParams.get('tag')?.toString() ?? '';
 
     if (_id) {
-      const forum = await Forum.findById(_id).populate({ path: 'user', select: 'name' });
-      const answers = await Forum.find({ parent: _id })
+      const forum = await Forum.findById(_id)
         .populate({ path: 'user', select: 'name' })
-        .select('-question -__v -tags -parent -views -saved -answers');
+        .populate({
+          path: 'answers',
+          select: '-question -__v -tags -views -saved',
+          populate: { path: 'user', select: 'name' },
+        });
       if (!forum?.views.includes(new mongoose.Types.ObjectId(session?.user._id))) {
         await forum?.updateOne({ $push: { views: session?.user._id } }, { new: true });
       }
-      return NextResponse.json([forum, answers], { status: 200 });
+      return NextResponse.json(forum, { status: 200 });
     }
 
     if (tags) {
