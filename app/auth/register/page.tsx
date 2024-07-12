@@ -12,6 +12,8 @@ import {
 import { useForm } from '@mantine/form';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { DatePickerInput } from '@mantine/dates';
+import dayjs from 'dayjs';
 import FormButtons from '@/components/FormButtons';
 import { apiCall, success } from '@/lib/client_functions';
 
@@ -21,14 +23,17 @@ const Register = () => {
   const form = useForm({
     initialValues: {
       name: '',
+      dob: null,
+      username: '',
+      mobile: '',
       email: '',
       password: '',
-      mobile: '',
-      pan: '',
-      folios: [],
-      isAdmin: true,
     },
     validate: {
+      name: (value) => (value ? null : 'Name is required'),
+      dob: (value) =>
+        dayjs().diff(dayjs(value), 'year') >= 18 ? null : 'Age should be atleast 18',
+      mobile: (value) => (/^[0]?[6789]\d{9}$/.test(value) ? null : 'Mobile is required'),
       email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
       password: (value) =>
         value.length < 8 ? 'Password should include at least 8 characters' : null,
@@ -42,8 +47,13 @@ const Register = () => {
     });
   };
 
-  if (session.status === 'authenticated') {
+  if (session?.status === 'loading') {
+    return <></>;
+  }
+
+  if (session?.status === 'authenticated') {
     router.push('/notes');
+    return <></>;
   }
 
   return (
@@ -56,12 +66,26 @@ const Register = () => {
           <form onSubmit={form.onSubmit(sumbitRegister)} onReset={form.onReset}>
             <Stack>
               <TextInput label="Name" placeholder="Name" {...form.getInputProps('name')} />
+              <TextInput
+                label="Username"
+                placeholder="Username"
+                {...form.getInputProps('username')}
+              />
+              <DatePickerInput
+                placeholder="Pick date"
+                label="Date of Birth"
+                {...form.getInputProps('dob')}
+                mt="xs"
+              />
               <NumberInput
-                label="Mobile number"
-                placeholder="Mobile number"
+                label="Mobile"
+                placeholder="Mobile"
                 {...form.getInputProps('mobile')}
+                min={0}
+                minLength={10}
                 maxLength={10}
                 hideControls
+                mt="xs"
               />
               <TextInput label="Email" placeholder="Email" {...form.getInputProps('email')} />
               <PasswordInput

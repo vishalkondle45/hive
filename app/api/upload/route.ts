@@ -17,7 +17,7 @@ const s3Client = new S3Client({
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
 
-async function uploadImageToS3(file: Buffer, name: string) {
+export async function uploadImageToS3(file: Buffer, name: string) {
   try {
     const fileBuffer = file;
     const params = {

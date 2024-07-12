@@ -32,8 +32,8 @@ export default function SpotLight() {
   return (
     <>
       <ActionIcon
-        variant="filled"
-        color="orange"
+        variant="outline"
+        color="dark"
         radius="xl"
         size={rem(40)}
         onClick={spotlight.open}

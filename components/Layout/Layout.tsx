@@ -6,6 +6,7 @@ import {
   Avatar,
   Burger,
   Button,
+  FileButton,
   Group,
   Indicator,
   Popover,
@@ -35,13 +36,14 @@ import {
 } from '@/store/features/layoutSlice';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const session = useSession();
-  const isLoggedIn = session?.status === 'authenticated';
-  const isLoading = session?.status === 'loading';
+  const { data, status, update } = useSession() as any;
+  const isLoggedIn = status === 'authenticated';
+  const isLoading = status === 'loading';
   const router = useRouter();
   const pathname = usePathname();
   const rootpath = pathname.split('/')[1];
   const network = useNetwork();
+  const [file, setFile] = useState<File | null>(null);
 
   const [APP, setAPP] = useState(APPS?.find((app) => `/${rootpath}` === app?.path));
 
@@ -63,19 +65,35 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   );
 
   const getList = async () => {
-    if (session.status === 'unauthenticated') {
+    if (status === 'unauthenticated') {
       return;
     }
-    setAPP(APPS?.find((app) => `/${rootpath}` === app?.path));
-    const res = await apiCall(`/api/list?schema=${rootpath}`);
-    if (res?.data) {
-      setAPP((old = { sidebar: [] }) => ({ ...old, sidebar: [...old.sidebar, ...res.data] }));
+    if (rootpath) {
+      setAPP(APPS?.find((app) => `/${rootpath}` === app?.path));
+      const res = await apiCall(`/api/list?schema=${rootpath}`);
+      if (res?.data) {
+        setAPP((old = { sidebar: [] }) => ({ ...old, sidebar: [...old.sidebar, ...res.data] }));
+      }
     }
+  };
+
+  const onUpload = async (_file: File) => {
+    const formData = new FormData();
+    formData.append('file', _file);
+    const res = await apiCall('/api/upload', formData, 'POST');
+    const res1 = await apiCall('/api/profile', { image: res?.data }, 'PUT');
+    update({ image: res1?.data?.image });
   };
 
   useEffect(() => {
     getList();
   }, [pathname]);
+
+  useEffect(() => {
+    if (file) {
+      onUpload(file);
+    }
+  }, [file]);
 
   useEffect(() => {
     if (!network.online) {
@@ -151,8 +169,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 >
                   <Popover.Target>
                     <ActionIcon
-                      variant="filled"
-                      color="blue"
+                      variant="outline"
+                      color="dark"
                       radius="xl"
                       size={rem(40)}
                       onClick={() => dispatch(setAppsOpened(!appsOpened))}
@@ -185,32 +203,45 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <Popover.Target>
                     <Indicator color={network.online ? 'teal' : 'red'} offset={5}>
                       <Avatar
-                        variant="filled"
-                        color="green"
+                        variant="outline"
+                        color="dark"
                         radius="xl"
                         size={rem(40)}
                         onClick={() => dispatch(setUserOpened(!userOpened))}
                         style={{ cursor: 'pointer' }}
+                        src={data?.user?.image}
                       >
-                        {getInitials(session?.data?.user?.name)}
+                        {getInitials(data?.user?.name)}
                       </Avatar>
                     </Indicator>
                   </Popover.Target>
                   <Popover.Dropdown p="xs">
                     <Stack align="center">
                       <Text fw={700} size="xs">
-                        {session?.data?.user?.email}
+                        {data?.user?.username}
                       </Text>
                       <Stack align="center" gap={rem(4)}>
-                        <Avatar variant="filled" color={APP?.color} radius="xl" size={rem(60)}>
-                          {getInitials(session?.data?.user?.name)}
-                        </Avatar>
+                        <FileButton accept="image/png,image/jpeg" onChange={setFile}>
+                          {(props) => (
+                            <Avatar
+                              variant="filled"
+                              color={APP?.color}
+                              radius="50%"
+                              size={rem(100)}
+                              style={{ cursor: 'pointer' }}
+                              {...props}
+                              src={data?.user?.image}
+                            >
+                              {getInitials(data?.user?.name)}
+                            </Avatar>
+                          )}
+                        </FileButton>
                         <Text fw={700} size="xs" c={network.online ? 'teal' : 'red'}>
                           {network.online ? 'Online' : 'Offline'}
                         </Text>
                       </Stack>
                       <Text fw={700} size="sm">
-                        Hi {session?.data?.user?.name},
+                        Hi {data?.user?.name},
                       </Text>
                       <Group>
                         <Button

@@ -4,6 +4,9 @@ import { Model, model, models, Schema, Types } from 'mongoose';
 export interface UserDocument extends Document {
   _id?: Types.ObjectId;
   name: string;
+  image?: string;
+  dob: Date;
+  username?: string;
   mobile?: string;
   email: string;
   password: string;
@@ -23,10 +26,26 @@ const userSchema = new Schema<UserDocument, {}, Methods>(
       collation: { locale: 'en', strength: 2 },
       index: true,
     },
+    dob: {
+      type: Date,
+      required: true,
+    },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+    image: {
+      type: String,
+      unique: true,
+      default: null,
+      index: true,
+    },
     mobile: {
       type: String,
       required: true,
-      // unique: true,
+      unique: true,
       index: true,
     },
     email: {

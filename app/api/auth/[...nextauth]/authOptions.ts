@@ -25,7 +25,7 @@ export const authOptions: NextAuthOptions = {
         if (!passwordMatch) throw Error('email/password mismatch!');
         if (!user.isVerified) {
           await sendMail(user?.email, verificationMessage(user.name, String(user._id)));
-          throw Error('Please verify your email!');
+          throw Error('Please verify your email!, Verification mail sent to your email');
         }
 
         return {
@@ -33,15 +33,28 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           _id: user._id,
           isAdmin: user.isAdmin,
+          username: user.username,
+          image: user.image,
         };
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token._id = (user as UserSessionObject)?._id;
         token.isAdmin = (user as UserSessionObject)?.isAdmin;
+        token.image = (user as UserSessionObject)?.image as string;
+        token.username = (user as UserSessionObject)?.username as string;
+      }
+      if (trigger === 'update' && session?.image) {
+        token.image = session.image;
+      }
+      if (trigger === 'update' && session?.name) {
+        token.name = session.name;
+      }
+      if (trigger === 'update' && session?.username) {
+        token.username = session.username;
       }
       return token;
     },
@@ -49,6 +62,9 @@ export const authOptions: NextAuthOptions = {
       if (token && session.user) {
         (session.user as UserSessionObject)._id = token?._id as string;
         (session.user as UserSessionObject).isAdmin = token?.isAdmin as boolean;
+        (session.user as UserSessionObject).image = token?.image as string;
+        (session.user as UserSessionObject).name = token?.name as string;
+        (session.user as UserSessionObject).username = token?.username as string;
       }
       return session;
     },
