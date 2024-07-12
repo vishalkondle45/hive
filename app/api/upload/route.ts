@@ -1,39 +1,13 @@
 import dayjs from 'dayjs';
-import { ObjectCannedACL, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 import { authOptions } from '../auth/[...nextauth]/authOptions';
 import { UserDataTypes } from '../auth/[...nextauth]/next-auth.interfaces';
 import startDb from '@/lib/db';
-
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION as string,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
-  },
-});
+import { uploadImageToS3 } from '@/lib/functions';
 
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
-
-export async function uploadImageToS3(file: Buffer, name: string) {
-  try {
-    const fileBuffer = file;
-    const params = {
-      Key: name,
-      Body: fileBuffer,
-      ACL: ObjectCannedACL.public_read,
-      Bucket: 'dream-by-vishal',
-      ContentType: 'image/*',
-    };
-    const command = new PutObjectCommand(params);
-    const result = await s3Client.send(command);
-    return result;
-  } catch (error) {
-    return '';
-  }
-}
 
 export async function POST(req: Request) {
   try {
