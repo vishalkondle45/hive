@@ -11,6 +11,8 @@ export interface UserDataTypes {
     name?: string | null | undefined;
     email?: string | null | undefined;
     isAdmin?: boolean | undefined;
+    image?: string | undefined;
+    username?: string;
   };
 }
 
@@ -19,4 +21,6 @@ export interface UserSessionObject {
   email: string;
   _id?: string;
   isAdmin?: boolean;
+  image?: string;
+  username?: string;
 }

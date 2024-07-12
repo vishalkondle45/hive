@@ -9,7 +9,7 @@ import { failure } from '@/lib/client_functions';
 
 const Login = () => {
   const router = useRouter();
-  const session = useSession();
+  const { status } = useSession();
   const form = useForm({
     initialValues: {
       email: '',
@@ -25,15 +25,21 @@ const Login = () => {
   const sumbitLogin = async () => {
     await signIn('credentials', { ...form.values, redirect: false }).then((res) => {
       if (res?.ok) {
-        router.push('/');
+        router.push('/profile');
+        router.refresh();
       } else {
         failure(res?.error || '');
       }
     });
   };
 
-  if (session.status === 'authenticated') {
+  if (status === 'loading') {
+    return <></>;
+  }
+
+  if (status === 'authenticated') {
     router.push('/notes');
+    return <></>;
   }
 
   return (
