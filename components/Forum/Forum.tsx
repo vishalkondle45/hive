@@ -24,6 +24,7 @@ import {
 } from '@tabler/icons-react';
 import { ForumType } from './Forum.types';
 import { apiCall, openModal } from '@/lib/client_functions';
+import { SparkButton } from '../Custom';
 
 dayjs.extend(relativeTime);
 
@@ -163,11 +164,7 @@ export const Forum = ({ forum, refetch, answer, onMarkAsAnswer }: Props) => {
                   </Button>
                 </>
               )}
-              {session.data.user._id !== forum?.user?._id && (
-                <Button variant="transparent" color="gray" size="compact-xs">
-                  Follow
-                </Button>
-              )}
+              {session.data.user._id !== forum?.user?._id && <SparkButton />}
               {!forum?.question && forum?.user?._id === session.data.user._id && (
                 <Tooltip label={`${isThisAnswer ? 'Remove as answer' : 'Mark as answer'}`}>
                   <Button

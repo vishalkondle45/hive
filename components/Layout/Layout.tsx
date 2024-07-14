@@ -70,9 +70,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }
     if (rootpath) {
       setAPP(APPS?.find((app) => `/${rootpath}` === app?.path));
+      const sidebar = APPS?.find((app) => `/${rootpath}` === app?.path)?.sidebar || [];
       const res = await apiCall(`/api/list?schema=${rootpath}`);
       if (res?.data) {
-        setAPP((old = { sidebar: [] }) => ({ ...old, sidebar: [...old.sidebar, ...res.data] }));
+        setAPP((old = { sidebar: [] }) => ({ ...old, sidebar: [...sidebar, ...res.data] }));
       }
     }
   };

@@ -9,7 +9,6 @@ import {
   IconClipboardText,
   IconCloud,
   IconCode,
-  IconLock,
   IconMessageQuestion,
   IconMessageReply,
   IconMessages,
@@ -46,6 +45,7 @@ import {
   IconStar,
   IconTags,
   IconTrash,
+  IconUsersGroup,
   IconWallet,
 } from '@tabler/icons-react';
 
@@ -147,9 +147,9 @@ export const APPS: AppType[] = [
       { label: 'You Answered', path: '/forum/my-answers', icon: <IconMessageReply /> },
     ],
   },
-  { label: 'Passwords', path: '/passwords', icon: <IconLock />, color: 'red', sidebar: [] },
+  { label: 'Network', path: '/network', icon: <IconUsersGroup />, color: 'grape', sidebar: [] },
   { label: 'Chat', path: '/chat', icon: <IconMessages />, color: 'pink', sidebar: [] },
-  { label: 'Wallet', path: '/wallet', icon: <IconWallet />, color: 'grape', sidebar: [] },
+  { label: 'Wallet', path: '/wallet', icon: <IconWallet />, color: 'red', sidebar: [] },
   { label: 'Dev Tools', path: '/dev', icon: <IconCode />, color: 'lime', sidebar: [] },
 ];
 
