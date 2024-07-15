@@ -45,6 +45,7 @@ import {
   IconStar,
   IconTags,
   IconTrash,
+  IconUserCircle,
   IconUsersGroup,
   IconWallet,
 } from '@tabler/icons-react';
@@ -147,7 +148,16 @@ export const APPS: AppType[] = [
       { label: 'You Answered', path: '/forum/my-answers', icon: <IconMessageReply /> },
     ],
   },
-  { label: 'Network', path: '/network', icon: <IconUsersGroup />, color: 'grape', sidebar: [] },
+  {
+    label: 'Network',
+    path: '/network',
+    icon: <IconUsersGroup />,
+    color: 'grape',
+    sidebar: [
+      { label: 'Home', path: '/network', icon: <IconUsersGroup /> },
+      { label: 'My Profile', path: '/network/profile', icon: <IconUserCircle /> },
+    ],
+  },
   { label: 'Chat', path: '/chat', icon: <IconMessages />, color: 'pink', sidebar: [] },
   { label: 'Wallet', path: '/wallet', icon: <IconWallet />, color: 'red', sidebar: [] },
   { label: 'Dev Tools', path: '/dev', icon: <IconCode />, color: 'lime', sidebar: [] },

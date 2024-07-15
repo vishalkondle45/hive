@@ -249,7 +249,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                           variant="filled"
                           radius="xl"
                           color="teal"
-                          onClick={() => router.push('/profile')}
+                          onClick={() => router.push('/network/profile')}
                           leftSection={<IconUser />}
                         >
                           Profile

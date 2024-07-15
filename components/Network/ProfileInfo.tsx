@@ -12,27 +12,13 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { useEffect, useState } from 'react';
 import { useMediaQuery } from '@mantine/hooks';
 import { IconCarambola, IconMapPin } from '@tabler/icons-react';
-import { apiCall, sumOfDigits } from '@/lib/client_functions';
+import { sumOfDigits } from '@/lib/client_functions';
 import { COLORS } from '@/lib/constants';
 
-export const ProfileInfo = ({ username }: { username: string }) => {
+export const ProfileInfo = ({ profile, username }: { profile: any; username: string }) => {
   const isMobile = useMediaQuery('(max-width: 650px)');
-  const [profile, setProfile] = useState<any>();
-
-  const getProfile = async () => {
-    await apiCall(`/api/profile?username=${username}`).then((res) =>
-      setProfile({ ...res?.data, dob: new Date(res?.data.user.dob) })
-    );
-  };
-
-  useEffect(() => {
-    getProfile();
-  }, []);
-
-  if (!profile) return <></>;
 
   return (
     <Container px={0} size="md">
@@ -59,7 +45,7 @@ export const ProfileInfo = ({ username }: { username: string }) => {
                   variant="transparent"
                   px={0}
                   color="red"
-                  leftSection={100}
+                  leftSection={profile?.posts?.length || '0 '}
                 >
                   Posts
                 </Badge>
@@ -69,7 +55,9 @@ export const ProfileInfo = ({ username }: { username: string }) => {
                   variant="transparent"
                   px={0}
                   color="green"
-                  leftSection={profile?.by?.length}
+                  leftSection={
+                    (Array.isArray(profile?.by) ? profile?.by?.length : profile?.by) || '0 '
+                  }
                 >
                   Sparks
                 </Badge>
@@ -79,7 +67,9 @@ export const ProfileInfo = ({ username }: { username: string }) => {
                   variant="transparent"
                   px={0}
                   color="blue"
-                  leftSection={profile?.to?.length}
+                  leftSection={
+                    (Array.isArray(profile?.to) ? profile?.to?.length : profile?.to) || '0 '
+                  }
                 >
                   Sparking
                 </Badge>
@@ -102,12 +92,14 @@ export const ProfileInfo = ({ username }: { username: string }) => {
                   </Badge>
                 ))}
               </Group>
-              <Badge
-                variant="filled"
-                leftSection={<IconMapPin style={{ width: rem(14), height: rem(14) }} />}
-              >
-                {profile?.user?.city}
-              </Badge>
+              {profile?.user?.city && (
+                <Badge
+                  variant="filled"
+                  leftSection={<IconMapPin style={{ width: rem(14), height: rem(14) }} />}
+                >
+                  {profile?.user?.city}
+                </Badge>
+              )}
             </Stack>
           </Grid.Col>
         </Grid>

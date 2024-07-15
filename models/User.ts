@@ -13,6 +13,7 @@ export interface UserDocument extends Document {
   mobile?: string;
   email: string;
   password: string;
+  isPrivate: boolean;
   isAdmin: boolean;
   isVerified: boolean;
 }
@@ -72,6 +73,10 @@ const userSchema = new Schema<UserDocument, {}, Methods>(
     password: {
       type: String,
       required: true,
+    },
+    isPrivate: {
+      type: Boolean,
+      default: false,
     },
     isAdmin: {
       type: Boolean,
