@@ -13,7 +13,7 @@ import {
   Title,
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { IconCarambola, IconMapPin } from '@tabler/icons-react';
+import { IconMapPinFilled, IconStarFilled } from '@tabler/icons-react';
 import { sumOfDigits } from '@/lib/client_functions';
 import { COLORS } from '@/lib/constants';
 
@@ -83,9 +83,9 @@ export const ProfileInfo = ({ profile, username }: { profile: any; username: str
                 {profile?.user?.interests?.map((interest: string) => (
                   <Badge
                     key={interest}
-                    leftSection={<IconCarambola style={{ width: rem(12), height: rem(12) }} />}
+                    leftSection={<IconStarFilled style={{ width: rem(12), height: rem(12) }} />}
                     radius="xs"
-                    variant="outline"
+                    variant="filled"
                     color={COLORS[sumOfDigits(interest)]}
                   >
                     {interest}
@@ -94,8 +94,9 @@ export const ProfileInfo = ({ profile, username }: { profile: any; username: str
               </Group>
               {profile?.user?.city && (
                 <Badge
-                  variant="filled"
-                  leftSection={<IconMapPin style={{ width: rem(14), height: rem(14) }} />}
+                  variant="transparent"
+                  px={0}
+                  leftSection={<IconMapPinFilled style={{ width: rem(14), height: rem(14) }} />}
                 >
                   {profile?.user?.city}
                 </Badge>

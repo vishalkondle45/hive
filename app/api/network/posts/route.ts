@@ -1,3 +1,4 @@
+import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 import startDb from '@/lib/db';
@@ -9,6 +10,14 @@ import { uploadImageToS3 } from '@/lib/functions';
 
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
+
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION as string,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+  },
+});
 
 export async function GET() {
   try {
@@ -70,6 +79,28 @@ export async function PUT(req: NextRequest) {
     const post = await Post.findByIdAndUpdate(req.nextUrl.searchParams.get('_id'), body, {
       new: true,
     });
+    return NextResponse.json(post, { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json({ error: error?.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const session: UserDataTypes | null = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json({ error: 'You are not authorized' }, { status: 401 });
+    }
+    await startDb();
+    const post = await Post.findByIdAndDelete(req.nextUrl.searchParams.get('_id'));
+
+    await s3Client.send(
+      new DeleteObjectCommand({
+        Bucket: 'dream-by-vishal',
+        Key: post?.url.split('/').pop(),
+      })
+    );
+
     return NextResponse.json(post, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error?.message }, { status: 500 });

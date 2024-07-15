@@ -13,7 +13,7 @@ export async function PUT(req: NextRequest) {
     }
     await startDb();
     const isLiked = await Post.findById(req.nextUrl.searchParams.get('_id')).select('likes');
-    if (isLiked?.likes.includes(session?.user?._id)) {
+    if (isLiked?.likes?.includes(session?.user?._id)) {
       const post = await Post.findByIdAndUpdate(
         req.nextUrl.searchParams.get('_id'),
         { $pull: { likes: session?.user?._id } },

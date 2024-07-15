@@ -37,18 +37,10 @@ const NetworkPage = () => {
     await apiCall('/api/network/posts', formData, 'POST')
       .then(refetch)
       .catch((err) => failure(err.response.data.error))
-      .finally(close);
-  };
-
-  const onLike = async (_id: string) => {
-    await apiCall(`/api/network/posts/like?_id=${_id}`, null, 'PUT')
-      .then(refetch)
-      .catch((error) => failure(error.response.data.error));
-  };
-  const onSave = async (_id: string) => {
-    await apiCall(`/api/network/posts/save?_id=${_id}`, null, 'PUT')
-      .then(refetch)
-      .catch((error) => failure(error.response.data.error));
+      .finally(() => {
+        form.reset();
+        close();
+      });
   };
 
   return (
@@ -69,8 +61,7 @@ const NetworkPage = () => {
               <Post
                 key={String(post?._id)}
                 post={post}
-                onLike={onLike}
-                onSave={onSave}
+                refetch={refetch}
                 user={session.data?.user?._id}
               />
             ))}
@@ -102,6 +93,7 @@ const NetworkPage = () => {
             createdAt: '2024-07-15T09:13:46.101Z',
           }}
           user={session.data?.user?._id}
+          refetch={refetch}
         />
       </Modal>
     </Container>

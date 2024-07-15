@@ -33,7 +33,10 @@ export async function GET(req: NextRequest) {
     }
     const by = await Spark.find({ by: user?._id });
     const to = await Spark.find({ to: user?._id });
-    const posts = await Post.find({ user: user?._id });
+    const posts = await Post.find({ user: user?._id }).populate({
+      path: 'user',
+      select: 'name username image',
+    });
     const isSparked = await Spark.findOne({
       to: user?._id,
       by: session?.user._id,
