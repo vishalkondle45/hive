@@ -15,7 +15,7 @@ export async function GET(req: Request, { params }: { params: { secret: string }
     await user.save();
     await sendMail(
       user?.email,
-      `Hello ${user.name}!\n\nYour account has been verified successfully. \n\nRegards, \nDream Team`
+      `Hello ${user.name}!\n\nYour account has been verified successfully. \n\nRegards, \nHive Team`
     );
     return NextResponse.json(
       'Your account has been verified, close this tab and proceed to login.',

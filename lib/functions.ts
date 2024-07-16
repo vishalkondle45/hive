@@ -30,7 +30,7 @@ export const sendMail = async (email: string, message: string) => {
 };
 
 export const verificationMessage = (name: string, _id: string) =>
-  `Hello ${name}!\n\nYour account has been created successfully. \n\nPlease click on the link below to verify your email. <a href="http://localhost:3000/verify/${_id}">Click here</a> \n\nRegards, \nDream Team`;
+  `Hello ${name}!\n\nYour account has been created successfully. \n\nPlease click on the link below to verify your email. <a href="http://localhost:3000/verify/${_id}">Click here</a> \n\nRegards, \nHive Team`;
 
 //? TODO QUERIES
 export const getTodaysTodos = async (user: any) =>
@@ -79,7 +79,7 @@ export async function uploadImageToS3(file: Buffer, name: string) {
       Key: name,
       Body: fileBuffer,
       ACL: ObjectCannedACL.public_read,
-      Bucket: 'dream-by-vishal',
+      Bucket: 'hive-by-vishal',
       ContentType: 'image/*',
     };
     const command = new PutObjectCommand(params);

@@ -108,12 +108,12 @@ export async function PUT(req: NextRequest) {
         );
         if (fl?.link) {
           const input = {
-            Bucket: 'dream-by-vishal',
-            CopySource: `dream-by-vishal/${encodeURI(fl.link)}`,
+            Bucket: 'hive-by-vishal',
+            CopySource: `hive-by-vishal/${encodeURI(fl.link)}`,
             Key,
           };
           await s3Client.send(new CopyObjectCommand(input));
-          await s3Client.send(new DeleteObjectCommand({ Bucket: 'dream-by-vishal', Key: fl.link }));
+          await s3Client.send(new DeleteObjectCommand({ Bucket: 'hive-by-vishal', Key: fl.link }));
         }
         const input = { parent: body?.parent || null, link: fl?.link ? Key : undefined };
         await fl?.updateOne(input);
@@ -130,7 +130,7 @@ const deleteAllChilds = async (fl: any) => {
   if (fl?.link) {
     await s3Client.send(
       new DeleteObjectCommand({
-        Bucket: 'dream-by-vishal',
+        Bucket: 'hive-by-vishal',
         Key: fl?.link,
       })
     );

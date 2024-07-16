@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
     const post = await Post.create({
       user: session?.user._id,
       caption,
-      url: `https://dream-by-vishal.s3.eu-north-1.amazonaws.com/${name}`,
+      url: `https://hive-by-vishal.s3.eu-north-1.amazonaws.com/${name}`,
     });
     return NextResponse.json(post, { status: 200 });
   } catch (error: any) {
@@ -98,7 +98,7 @@ export async function DELETE(req: NextRequest) {
 
     await s3Client.send(
       new DeleteObjectCommand({
-        Bucket: 'dream-by-vishal',
+        Bucket: 'hive-by-vishal',
         Key: post?.url.split('/').pop(),
       })
     );

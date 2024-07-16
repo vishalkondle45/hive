@@ -16,7 +16,7 @@ import { StoreProvider } from '@/store/StoreProvder';
 import Layout from '@/components/Layout';
 import AuthProvider from '@/Providers/AuthProvider';
 
-export const metadata = { title: 'Dream', description: '' };
+export const metadata = { title: 'Hive', description: '' };
 
 export default function RootLayout({ children }: { children: any }) {
   return (
