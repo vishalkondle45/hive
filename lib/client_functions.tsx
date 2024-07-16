@@ -172,3 +172,10 @@ export const renderBoldText = (text: string) => {
   const boldRegex = /\*\*(.*?)\*\*/g;
   return text.split(boldRegex);
 };
+
+export const sumOfDigits = (n: string) =>
+  n
+    .charCodeAt(0)
+    .toString()
+    .split('')
+    .reduce((sum, digit) => sum + Number(digit), 0);

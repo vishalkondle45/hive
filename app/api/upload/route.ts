@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 import { authOptions } from '../auth/[...nextauth]/authOptions';
@@ -12,7 +11,7 @@ export const dynamic = 'force-dynamic';
 export async function POST(req: Request) {
   try {
     const session: UserDataTypes | null = await getServerSession(authOptions);
-    if (!session?.user || !session?.user?.isAdmin) {
+    if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     await startDb();
@@ -20,7 +19,7 @@ export async function POST(req: Request) {
     const file = formData.get('file') as File;
     if (!file) return NextResponse.json({ error: 'Please select a file' }, { status: 400 });
     const buffer = Buffer.from(await file.arrayBuffer());
-    const timestamp = Date.parse(dayjs().format('MMMM DD YYYY HH:mm:ss'));
+    const timestamp = Date.now();
     const name = `${timestamp}.${file.name.split('.').pop()}`;
     const result = await uploadImageToS3(buffer, name);
     if (!result) {

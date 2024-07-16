@@ -70,9 +70,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }
     if (rootpath) {
       setAPP(APPS?.find((app) => `/${rootpath}` === app?.path));
+      const sidebar = APPS?.find((app) => `/${rootpath}` === app?.path)?.sidebar || [];
       const res = await apiCall(`/api/list?schema=${rootpath}`);
       if (res?.data) {
-        setAPP((old = { sidebar: [] }) => ({ ...old, sidebar: [...old.sidebar, ...res.data] }));
+        setAPP((old = { sidebar: [] }) => ({ ...old, sidebar: [...sidebar, ...res.data] }));
       }
     }
   };
@@ -221,7 +222,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         {data?.user?.username}
                       </Text>
                       <Stack align="center" gap={rem(4)}>
-                        <FileButton accept="image/png,image/jpeg" onChange={setFile}>
+                        <FileButton accept="image/*" onChange={setFile}>
                           {(props) => (
                             <Avatar
                               variant="filled"
@@ -248,7 +249,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                           variant="filled"
                           radius="xl"
                           color="teal"
-                          onClick={() => router.push('/profile')}
+                          onClick={() => router.push('/network/profile')}
                           leftSection={<IconUser />}
                         >
                           Profile

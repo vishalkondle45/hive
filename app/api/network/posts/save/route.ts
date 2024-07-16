@@ -1,0 +1,33 @@
+import { getServerSession } from 'next-auth';
+import { NextRequest, NextResponse } from 'next/server';
+import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
+import { UserDataTypes } from '@/app/api/auth/[...nextauth]/next-auth.interfaces';
+import startDb from '@/lib/db';
+import Post from '@/models/Post';
+
+export async function PUT(req: NextRequest) {
+  try {
+    const session: UserDataTypes | null = await getServerSession(authOptions);
+    if (!session?.user?._id) {
+      return NextResponse.json({ error: 'You are not authorized' }, { status: 401 });
+    }
+    await startDb();
+    const isSaved = await Post.findById(req.nextUrl.searchParams.get('_id')).select('saved');
+    if (isSaved?.saved.includes(session?.user?._id)) {
+      const post = await Post.findByIdAndUpdate(
+        req.nextUrl.searchParams.get('_id'),
+        { $pull: { saved: session?.user?._id } },
+        { new: true }
+      );
+      return NextResponse.json(post, { status: 200 });
+    }
+    const post = await Post.findByIdAndUpdate(
+      req.nextUrl.searchParams.get('_id'),
+      { $addToSet: { saved: session?.user._id } },
+      { new: true }
+    );
+    return NextResponse.json(post, { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json({ error: error?.message }, { status: 500 });
+  }
+}

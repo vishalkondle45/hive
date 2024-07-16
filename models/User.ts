@@ -6,10 +6,14 @@ export interface UserDocument extends Document {
   name: string;
   image?: string;
   dob: Date;
+  bio?: string;
+  interests?: string[];
+  city?: string;
   username?: string;
   mobile?: string;
   email: string;
   password: string;
+  isPrivate: boolean;
   isAdmin: boolean;
   isVerified: boolean;
 }
@@ -26,9 +30,21 @@ const userSchema = new Schema<UserDocument, {}, Methods>(
       collation: { locale: 'en', strength: 2 },
       index: true,
     },
+    bio: {
+      type: String,
+      default: '',
+    },
     dob: {
       type: Date,
       required: true,
+    },
+    interests: {
+      type: [String],
+      default: [],
+    },
+    city: {
+      type: String,
+      default: '',
     },
     username: {
       type: String,
@@ -57,6 +73,10 @@ const userSchema = new Schema<UserDocument, {}, Methods>(
     password: {
       type: String,
       required: true,
+    },
+    isPrivate: {
+      type: Boolean,
+      default: false,
     },
     isAdmin: {
       type: Boolean,

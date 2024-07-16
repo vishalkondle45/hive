@@ -9,6 +9,7 @@ import '@mantine/dates/styles.css';
 import '@mantine/tiptap/styles.css';
 import '@mantine/spotlight/styles.css';
 import '@mantine/code-highlight/styles.css';
+import '@mantine/carousel/styles.css';
 import { DatesProvider } from '@mantine/dates';
 import { theme } from '../theme';
 import { StoreProvider } from '@/store/StoreProvder';
