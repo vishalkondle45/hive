@@ -30,10 +30,7 @@ export async function GET() {
     const posts = await Post.find({
       $or: [{ user: { $in: to.map((t) => t.to) } }, { user: session.user?._id }],
     })
-      .populate({
-        path: 'user',
-        select: 'name username image',
-      })
+      .populate({ path: 'user', select: 'name username image' })
       .sort('-createdAt');
     return NextResponse.json(posts, { status: 200 });
   } catch (error: any) {

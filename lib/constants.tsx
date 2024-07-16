@@ -2,6 +2,7 @@ import { HarmBlockThreshold, HarmCategory } from '@google/generative-ai';
 import {
   IconArchive,
   IconBookmark,
+  IconBookmarkFilled,
   IconCalendar,
   IconCalendarDown,
   IconCalendarUp,
@@ -9,6 +10,7 @@ import {
   IconClipboardText,
   IconCloud,
   IconCode,
+  IconHeartFilled,
   IconMessageQuestion,
   IconMessageReply,
   IconMessages,
@@ -157,6 +159,8 @@ export const APPS: AppType[] = [
     sidebar: [
       { label: 'Home', path: '/network', icon: <IconUsersGroup /> },
       { label: 'Suggestions', path: '/network/suggested', icon: <IconSparkles /> },
+      { label: 'Liked Posts', path: '/network/liked', icon: <IconBookmarkFilled /> },
+      { label: 'Saved Posts', path: '/network/saved', icon: <IconHeartFilled /> },
       { label: 'My Profile', path: '/network/profile', icon: <IconUserCircle /> },
     ],
   },

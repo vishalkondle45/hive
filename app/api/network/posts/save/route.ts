@@ -5,6 +5,22 @@ import { UserDataTypes } from '@/app/api/auth/[...nextauth]/next-auth.interfaces
 import startDb from '@/lib/db';
 import Post from '@/models/Post';
 
+export async function GET() {
+  try {
+    const session: UserDataTypes | null = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json({ error: 'You are not authorized' }, { status: 401 });
+    }
+    await startDb();
+    const posts = await Post.find({ saved: session.user._id })
+      .populate({ path: 'user', select: 'name username image' })
+      .sort('-createdAt');
+    return NextResponse.json(posts, { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json({ error: error?.message }, { status: 500 });
+  }
+}
+
 export async function PUT(req: NextRequest) {
   try {
     const session: UserDataTypes | null = await getServerSession(authOptions);
