@@ -2,18 +2,18 @@
 
 ## Buzzing with productivity
 
-### Notes
+### 📝 Notes
 
-### Todos
+### ✅ Todos
 
-### Documents
+### 📄 Documents
 
-### Drive
+### 🌩️ Drive
 
-### AI
+### 🤖 AI
 
-### Calendar
+### 🗓️ Calendar
 
-### Forum
+### 💬 Forum
 
-### Social Network
+### 🌎 Social Network
