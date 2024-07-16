@@ -7,8 +7,11 @@ export default function Welcome() {
       <Title className={classes.title} ta="center" mt={100}>
         Welcome to{' '}
         <Text inherit variant="gradient" component="span" gradient={{ from: 'pink', to: 'yellow' }}>
-          My Next App Template
+          Hive
         </Text>
+      </Title>
+      <Title ta="center" order={1}>
+        Buzzing with productivity.
       </Title>
     </>
   );
