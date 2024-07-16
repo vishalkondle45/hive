@@ -44,7 +44,7 @@ const NetworkPage = () => {
   };
 
   return (
-    <Container px={0} size="sm">
+    <Container px={0} size="md">
       <Group mb="md" justify="space-between">
         <Title order={3}>Network</Title>
         <Button
@@ -54,7 +54,7 @@ const NetworkPage = () => {
           Upload
         </Button>
       </Group>
-      <Container px={0} size="xs">
+      <Container mt="md" px={0} size="xs">
         {Array.isArray(posts) && (
           <Stack>
             {posts?.map((post) => (

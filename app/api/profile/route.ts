@@ -31,8 +31,18 @@ export async function GET(req: NextRequest) {
         'name username image bio city interests dob'
       );
     }
-    const by = await Spark.find({ by: user?._id });
-    const to = await Spark.find({ to: user?._id });
+    const by = await Spark.find({ by: user?._id })
+      .populate({
+        path: 'to',
+        select: 'name username image',
+      })
+      .select('-createdAt -updatedAt -__v');
+    const to = await Spark.find({ to: user?._id })
+      .populate({
+        path: 'by',
+        select: 'name username image',
+      })
+      .select('-createdAt -updatedAt -__v');
     const posts = await Post.find({ user: user?._id }).populate({
       path: 'user',
       select: 'name username image',
@@ -40,9 +50,9 @@ export async function GET(req: NextRequest) {
     const isSparked = await Spark.findOne({
       to: user?._id,
       by: session?.user._id,
-      //! isAccepted: true,
+      // isAccepted: true,
     });
-    if (!isSparked) {
+    if (!isSparked && user?._id === session?.user._id) {
       return NextResponse.json(
         { user, by: by?.length, to: to?.length, posts: posts?.length, isSparked: !!isSparked },
         { status: 200 }

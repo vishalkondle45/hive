@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 export async function POST(req: Request) {
   try {
     const session: UserDataTypes | null = await getServerSession(authOptions);
-    if (!session?.user || !session?.user?.isAdmin) {
+    if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     await startDb();

@@ -42,6 +42,7 @@ import {
   IconPrompt,
   IconQuestionMark,
   IconRobot,
+  IconSparkles,
   IconStar,
   IconTags,
   IconTrash,
@@ -155,6 +156,7 @@ export const APPS: AppType[] = [
     color: 'grape',
     sidebar: [
       { label: 'Home', path: '/network', icon: <IconUsersGroup /> },
+      { label: 'Suggestions', path: '/network/suggested', icon: <IconSparkles /> },
       { label: 'My Profile', path: '/network/profile', icon: <IconUserCircle /> },
     ],
   },

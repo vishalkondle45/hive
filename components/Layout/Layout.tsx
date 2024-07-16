@@ -222,7 +222,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         {data?.user?.username}
                       </Text>
                       <Stack align="center" gap={rem(4)}>
-                        <FileButton accept="image/png,image/jpeg" onChange={setFile}>
+                        <FileButton accept="image/*" onChange={setFile}>
                           {(props) => (
                             <Avatar
                               variant="filled"

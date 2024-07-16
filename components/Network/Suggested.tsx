@@ -3,6 +3,7 @@
 import { Avatar, Box, Button, Group, Paper, rem, Stack, Text } from '@mantine/core';
 import { useFetch } from '@mantine/hooks';
 import { Carousel } from '@mantine/carousel';
+import { useRouter } from 'next/navigation';
 import { SparkButton } from '@/components/Custom';
 import { UserDocument } from '@/models/User';
 import classes from './Slideshow.module.css';
@@ -12,6 +13,7 @@ import { apiCall } from '@/lib/client_functions';
 export const Suggested = () => {
   const { data: suggested } = useFetchData('/api/sparks/suggested');
   const { data: sparks, refetch: refetchSparks } = useFetch('/api/sparks');
+  const router = useRouter();
 
   const onSpark = async (_id: string) => {
     await apiCall('/api/sparks', { to: _id }, 'POST');
@@ -21,7 +23,7 @@ export const Suggested = () => {
     <Box>
       <Group my={rem(8)} justify="space-between">
         <Text c="dimmed" fw={700}>
-          Suggested
+          Suggested Profiles
         </Text>
         <Button size="compact-md" variant="transparent">
           See All
@@ -41,8 +43,20 @@ export const Suggested = () => {
             <Carousel.Slide key={String(item?._id)}>
               <Paper p="md" withBorder>
                 <Stack gap={rem(6)} align="center">
-                  <Avatar size="xl" color="initials" src={item?.image} name={item?.name} />
-                  <Text fw={700} size="sm">
+                  <Avatar
+                    onClick={() => router.push(`/network/${item?.username}`)}
+                    style={{ cursor: 'pointer' }}
+                    size="xl"
+                    color="initials"
+                    src={item?.image}
+                    name={item?.name}
+                  />
+                  <Text
+                    fw={700}
+                    size="sm"
+                    onClick={() => router.push(`/network/${item?.username}`)}
+                    style={{ cursor: 'pointer' }}
+                  >
                     {item?.username ?? 'Anonymous'}
                   </Text>
                   <Text>{item?.name}</Text>

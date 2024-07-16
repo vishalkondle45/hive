@@ -77,23 +77,25 @@ export const Post = ({ post, user, refetch }: Props) => {
           </Group>
         </Paper>
         {post?.caption && (
-          <Spoiler
-            maxHeight={50}
-            showLabel={
-              <Text size="sm" px="xs">
-                Show more
+          <Paper radius={0} withBorder>
+            <Spoiler
+              maxHeight={50}
+              showLabel={
+                <Text size="sm" px="xs">
+                  Show more
+                </Text>
+              }
+              hideLabel={
+                <Text size="sm" px="xs">
+                  Hide
+                </Text>
+              }
+            >
+              <Text size="sm" p="xs">
+                {post?.caption}
               </Text>
-            }
-            hideLabel={
-              <Text size="sm" px="xs">
-                Hide
-              </Text>
-            }
-          >
-            <Text size="sm" p="xs">
-              {post?.caption}
-            </Text>
-          </Spoiler>
+            </Spoiler>
+          </Paper>
         )}
       </Card>
     </>
