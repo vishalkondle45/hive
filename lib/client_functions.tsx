@@ -3,10 +3,12 @@ import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { nprogress } from '@mantine/nprogress';
 import {
+  IconBrandReact,
   IconCheck,
   IconFile,
   IconFileTypeDoc,
   IconFileTypePdf,
+  IconFileZip,
   IconMusic,
   IconPhoto,
   IconVideo,
@@ -105,14 +107,21 @@ export const Preview = (url: string) => {
           <track kind="captions" srcLang="en" src="captions.vtt" />
         </video>
       );
-    default:
+
+    case 'jpeg':
+    case 'jpg':
+    case 'png':
+    case 'svg':
       return <Image alt={url} src={url} h="auto" w="auto" fit="contain" />;
+
+    default:
+      return url;
   }
 };
 
 export const fileIcon = (url: string) => {
   if (!url) return <></>;
-  switch (url.split('?')[0].split('.').at(-1)) {
+  switch (url.toLowerCase().split('?')[0].split('.').at(-1)) {
     case 'jpeg':
     case 'jpg':
     case 'png':
@@ -128,6 +137,12 @@ export const fileIcon = (url: string) => {
       return <IconMusic size={18} />;
     case 'mp4':
       return <IconVideo size={18} />;
+    case 'tsx':
+    case 'jsx':
+      return <IconBrandReact size={18} />;
+    case 'zip':
+    case 'rar':
+      return <IconFileZip size={18} />;
     default:
       return <IconFile size={18} />;
   }

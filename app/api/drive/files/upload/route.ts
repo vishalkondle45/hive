@@ -32,13 +32,13 @@ export async function POST(req: Request) {
 
     await Promise.all(
       files.map(async (file) => {
-        const Body = (await file.arrayBuffer()) as Buffer;
+        const Body = (await file.arrayBuffer()) as any;
         const Key = encodeURI(
           parent
             ? `${session?.user._id}${parent ? `/${parent}` : ''}/${file.name}`
             : `${session?.user._id}/${file.name}`
         );
-        await s3Client.send(new PutObjectCommand({ Bucket: 'hive-by-vishal', Key, Body }));
+        await s3Client.send(new PutObjectCommand({ Bucket: 'vishal-nextjs', Key, Body }));
         const isAlready = await File.findOne({ link: Key });
         if (!isAlready) {
           await File.create({
@@ -68,7 +68,7 @@ export async function GET(req: NextRequest) {
     }
     await startDb();
     const Key = req.nextUrl.searchParams.get('Key') || '';
-    const command = new GetObjectCommand({ Bucket: 'hive-by-vishal', Key });
+    const command = new GetObjectCommand({ Bucket: 'vishal-nextjs', Key });
     const src = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
     return NextResponse.json(src, { status: 200 });
   } catch (error: any) {

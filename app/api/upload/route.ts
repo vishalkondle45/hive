@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     if (!result) {
       return NextResponse.json({ error: 'Error uploading image to S3' }, { status: 500 });
     }
-    return NextResponse.json(`https://hive-by-vishal.s3.eu-north-1.amazonaws.com/${name}`, {
+    return NextResponse.json(`https://vishal-nextjs.s3.eu-north-1.amazonaws.com/${name}`, {
       status: 200,
     });
   } catch (error: any) {

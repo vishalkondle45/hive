@@ -79,7 +79,7 @@ export async function uploadImageToS3(file: Buffer, name: string) {
       Key: name,
       Body: fileBuffer,
       ACL: ObjectCannedACL.public_read,
-      Bucket: 'hive-by-vishal',
+      Bucket: 'vishal-nextjs',
       ContentType: 'image/*',
     };
     const command = new PutObjectCommand(params);

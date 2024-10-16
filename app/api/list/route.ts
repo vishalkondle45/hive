@@ -5,6 +5,7 @@ import TodoList from '@/models/TodoList';
 import { authOptions } from '../auth/[...nextauth]/authOptions';
 import { UserDataTypes } from '../auth/[...nextauth]/next-auth.interfaces';
 import Prompt from '@/models/Prompt';
+import Album from '@/models/Album';
 
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
@@ -31,6 +32,13 @@ export async function GET(req: NextRequest) {
         list = [
           ...list,
           ...prompts.map((i) => ({ path: `/${schema}/prompts/${i?._id}`, label: i?.prompt })),
+        ];
+        break;
+      case 'music':
+        const albums = await Album.find().sort('-updatedAt');
+        list = [
+          ...list,
+          ...albums.map((i) => ({ path: `/${schema}/album/${i?._id}`, label: i?.title })),
         ];
         break;
       default:

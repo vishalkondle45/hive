@@ -1,29 +1,40 @@
-import { Prompt } from '@/components/Robot/Prompt.types';
+import { RefObject } from 'react';
 import { createSlice } from '@reduxjs/toolkit';
+import { History } from '@/models/Chat';
 
-export interface RobotState {
-  response: Prompt | null;
-  prompts: Prompt[];
-}
-
-const initialState: RobotState = {
-  response: null,
-  prompts: [],
+type initialStateType = {
+  chats: History[];
+  prompt: string;
+  loading: boolean;
+  viewport: RefObject<HTMLDivElement> | null;
 };
 
-export const robotSlice = createSlice({
-  name: 'document',
+const initialState: initialStateType = {
+  chats: [],
+  prompt: '',
+  loading: false,
+  viewport: null,
+};
+
+const robotSlice = createSlice({
+  name: 'robotSlice',
   initialState,
   reducers: {
-    setResponse: (state, action) => {
-      state.response = action.payload;
+    setChats: (state, action) => {
+      state.chats = action.payload;
     },
-    setPrompts: (state, action) => {
-      state.prompts = action.payload;
+    setPrompt: (state, action) => {
+      state.prompt = action.payload;
+    },
+    setLoading: (state, action) => {
+      state.loading = action.payload;
+    },
+    setViewport: (state, action) => {
+      state.viewport = action.payload;
     },
   },
 });
 
-export const { setResponse, setPrompts } = robotSlice.actions;
+export const { setChats, setPrompt, setViewport, setLoading } = robotSlice.actions;
 
 export default robotSlice.reducer;
