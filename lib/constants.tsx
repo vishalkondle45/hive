@@ -41,7 +41,6 @@ import {
   IconNumber8Small,
   IconNumber9Small,
   IconPlus,
-  IconPrompt,
   IconQuestionMark,
   IconRobot,
   IconStar,
@@ -124,10 +123,7 @@ export const APPS: AppType[] = [
     path: '/robot',
     icon: <IconRobot />,
     color: 'grape',
-    sidebar: [
-      { label: 'Robot', path: '/robot', icon: <IconRobot /> },
-      { label: 'Recent Prompts', path: '/robot/prompts', icon: <IconPrompt /> },
-    ],
+    sidebar: [{ label: 'Robot', path: '/robot', icon: <IconRobot /> }],
   },
   {
     label: 'Calendar',
@@ -210,31 +206,6 @@ export const FONTS = [
 ];
 
 export const spotlightItems = [];
-
-export const promptExamples = [
-  {
-    header: 'Learn a new language',
-    subheader: 'Spanish immersion',
-    prompt: 'Plan a 2-week language immersion experience to learn Spanish in a vibrant city.',
-  },
-  {
-    header: 'Design a healthy meal plan',
-    subheader: 'for a busy professional',
-    prompt: 'Create a 5-day healthy meal plan for a busy professional with quick and easy recipes.',
-  },
-  {
-    header: 'Organize a virtual game night',
-    subheader: 'for friends',
-    prompt:
-      'Plan a virtual game night for friends with fun and engaging activities for an unforgettable evening.',
-  },
-  {
-    header: 'Decorate a home office',
-    subheader: 'on a budget',
-    prompt:
-      'Create a budget-friendly plan to decorate a home office space for increased productivity and comfort.',
-  },
-];
 
 export const geminiModelConfig = {
   model: 'gemini-pro',

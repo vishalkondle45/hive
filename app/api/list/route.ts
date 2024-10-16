@@ -4,7 +4,7 @@ import startDb from '@/lib/db';
 import TodoList from '@/models/TodoList';
 import { authOptions } from '../auth/[...nextauth]/authOptions';
 import { UserDataTypes } from '../auth/[...nextauth]/next-auth.interfaces';
-import Prompt from '@/models/Prompt';
+import Chat from '@/models/Chat';
 import Album from '@/models/Album';
 
 export const maxDuration = 60;
@@ -24,21 +24,24 @@ export async function GET(req: NextRequest) {
         const todos = await TodoList.find({ user: session?.user._id }).sort('-updatedAt');
         list = [
           ...list,
-          ...todos.map((i) => ({ path: `/${schema}/${i?._id}`, label: i?.title, color: i?.color })),
+          ...todos.map((i) => ({ path: `/todos/${i?._id}`, label: i?.title, color: i?.color })),
         ];
         break;
       case 'robot':
-        const prompts = await Prompt.find({ user: session?.user._id }).sort('-updatedAt');
+        const chat = await Chat.find({ user: session?.user._id }).sort('-updatedAt');
         list = [
           ...list,
-          ...prompts.map((i) => ({ path: `/${schema}/prompts/${i?._id}`, label: i?.prompt })),
+          ...chat.map((i) => ({
+            path: `/robot/chats/${i?._id}`,
+            label: i?.history[0].parts[0].text,
+          })),
         ];
         break;
       case 'music':
         const albums = await Album.find().sort('-updatedAt');
         list = [
           ...list,
-          ...albums.map((i) => ({ path: `/${schema}/album/${i?._id}`, label: i?.title })),
+          ...albums.map((i) => ({ path: `/music/album/${i?._id}`, label: i?.title })),
         ];
         break;
       default:
