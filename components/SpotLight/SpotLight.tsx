@@ -45,7 +45,7 @@ export default function SpotLight() {
         nothingFound="Nothing found..."
         highlightQuery
         limit={7}
-        shortcut="mod + K"
+        shortcut={['mod + K', 'mod + F', '/']}
         searchProps={{
           leftSection: <IconSearch style={{ width: rem(20), height: rem(20) }} stroke={1.5} />,
           placeholder: 'Search...',

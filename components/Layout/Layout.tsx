@@ -6,6 +6,7 @@ import {
   Avatar,
   Burger,
   Button,
+  Container,
   FileButton,
   Group,
   Indicator,
@@ -21,7 +22,7 @@ import { notifications } from '@mantine/notifications';
 import { IconGridDots, IconList, IconLogout, IconUser } from '@tabler/icons-react';
 import { signOut, useSession } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { App } from '../App';
 import { APPS } from '@/lib/constants';
 import { apiCall, getInitials } from '@/lib/client_functions';
@@ -34,6 +35,8 @@ import {
   toggleDesktop,
   toggleMobile,
 } from '@/store/features/layoutSlice';
+import { useAppSelector } from '@/store/features/hooks';
+import PlayerBar from '../Music/PlayerBar';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { data, status, update } = useSession() as any;
@@ -44,6 +47,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const rootpath = pathname.split('/')[1];
   const network = useNetwork();
   const [file, setFile] = useState<File | null>(null);
+  const { selected } = useAppSelector((state) => state.musicSlice);
+  const ref = useRef(null);
 
   const [APP, setAPP] = useState(APPS?.find((app) => `/${rootpath}` === app?.path));
 
@@ -118,7 +123,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <AppShell
       header={{ height: 60 }}
       navbar={{
-        width: isLoggedIn && APP?.sidebar?.length ? 200 : 0,
+        width: isLoggedIn ? 200 : 0,
         breakpoint: 'sm',
         collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
       }}
@@ -301,11 +306,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   key={item?.path}
                   justify="left"
                   onClick={() => navigateTo(item?.path)}
-                  leftSection={item?.icon || <IconList />}
+                  leftSection={item?.icon || APP?.listIcon || <IconList />}
                   radius={0}
                   variant={pathname === item?.path ? 'filled' : 'subtle'}
                   color={`${item?.color || APP.color}${pathname === item?.path ? '.3' : '.5'}`}
                   fullWidth
+                  title={item?.label}
                 >
                   {item?.label}
                 </Button>
@@ -316,6 +322,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <></>
         )}
         <AppShell.Main pt={rem(80)}>{children}</AppShell.Main>
+        {selected?.link && (
+          <AppShell.Footer p={8}>
+            <Container px={0} size="lg">
+              <PlayerBar ref={ref} />
+            </Container>
+          </AppShell.Footer>
+        )}
       </>
     </AppShell>
   );

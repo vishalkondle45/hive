@@ -1,1 +1,0 @@
-export { NewPrompt } from './NewPrompt';

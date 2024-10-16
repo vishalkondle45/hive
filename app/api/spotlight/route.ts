@@ -6,6 +6,8 @@ import Todo from '@/models/Todo';
 import { authOptions } from '../auth/[...nextauth]/authOptions';
 import { UserDataTypes } from '../auth/[...nextauth]/next-auth.interfaces';
 import Document from '@/models/Document';
+import Album from '@/models/Album';
+import Song from '@/models/Song';
 
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
@@ -46,7 +48,28 @@ export async function GET() {
         type: 'documents',
       }))
     );
-    return NextResponse.json(spotlight, { status: 200 });
+    const albums = await Album.find({});
+    spotlight = spotlight.concat(
+      albums.map((i) => ({
+        id: `/music/album/${i?._id}`,
+        label: i?.title,
+        description: 'Album',
+        type: 'album',
+      }))
+    );
+    const songs = await Song.find({}).populate('album', 'title');
+    spotlight = spotlight.concat(
+      songs.map((i, index) => ({
+        id: `/music/album/${i?.album._id}#${index}`,
+        label: i?.title,
+        description: (i?.album as any)?.title,
+        type: 'song',
+      }))
+    );
+    return NextResponse.json(
+      spotlight.sort(() => Math.random() - 0.5),
+      { status: 200 }
+    );
   } catch (error: any) {
     return NextResponse.json({ error: error?.message }, { status: 500 });
   }

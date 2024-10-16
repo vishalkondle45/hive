@@ -2,7 +2,6 @@ import { HarmBlockThreshold, HarmCategory } from '@google/generative-ai';
 import {
   IconArchive,
   IconBookmark,
-  IconBookmarkFilled,
   IconCalendar,
   IconCalendarDown,
   IconCalendarUp,
@@ -10,10 +9,11 @@ import {
   IconClipboardText,
   IconCloud,
   IconCode,
-  IconHeartFilled,
+  IconDisc,
   IconMessageQuestion,
   IconMessageReply,
   IconMessages,
+  IconMusic,
   IconNote,
   IconNumber0Small,
   IconNumber10Small,
@@ -44,12 +44,9 @@ import {
   IconPrompt,
   IconQuestionMark,
   IconRobot,
-  IconSparkles,
   IconStar,
   IconTags,
   IconTrash,
-  IconUserCircle,
-  IconUsersGroup,
   IconWallet,
 } from '@tabler/icons-react';
 
@@ -58,6 +55,7 @@ interface AppType {
   path?: string;
   icon?: JSX.Element;
   color?: string;
+  listIcon?: JSX.Element;
   sidebar: {
     label?: string;
     path?: string;
@@ -151,22 +149,17 @@ export const APPS: AppType[] = [
       { label: 'You Answered', path: '/forum/my-answers', icon: <IconMessageReply /> },
     ],
   },
-  {
-    label: 'Network',
-    path: '/network',
-    icon: <IconUsersGroup />,
-    color: 'grape',
-    sidebar: [
-      { label: 'Home', path: '/network', icon: <IconUsersGroup /> },
-      { label: 'Suggestions', path: '/network/suggested', icon: <IconSparkles /> },
-      { label: 'Liked Posts', path: '/network/liked', icon: <IconBookmarkFilled /> },
-      { label: 'Saved Posts', path: '/network/saved', icon: <IconHeartFilled /> },
-      { label: 'My Profile', path: '/network/profile', icon: <IconUserCircle /> },
-    ],
-  },
   { label: 'Chat', path: '/chat', icon: <IconMessages />, color: 'pink', sidebar: [] },
   { label: 'Wallet', path: '/wallet', icon: <IconWallet />, color: 'red', sidebar: [] },
   { label: 'Dev Tools', path: '/dev', icon: <IconCode />, color: 'lime', sidebar: [] },
+  {
+    label: 'Music',
+    path: '/music',
+    icon: <IconMusic />,
+    listIcon: <IconDisc />,
+    color: 'dark',
+    sidebar: [],
+  },
 ];
 
 export const COLORS = [
